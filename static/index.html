@@ -1,0 +1,125 @@
+<!-- KataJS Chat
+ index.html
+
+ Copyright (c) 2010, Ewen Cheslack-Postava
+ All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are
+ met:
+ * Redistributions of source code must retain the above copyright
+   notice, this list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer in
+   the documentation and/or other materials provided with the
+   distribution.
+ * Neither the name of katajs nor the names of its contributors may
+   be used to endorse or promote products derived from this software
+   without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
+IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER
+OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Chat</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+	<!-- Core must be loaded before web-socket-js because it cludges window.console -->
+	<script type="text/javascript" src="../externals/katajs/katajs/core/Core.js"></script>
+
+        <script type="text/javascript">
+          Kata.WEB_WORKERS_ENABLED = false;
+        </script>
+
+	<script type="text/javascript" src="../externals/katajs/katajs/gfx/WebGLCompat.js"></script>
+
+	<script type="text/javascript" src="../externals/katajs/externals/o3djs/base.js"></script>
+	<script type="text/javascript" src="../externals/katajs/externals/o3d-webgl/base.js"></script>
+	<script type="text/javascript" src="../externals/katajs/externals/GLGE/glge_math.js"></script>
+	<script type="text/javascript" src="../externals/katajs/externals/GLGE/glge.js"></script>
+	<script type="text/javascript" src="../externals/katajs/externals/GLGE/glge_input.js"></script>
+	<script type="text/javascript" src="../externals/katajs/externals/GLGE/glge_collada.js"></script>
+
+        <script type="text/javascript">
+
+          Kata.include("katajs/oh/MainThread.js");
+          // "Plugins" - load files which add specific implementations. This is left up to the user since some may be expensive to load.
+	  Kata.include("katajs/oh/SpaceConnection.js");
+	  Kata.include("katajs/space/loop/Space.js");
+	  Kata.include("katajs/oh/GraphicsSimulation.js");
+	  Kata.include("katajs/gfx/kjsgfx.js");
+          Kata.include("katajs/core/Location.js");
+	  Kata.include("katajs/gfx/TextGraphics.js");
+	  Kata.include("katajs/gfx/o3dgfx.js");
+	  Kata.include("katajs/oh/Script.js");
+	  Kata.include("katajs/oh/ObjectHost.js");
+	  Kata.include("katajs/oh/impl/BootstrapScript.js");
+	  Kata.include("katajs/oh/GraphicsScript.js");
+        </script>
+
+        <!-- "Plugins" - load files which add specific implementations. This
+             is left up to the user since some may be expensive to load.
+          -->
+        <script>
+          // This gives the offset that Kata.include needs prepended
+          // to get to the base of our code directory (it starts at
+          // katajs.git, so we need to get out of externals/katajs.git).
+          var kata_base_offset = "../../";
+
+          var kata, graphics;
+          var driver = "o3d"; // "o3d" or "glge"
+
+          var connectRequested = false;
+          var docReady = false;
+          function setDocReady() { docReady = true; loadGFX(); }
+          function setConnectRequested() { connectRequested = true; loadGFX(); }
+
+          function loadGFX() {
+            if (!docReady || !connectRequested) return;
+
+            var spaceurl = document.getElementById("spaceurl").value;
+            if (!spaceurl)
+                spaceurl = document.getElementById("spacedropdown").value;
+
+            window.kata = new Kata.MainThread(
+                                kata_base_offset + "scripts/BlessedScript.js",
+                                "Example.BlessedScript",
+                                { space : spaceurl }
+                          );
+            graphics = new Kata.GraphicsSimulation(driver, window.kata.getChannel(), document.getElementById("container"));
+          }
+          if (driver == "glge") {
+            doc = new GLGE.Document;
+            doc.onLoad = setDocReady;
+            doc.load("scene.xml");
+          } else {
+            window.onload = setDocReady;
+          }
+          Kata.resolveDeferredHeaders();
+        </script>
+  </head>
+
+  <body>
+    <div>
+      <select id="spacedropdown">
+        <option value="loop://localhost">loop://localhost</option>
+        <option value="sirikata://localhost">sirikata://localhost</option>
+      </select>
+      <input type="text" id="spaceurl" value="">
+      <input type="button" onclick="setConnectRequested()" value="Connect">
+    </div>
+    <div style="width:900px;margin:auto;position:relative" id="container"></div>
+    <canvas id="canvas" width="900" height="500"></canvas>
+  </body>
+</html>
