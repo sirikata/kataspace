@@ -1,2 +1,40 @@
 This is a simple interactive, multi-user, 3D, online application,
 based on KataJS and Sirikata.
+
+Client
+------
+The code in this repository, along with KataJS, included as an
+submodule, is a full client for Sirikata-based worlds. Because we rely
+on KataJS, which in turn relies on other libraries, there's quite a
+bit of initialization.  This should all be wrapped up nicely in the
+Makefile, so simply typing
+
+make
+
+in this directory should make sure all the libraries are up to date
+and built. This application must then be served by a web server.  A
+convenient way to do that is to run
+
+./externals/katajs/contrib/lighttpd.py
+
+from this directory, which uses lighttp to serve this directory from
+localhost:8888.  To view the application, enter
+
+http://localhost:8888/static/
+
+into your browser.
+
+Server
+------
+To interact with other users we connect to a Sirikata space server.
+See http://sirikata.com for details.  If you want to set up a server
+to connect to, download the code for Sirikata and build the space
+server. Using the minimal set of dependencies is sufficient because
+only the server component is used -- KataJS provides the client-side
+code for connecting to a Sirikata space.
+
+Once you have the code, simply run the space server
+(sirikata/build/cmake/space, append _d for the debug version). The
+appropriate ports are hard-coded into the application to work with the
+defaults.  If you need to use different ports, or want to point to a
+server other than localhost, make the appropriate changes in index.html.
