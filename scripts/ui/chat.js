@@ -30,15 +30,23 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-(function() {
+Kata.include("katajs/oh/GUISimulation.js");
+
+Kata.defer(function() {
+
+    var SUPER = Kata.GUISimulation.prototype;
+
     /** Manages a chat UI on a page. Supports multiple chat windows. */
-    ChatUI = function(width) {
+    ChatUI = function(channel, width) {
+        SUPER.constructor.call(this, channel);
+
         this.mWidth = width; // width of chat boxes
         this.mGap = 30;
 
         this.mNextDivID = 0;
         this.mChats = [];
     };
+    Kata.extend(ChatUI, SUPER);
 
     ChatUI.prototype.create = function(title) {
         // Create a new div to hold it
@@ -97,4 +105,10 @@
         };
     };
 
-})();
+
+    // GUISimulation interface
+    ChatUI.prototype.handleGUIMessage = function(evt) {
+        Kata.warn('' + evt.event.name + ' ' + evt.event.action);
+    };
+
+});

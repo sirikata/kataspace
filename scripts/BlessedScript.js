@@ -30,14 +30,23 @@ var Example;
     };
     Kata.extend(Example.BlessedScript, SUPER);
 
+    Example.BlessedScript.prototype.createChatEvent = function(action, name, msg) {
+        var evt = {
+            action : action,
+            name : name
+        };
+        if (msg)
+            evt.msg = msg;
+        return new Kata.ScriptProtocol.FromScript.GUIMessage("chat", evt);
+    };
     Example.BlessedScript.prototype.chatEnterEvent = function(remote, name) {
-        Kata.warn("chat enter: " + name);
+        this._sendHostedObjectMessage(this.createChatEvent('enter', name));
     };
     Example.BlessedScript.prototype.chatExitEvent = function(remote, name, msg) {
-        Kata.warn("chat exit: " + name);
+        this._sendHostedObjectMessage(this.createChatEvent('exit', name, msg));
     };
     Example.BlessedScript.prototype.chatMessageEvent = function(remote, name, msg) {
-        Kata.warn("chat: " + name + " says " + msg);
+        this._sendHostedObjectMessage(this.createChatEvent('say', name, msg));
     };
 
     Example.BlessedScript.prototype.proxEvent = function(remote, added){

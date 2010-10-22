@@ -42,8 +42,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <link type="text/css" href="../externals/jquery.ui.chatbox/jquery.ui.chatbox.css" rel="stylesheet" />
     <script type="text/javascript" src="../externals/jquery.ui.chatbox/jquery.ui.chatbox.js"></script>
 
-    <script type="text/javascript" src="../scripts/ui/chat.js"></script>
-
 	<!-- Core must be loaded before web-socket-js because it cludges window.console -->
 	<script type="text/javascript" src="../externals/katajs/katajs/core/Core.js"></script>
 
@@ -77,6 +75,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	  Kata.include("katajs/oh/GraphicsScript.js");
         </script>
 
+        <!-- FIXME currently, including this explicitly seems to be the only
+             way for it not to cause an exception when chat.js is evaluated
+             before GUISimulation is.
+          -->
+        <script type="text/javascript" src="../externals/katajs/katajs/oh/GUISimulation.js"></script>
+        <script type="text/javascript" src="../scripts/ui/chat.js"></script>
+
+
         <!-- "Plugins" - load files which add specific implementations. This
              is left up to the user since some may be expensive to load.
           -->
@@ -107,6 +113,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                 { space : spaceurl }
                           );
             graphics = new Kata.GraphicsSimulation(driver, window.kata.getChannel(), document.getElementById("container"));
+
+            chats = new ChatUI(window.kata.getChannel(), 200);
+            chats.create("Chat");
           }
           if (driver == "glge") {
             doc = new GLGE.Document;
@@ -116,13 +125,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             window.onload = setDocReady;
           }
           Kata.resolveDeferredHeaders();
-
-          $(document).ready(function(){
-            chats = new ChatUI(200);
-            chats.create("Chat 1");
-            chats.create("Chat 2");
-            chats.create("Chat 3");
-          });
         </script>
   </head>
 
