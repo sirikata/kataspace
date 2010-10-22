@@ -172,8 +172,6 @@ var Example;
                     var q = this._euler2Quat(this.avPointX * -.25, this.avPointY * -.25, 0);
                     this.mPresence.setOrientation(q);
                     break;
-                case "32":
-                    this.updateAvatar();
             }
         }
         if (msg.msg == "wheel") {
@@ -194,13 +192,5 @@ var Example;
                 this.mPresence.setPosition(this.avPos);
             }
         }
-    };
-
-    // update avatar (which is us)
-    Example.BlessedScript.prototype.updateAvatar = function(){
-        this.avPos = this.mPresence.position();
-        this.avOrient = this.mPresence.orientation();
-        this.avVel = this.mPresence.velocity()
-        console.log("DEBUG updateAvatar:", this.avPos, this.avOrient, this.avVel);
     };
 })();
