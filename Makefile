@@ -15,7 +15,7 @@ ALL_PBJJS += $(THESE_PBJJS)
 
 ### Rules
 
-all : submodules katajs $(ALL_PBJJS)
+all : submodules katajs $(ALL_PBJJS) jquery-ui
 
 ### PBJ Rules
 
