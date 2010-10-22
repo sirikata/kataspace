@@ -15,7 +15,13 @@ var Example;
         SUPER.constructor.call(this, channel, args);
 
         this.connect(args, null, Kata.bind(this.connected, this));
-
+        this.createObject("examples/simple_script/TestScript.js", "Example.TestScript", {
+            space: args.space,
+            visual: {
+                mesh: "../content/bigbox.dae",
+            }
+        });
+        
         this.keyIsDown = {};
         this.avSpeed = 0;
         this.avVel = [0,0,0]
