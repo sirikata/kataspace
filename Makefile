@@ -33,12 +33,16 @@ $(CHAT_PROTOCOL_OUTPUT)/%.pbj.js: $(CHAT_PROTOCOL_INPUT)/%.pbj
 katajs : katajs-submodules
 	$(MAKE) -C externals/katajs
 
-katajs-submodules :
+katajs-submodules : our-submodules
 	cd externals/katajs && \
 	git submodule init && \
 	git submodule update
 
-submodules : katajs-submodules
+our-submodules :
+	git submodule init && \
+	git submodule update
+
+submodules : our-submodules katajs-submodules
 
 # JQuery initialization
 
@@ -53,4 +57,4 @@ jquery-ui :
 	wget -O $(JQUERY_UI_ZIP) $(JQUERY_UI_URL) && \
 	unzip $(JQUERY_UI_ZIP)
 
-.PHONY : submodules katajs-submodules katajs jquery-ui
+.PHONY : submodules our-submodules katajs-submodules katajs jquery-ui
