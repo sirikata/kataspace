@@ -132,41 +132,26 @@ var Example;
                 k += "C"
             switch (k) {
                 case "65": // A -- left
-                    //this.cameraPos[0]-=y;
-                    //this.cameraPos[2]+=x;
                     this.mPresence.setVelocity([-camXX, -camXY, -camXZ]);
                     break;
                 case "68": // D -- right
-                    //this.cameraPos[0]+=y;
-                    //this.cameraPos[2]-=x;
                     this.mPresence.setVelocity([camXX, camXY, camXZ]);
-                    //this.mPresence.setPosition(this.cameraPos);
                     break;
                 case "87": // W -- forward
                 case "38": // up arrow
-                    //this.cameraPos[0]-=x;
-                    //this.cameraPos[2]-=y;
                     this.mPresence.setVelocity([-camZX, -camZY, -camZZ]);
-                    //this.mPresence.setPosition(this.cameraPos);
                     break;
                 case "83": // S -- reverse
                 case "40": // down arrow
-                    //this.cameraPos[0]+=x;
-                    //this.cameraPos[2]+=y;
                     this.mPresence.setVelocity([camZX, camZY, camZZ]);
-                    //this.mPresence.setPosition(this.cameraPos);
                     break;
                 case "82": // R -- raise camera
                 case "33": // page up
-                    //this.cameraPos[1]+=1.0;
                     this.mPresence.setVelocity([0, 30, 0]);
-                    //this.mPresence.setPosition(this.cameraPos);
                     break;
                 case "70": // F -- lower camera
                 case "34": // page down
-                    //this.cameraPos[1]-=1.0;
                     this.mPresence.setVelocity([0, -30, 0]);
-                    //this.mPresence.setPosition(this.cameraPos);
                     break;
                 case "81":
                 case "37": // left arrow: look left
