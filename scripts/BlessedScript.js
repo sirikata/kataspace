@@ -76,14 +76,15 @@ var Example;
     };
     Example.BlessedScript.prototype._handleGUIMessage = function (channel, msg) {
         if (msg.msg == "mousedown") {
-            this.dragStartX = parseInt(msg.event.offsetX)-this.cameraPointX;
-            this.dragStartY = parseInt(msg.event.offsetY)-this.cameraPointY;
+            console.log("DEBUG mousedown:", msg, msg.event)
+            this.dragStartX = parseInt(msg.event.x)-this.cameraPointX;
+            this.dragStartY = parseInt(msg.event.y)-this.cameraPointY;
         }
         if (msg.msg == "mousemove") {
-            this.cameraPointX = parseInt(msg.event.offsetX) - this.dragStartX;
-            this.cameraPointY = parseInt(msg.event.offsetY) - this.dragStartY;
+            this.cameraPointX = parseInt(msg.event.x) - this.dragStartX;
+            this.cameraPointY = parseInt(msg.event.y) - this.dragStartY;
             var q = this._euler2Quat(this.cameraPointX*-.25, this.cameraPointY*-.25, 0);
-            console.log("hackInputMsg:", msg.event.offsetX, this.cameraPointX,this.dragStartX,q);
+            console.log("DEBUG -- mousemove:", msg.event.x, "|", this.cameraPointX, "|", this.dragStartX, "|", q);
             this.mPresence.setOrientation(q);
         }
         if (msg.msg == "keydown") {
