@@ -18,14 +18,11 @@ var Example;
 
         this.keyIsDown = {};
         this.avSpeed = 0;
+        this.avVel = [0,0,0]
         this.avPointX=0;
         this.avPointY=0;
-        this.avPointXInit=0;
-        this.avPointYInit=0;
         this.avPos=[0,0,0];
-        this.avPosInit=this.avPos.concat();
         this.avOrient=[0,0,0,1];
-        this.avOrientInit=this.avOrient.concat();
 
         this.mChatBehavior =
             new Kata.Behavior.Chat(
@@ -203,6 +200,7 @@ var Example;
     Example.BlessedScript.prototype.updateAvatar = function(){
         this.avPos = this.mPresence.position();
         this.avOrient = this.mPresence.orientation();
-        console.log("DEBUG updateAvatar:", this.avPos, this.avOrient);
+        this.avVel = this.mPresence.velocity()
+        console.log("DEBUG updateAvatar:", this.avPos, this.avOrient, this.avVel);
     };
 })();
