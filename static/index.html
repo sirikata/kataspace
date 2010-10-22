@@ -35,6 +35,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <title>Chat</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
+    <!-- Chat UI -->
+    <link rel="stylesheet" href="../externals/css/smoothness/jquery-ui-1.8.5.custom.css" />
+    <script type="text/javascript" src="../externals/js/jquery-1.4.2.min.js"></script>
+    <script type="text/javascript" src="../externals/js/jquery-ui-1.8.5.custom.min.js"></script>
+    <link type="text/css" href="../externals/jquery.ui.chatbox/jquery.ui.chatbox.css" rel="stylesheet" />
+    <script type="text/javascript" src="../externals/jquery.ui.chatbox/jquery.ui.chatbox.js"></script>
+
+    <script type="text/javascript" src="../scripts/ui/chat.js"></script>
+
 	<!-- Core must be loaded before web-socket-js because it cludges window.console -->
 	<script type="text/javascript" src="../externals/katajs/katajs/core/Core.js"></script>
 
@@ -107,6 +116,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             window.onload = setDocReady;
           }
           Kata.resolveDeferredHeaders();
+
+          $(document).ready(function(){
+            chats = new ChatUI(200);
+            chats.create("Chat 1");
+            chats.create("Chat 2");
+            chats.create("Chat 3");
+          });
         </script>
   </head>
 

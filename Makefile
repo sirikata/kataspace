@@ -40,5 +40,17 @@ katajs-submodules :
 
 submodules : katajs-submodules
 
+# JQuery initialization
 
-.PHONY : submodules katajs-submodules katajs
+JQUERY_DIR=externals
+JQUERY_UI_VERSION=1.8.5
+JQUERY_UI_URL=http://jqueryui.com/download/jquery-ui-$(JQUERY_UI_VERSION).custom.zip
+JQUERY_UI_ZIP=jquery-ui-$(JQUERY_UI_VERSION).custom.zip
+JQUERY_UI_FILE=jquery-ui
+
+jquery-ui :
+	cd $(JQUERY_DIR) && \
+	wget -O $(JQUERY_UI_ZIP) $(JQUERY_UI_URL) && \
+	unzip $(JQUERY_UI_ZIP)
+
+.PHONY : submodules katajs-submodules katajs jquery-ui
