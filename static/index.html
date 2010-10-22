@@ -58,9 +58,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	  Kata.include("katajs/oh/SpaceConnection.js");
 	  Kata.include("katajs/space/loop/Space.js");
 	  Kata.include("katajs/oh/GraphicsSimulation.js");
-	  Kata.include("katajs/gfx/kjsgfx.js");
-          Kata.include("katajs/core/Location.js");
+      Kata.include("katajs/core/Location.js");
 	  Kata.include("katajs/gfx/TextGraphics.js");
+      Kata.include("katajs/gfx/glgegfx.js");
 	  Kata.include("katajs/gfx/o3dgfx.js");
 	  Kata.include("katajs/oh/Script.js");
 	  Kata.include("katajs/oh/ObjectHost.js");
@@ -78,7 +78,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
           var kata_base_offset = "../../";
 
           var kata, graphics;
-          var driver = "o3d"; // "o3d" or "glge"
+          var driver = "GLGE"; // "o3d" or "GLGE"
 
           var connectRequested = false;
           var docReady = false;
@@ -99,10 +99,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                           );
             graphics = new Kata.GraphicsSimulation(driver, window.kata.getChannel(), document.getElementById("container"));
           }
-          if (driver == "glge") {
-            doc = new GLGE.Document;
-            doc.onLoad = setDocReady;
-            doc.load("scene.xml");
+          if (driver == "GLGE") {
+		    g_GLGE_doc = new GLGE.Document();
+		    g_GLGE_doc.onLoad = setDocReady;
+		    g_GLGE_doc.load("glge_level.xml");
           } else {
             window.onload = setDocReady;
           }
