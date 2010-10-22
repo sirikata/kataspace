@@ -17,15 +17,15 @@ var Example;
         this.connect(args, null, Kata.bind(this.connected, this));
 
         this.keyIsDown = {};
-        this.camSpeed = 0;
-        this.cameraPointX=0;
-        this.cameraPointY=0;
-        this.cameraPointXInit=0;
-        this.cameraPointYInit=0;
-        this.cameraPos=[0,0,0];
-        this.cameraPosInit=this.cameraPos.concat();
-        this.cameraOrient=[0,0,0,1];
-        this.cameraOrientInit=this.cameraOrient.concat();
+        this.avSpeed = 0;
+        this.avPointX=0;
+        this.avPointY=0;
+        this.avPointXInit=0;
+        this.avPointYInit=0;
+        this.avPos=[0,0,0];
+        this.avPosInit=this.avPos.concat();
+        this.avOrient=[0,0,0,1];
+        this.avOrientInit=this.avOrient.concat();
 
         this.mChatBehavior =
             new Kata.Behavior.Chat(
@@ -63,7 +63,7 @@ var Example;
         this.enableGraphicsViewport(presence, 0);
         presence.setQueryHandler(Kata.bind(this.proxEvent, this));
         presence.setQuery(0);
-        presence.setPosition(this.cameraPos);
+        presence.setPosition(this.avPos);
         Kata.warn("Got connected callback.");
     };
 
@@ -89,8 +89,8 @@ var Example;
                 this.middleDown = true;
             if (msg.event.which == 2) {
                 this.rightDown = true;
-                this.dragStartX = parseInt(msg.event.x) - this.cameraPointX;
-                this.dragStartY = parseInt(msg.event.y) - this.cameraPointY;
+                this.dragStartX = parseInt(msg.event.x) - this.avPointX;
+                this.dragStartY = parseInt(msg.event.y) - this.avPointY;
             }
         }
         if (msg.msg == "mouseup") {
@@ -104,9 +104,9 @@ var Example;
         if (msg.msg == "mousemove") {
             /// Firefox 4 bug: ev.which is always 0, so get it from mousedown/mouseup events
             if (this.rightDown) {
-                this.cameraPointX = parseInt(msg.event.x) - this.dragStartX;
-                this.cameraPointY = parseInt(msg.event.y) - this.dragStartY;
-                var q = this._euler2Quat(this.cameraPointX * -.25, this.cameraPointY * -.25, 0);
+                this.avPointX = parseInt(msg.event.x) - this.dragStartX;
+                this.avPointY = parseInt(msg.event.y) - this.dragStartY;
+                var q = this._euler2Quat(this.avPointX * -.25, this.avPointY * -.25, 0);
                 this.mPresence.setOrientation(q);
             }
         }
@@ -116,14 +116,14 @@ var Example;
         }
         
         if (msg.msg == "keydown") {
-            var camMat = Kata.QuaternionToRotation(this.mPresence.orientation(new Date()));
-            var camSpeed = 30
-            var camXX = camMat[0][0] * camSpeed;
-            var camXY = camMat[0][1] * camSpeed;
-            var camXZ = camMat[0][2] * camSpeed;
-            var camZX = camMat[2][0] * camSpeed;
-            var camZY = camMat[2][1] * camSpeed;
-            var camZZ = camMat[2][2] * camSpeed;
+            var avMat = Kata.QuaternionToRotation(this.mPresence.orientation(new Date()));
+            var avSpeed = 30
+            var avXX = avMat[0][0] * avSpeed;
+            var avXY = avMat[0][1] * avSpeed;
+            var avXZ = avMat[0][2] * avSpeed;
+            var avZX = avMat[2][0] * avSpeed;
+            var avZY = avMat[2][1] * avSpeed;
+            var avZZ = avMat[2][2] * avSpeed;
             this.keyIsDown[msg.event.keyCode] = true;
             var k = "" + msg.event.keyCode
             if (msg.event.shiftKey) 
@@ -132,68 +132,77 @@ var Example;
                 k += "C"
             switch (k) {
                 case "65": // A -- left
-                    this.mPresence.setVelocity([-camXX, -camXY, -camXZ]);
+                    this.mPresence.setVelocity([-avXX, -avXY, -avXZ]);
                     break;
                 case "68": // D -- right
-                    this.mPresence.setVelocity([camXX, camXY, camXZ]);
+                    this.mPresence.setVelocity([avXX, avXY, avXZ]);
                     break;
                 case "87": // W -- forward
                 case "38": // up arrow
-                    this.mPresence.setVelocity([-camZX, -camZY, -camZZ]);
+                    this.mPresence.setVelocity([-avZX, -avZY, -avZZ]);
                     break;
                 case "83": // S -- reverse
                 case "40": // down arrow
-                    this.mPresence.setVelocity([camZX, camZY, camZZ]);
+                    this.mPresence.setVelocity([avZX, avZY, avZZ]);
                     break;
-                case "82": // R -- raise camera
+                case "82": // R -- raise av
                 case "33": // page up
                     this.mPresence.setVelocity([0, 30, 0]);
                     break;
-                case "70": // F -- lower camera
+                case "70": // F -- lower av
                 case "34": // page down
                     this.mPresence.setVelocity([0, -30, 0]);
                     break;
                 case "81":
                 case "37": // left arrow: look left
-                    this.cameraPointX -= 10;
-                    var q = this._euler2Quat(this.cameraPointX * -.25, this.cameraPointY * -.25, 0);
+                    this.avPointX -= 10;
+                    var q = this._euler2Quat(this.avPointX * -.25, this.avPointY * -.25, 0);
                     this.mPresence.setOrientation(q);
                     break;
                 case "69":
                 case "39": // right arrow: look right
-                    this.cameraPointX += 10;
-                    var q = this._euler2Quat(this.cameraPointX * -.25, this.cameraPointY * -.25, 0);
+                    this.avPointX += 10;
+                    var q = this._euler2Quat(this.avPointX * -.25, this.avPointY * -.25, 0);
                     this.mPresence.setOrientation(q);
                     break;
                 case "38S": // shift+up: look up
-                    this.cameraPointY -= 10;
-                    var q = this._euler2Quat(this.cameraPointX * -.25, this.cameraPointY * -.25, 0);
+                    this.avPointY -= 10;
+                    var q = this._euler2Quat(this.avPointX * -.25, this.avPointY * -.25, 0);
                     this.mPresence.setOrientation(q);
                     break;
                 case "40S": // shift+down: look down
-                    this.cameraPointY += 10;
-                    var q = this._euler2Quat(this.cameraPointX * -.25, this.cameraPointY * -.25, 0);
+                    this.avPointY += 10;
+                    var q = this._euler2Quat(this.avPointX * -.25, this.avPointY * -.25, 0);
                     this.mPresence.setOrientation(q);
                     break;
+                case "32":
+                    this.updateAvatar();
             }
         }
         if (msg.msg == "wheel") {
-            this.cameraPos = this.mPresence.position(new Date());
+            this.avPos = this.mPresence.position(new Date());
             if (this.leftDown || this.middleDown || this.rightDown) 
                 return;
-            var ang = this.cameraPointX * -.25 * 0.0174532925;
+            var ang = this.avPointX * -.25 * 0.0174532925;
             var x = Math.sin(ang) * 5;
             var y = Math.cos(ang) * 5;
             if (msg.event.dy > 0) {
-                this.cameraPos[0] -= x;
-                this.cameraPos[2] -= y;
-                this.mPresence.setPosition(this.cameraPos);
+                this.avPos[0] -= x;
+                this.avPos[2] -= y;
+                this.mPresence.setPosition(this.avPos);
             }
             else {
-                this.cameraPos[0] += x;
-                this.cameraPos[2] += y;
-                this.mPresence.setPosition(this.cameraPos);
+                this.avPos[0] += x;
+                this.avPos[2] += y;
+                this.mPresence.setPosition(this.avPos);
             }
         }
+    };
+
+    // update avatar (which is us)
+    Example.BlessedScript.prototype.updateAvatar = function(){
+        this.avPos = this.mPresence.position();
+        this.avOrient = this.mPresence.orientation();
+        console.log("DEBUG updateAvatar:", this.avPos, this.avOrient);
     };
 })();
