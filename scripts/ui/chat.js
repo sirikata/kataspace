@@ -45,6 +45,10 @@ Kata.defer(function() {
 
         this.mNextDivID = 0;
         this.mChats = [];
+
+        // We might later support multiple chat windows. For now we're
+        // just doing one large community chat, like IRC
+        this.mSingle = true;
     };
     Kata.extend(ChatUI, SUPER);
 
@@ -66,8 +70,6 @@ Kata.defer(function() {
         this.mChats.push(divIDstr);
 
         this.reflow();
-        // to insert a message
-        //$("#chat_div").chatbox("option", "boxManager").addMsg("Mr. Foo", "Barrr!");
     };
 
     // Reflow the layout of the chat boxes
@@ -84,6 +86,12 @@ Kata.defer(function() {
     };
 
     ChatUI.prototype._handleMessageSent = function(id, user, msg) {
+        this.mChannel.sendMessage(
+            new Kata.ScriptProtocol.ToScript.GUIMessage(
+                'chat',
+                { msg : msg }
+            )
+        );
     };
     ChatUI.prototype._getMessageSentHandler = function() {
         var self = this;
@@ -108,7 +116,23 @@ Kata.defer(function() {
 
     // GUISimulation interface
     ChatUI.prototype.handleGUIMessage = function(evt) {
-        Kata.warn('' + evt.event.name + ' ' + evt.event.action);
+        var revt = evt.event;
+
+        // If we're in single chat mode with no chats, there's nothing to do
+        if (this.mSingle && this.mChats.length == 0) return;
+
+        if (revt.action == 'enter') {
+            var chatdiv = $("#"+this.mChats[0]); // FIXME only works for single mode
+            chatdiv.chatbox("option", "boxManager").addMsg(revt.name, "(Entered)");
+        }
+        else if (revt.action == 'say') {
+            var chatdiv = $("#"+this.mChats[0]); // FIXME only works for single mode
+            chatdiv.chatbox("option", "boxManager").addMsg(revt.name, revt.msg);
+        }
+        else if (revt.action == 'exit') {
+            var chatdiv = $("#"+this.mChats[0]); // FIXME only works for single mode
+            chatdiv.chatbox("option", "boxManager").addMsg(revt.name, "(Left)");
+        }
     };
 
 });

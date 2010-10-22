@@ -107,10 +107,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             if (!spaceurl)
                 spaceurl = document.getElementById("spacedropdown").value;
 
+            var name = document.getElementById("name").value;
             window.kata = new Kata.MainThread(
                                 kata_base_offset + "scripts/BlessedScript.js",
                                 "Example.BlessedScript",
-                                { space : spaceurl }
+                                { space : spaceurl, name : name }
                           );
             graphics = new Kata.GraphicsSimulation(driver, window.kata.getChannel(), document.getElementById("container"));
 
@@ -135,6 +136,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         <option value="sirikata://localhost">sirikata://localhost</option>
       </select>
       <input type="text" id="spaceurl" value="">
+      <input type="text" id="name" value="(name)">
       <input type="button" onclick="setConnectRequested()" value="Connect">
     </div>
     <div style="width:900px;margin:auto;position:relative" id="container"></div>

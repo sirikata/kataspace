@@ -93,8 +93,8 @@ Kata.include("../../scripts/behavior/chat/Chat.pbj.js");
             container_msg.chat = chat_msg;
 
             var objdata = this.mTrackedObjects[remote_key];
-            var odp_port = this._getPort(objdata.presence.owner());
-            odp_port.send(objdata.presence.endpoint(this.ProtocolPort), this._serializeMessage(container_msg));
+            var odp_port = this._getPort(objdata.presence);
+            odp_port.send(objdata.dest, this._serializeMessage(container_msg));
         }
     };
 
@@ -111,35 +111,36 @@ Kata.include("../../scripts/behavior/chat/Chat.pbj.js");
         var odp_port = this.mPorts[id];
         if (!odp_port && pres.bindODPPort) {
             odp_port = pres.bindODPPort(this.ProtocolPort);
-            odp_port.receive(Kata.bind(this.handleResponse, this));
+            odp_port.receive(Kata.bind(this._handleMessage, this, pres));
             this.mPorts[id] = odp_port;
         }
         return odp_port;
     };
 
-    Kata.Behavior.Chat.prototype._handleEnter = function(remote, name) {
-        if (this.mTrackedObjects[remote.presenceID()]) {
+    Kata.Behavior.Chat.prototype._handleEnter = function(presence, remoteID, name) {
+        if (this.mTrackedObjects[remoteID]) {
             Kata.warn("Overwriting existing chat info due to duplicate intro.");
         }
-        this.mTrackedObjects[remote.presenceID()] = {
+        this.mTrackedObjects[remoteID] = {
             name : name,
-            presence : remote
+            presence : presence,
+            dest : new Kata.ODP.Endpoint(remoteID, this.ProtocolPort)
         };
-        this.mEnterCallback(remote, name);
+        this.mEnterCallback(remoteID, name);
     };
 
-    Kata.Behavior.Chat.prototype._handleChatMessage = function(remote, msg) {
-        if (this.mTrackedObjects[remote.presenceID()]) {
-            var objdata = this.mTrackedObjects[remote.presenceID()];
-            this.mMessageCallback(remote, objdata.name, msg);
+    Kata.Behavior.Chat.prototype._handleChatMessage = function(remoteID, msg) {
+        if (this.mTrackedObjects[remoteID]) {
+            var objdata = this.mTrackedObjects[remoteID];
+            this.mMessageCallback(remoteID, objdata.name, msg);
         }
     };
 
-    Kata.Behavior.Chat.prototype._handleExit = function(remote, msg) {
-        if (this.mTrackedObjects[remote.presenceID()]) {
-            var objdata = this.mTrackedObjects[remote.presenceID()];
-            delete this.mTrackedObjects[remote.presenceID()];
-            this.mExitCallback(remote, objdata.name, msg);
+    Kata.Behavior.Chat.prototype._handleExit = function(remoteID, msg) {
+        if (this.mTrackedObjects[remoteID]) {
+            var objdata = this.mTrackedObjects[remoteID];
+            delete this.mTrackedObjects[remoteID];
+            this.mExitCallback(remoteID, objdata.name, msg);
         }
     };
 
@@ -147,7 +148,6 @@ Kata.include("../../scripts/behavior/chat/Chat.pbj.js");
         // When we get a presence, we just set up a listener for
         // messages. The rest is triggered by prox events.
         var odp_port = this._getPort(pres);
-        odp_port.receive(Kata.bind(this._handleMessage, this, pres));
     };
 
     Kata.Behavior.Chat.prototype.presenceInvalidated = function(pres) {
@@ -185,15 +185,15 @@ Kata.include("../../scripts/behavior/chat/Chat.pbj.js");
 
         // And just try handling any and all of the three components
         if (container_msg.HasField("intro")) {
-            this._handleEnter(presence, container_msg.intro.name);
+            this._handleEnter(presence, src.presenceID(), container_msg.intro.name);
         }
 
         if (container_msg.HasField("chat")) {
-            this._handleChatMessage(presence, container_msg.chat.text);
+            this._handleChatMessage(src.presenceID(), container_msg.chat.text);
         }
 
         if (container_msg.HasField("exit")) {
-            this._handleExit(presence, container_msg.exit.text);
+            this._handleExit(src.presenceID(), container_msg.exit.text);
         }
     };
 

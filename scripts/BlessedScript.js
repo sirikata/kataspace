@@ -22,7 +22,7 @@ var Example;
 
         this.mChatBehavior =
             new Kata.Behavior.Chat(
-                "Blessed", this,
+                args.name, this,
                 Kata.bind(this.chatEnterEvent, this),
                 Kata.bind(this.chatExitEvent, this),
                 Kata.bind(this.chatMessageEvent, this)
@@ -48,6 +48,12 @@ var Example;
     Example.BlessedScript.prototype.chatMessageEvent = function(remote, name, msg) {
         this._sendHostedObjectMessage(this.createChatEvent('say', name, msg));
     };
+
+    Example.BlessedScript.prototype.handleChatGUIMessage = function(msg) {
+        var revt = msg.event;
+        this.mChatBehavior.chat(revt.msg);
+    };
+
 
     Example.BlessedScript.prototype.proxEvent = function(remote, added){
         if (added) {
@@ -84,6 +90,9 @@ var Example;
                 rollcos * pitchcos * yawcos + rollsin * pitchsin * yawsin];
     };
     Example.BlessedScript.prototype._handleGUIMessage = function (channel, msg) {
+        if (msg.msg == 'chat')
+            this.handleChatGUIMessage(msg);
+
         if (msg.msg == "mousedown") {
             this.dragStartX = parseInt(msg.event.offsetX)-this.cameraPointX;
             this.dragStartY = parseInt(msg.event.offsetY)-this.cameraPointY;
