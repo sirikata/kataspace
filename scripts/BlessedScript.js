@@ -190,17 +190,6 @@ var Example;
                     var q = this._euler2Quat(this.cameraPointX * -.25, this.cameraPointY * -.25, 0);
                     this.mPresence.setOrientation(q);
                     break;
-                case "67": // C -- reset camera & object
-                case "32": // space
-                    this.cameraPos = this.cameraPosInit.concat();
-                    this.cameraOrient = this.cameraOrientInit.concat();
-                    this.cameraPointX = this.cameraPointXInit;
-                    this.cameraPointY = this.cameraPointYInit;
-                    this.objectOrient = this.objectOrientInit.concat();
-                    this.objectScale = this.objectScaleInit.concat();
-                    this.updateCamera();
-                    this.updateObject();
-                    break;
             }
         }
         if (msg.msg == "wheel") {
