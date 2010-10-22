@@ -37,8 +37,10 @@ Kata.defer(function() {
     var SUPER = Kata.GUISimulation.prototype;
 
     /** Manages a chat UI on a page. Supports multiple chat windows. */
-    ChatUI = function(channel, width) {
+    ChatUI = function(channel, name, width) {
         SUPER.constructor.call(this, channel);
+
+        this.mName = name;
 
         this.mWidth = width; // width of chat boxes
         this.mGap = 30;
@@ -86,6 +88,10 @@ Kata.defer(function() {
     };
 
     ChatUI.prototype._handleMessageSent = function(id, user, msg) {
+        // Update the box
+        var chatdiv = $("#"+this.mChats[0]); // FIXME only works for single mode
+        chatdiv.chatbox("option", "boxManager").addMsg(this.mName, msg);
+        // Send the message
         this.mChannel.sendMessage(
             new Kata.ScriptProtocol.ToScript.GUIMessage(
                 'chat',

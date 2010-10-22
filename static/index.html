@@ -115,7 +115,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                           );
             graphics = new Kata.GraphicsSimulation(driver, window.kata.getChannel(), document.getElementById("container"));
 
-            chats = new ChatUI(window.kata.getChannel(), 200);
+            chats = new ChatUI(window.kata.getChannel(), name, 200);
             chats.create("Chat");
           }
           if (driver == "glge") {
