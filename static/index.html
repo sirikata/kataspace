@@ -60,7 +60,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         <script type="text/javascript" src="../externals/katajs/externals/GLGE/glge_collada.js">
         </script>
         <script type="text/javascript">
-            
+
             Kata.include("katajs/oh/MainThread.js");
             // "Plugins" - load files which add specific implementations. This is left up to the user since some may be expensive to load.
             Kata.include("katajs/oh/SpaceConnection.js");
@@ -85,7 +85,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         </script>
 
         <!-- Deployment-specific configuraton. Ideally, everything
-        that nees to be modified to make this run on different servers
+        that needs to be modified to make this run on different servers
         is isolated in this file.
         -->
         <script type="text/javascript" src="../scripts/deployment.js">
@@ -96,7 +96,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             // to get to the base of our code directory (it starts at
             // katajs.git, so we need to get out of externals/katajs.git).
             var kata_base_offset = "../../";
-            
+
             var kata, graphics;
             var driver = "GLGE"; // "o3d" or "GLGE"
             var connectRequested = false;
@@ -105,27 +105,30 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                 docReady = true;
                 loadGFX();
             }
-            
+
             function setConnectRequested(){
                 connectRequested = true;
                 loadGFX();
             }
-            
+
             function loadGFX(){
-                if (!docReady || !connectRequested) 
+                if (!docReady || !connectRequested)
                     return;
-                
+
                 var name = document.getElementById("name").value;
                 window.kata = new Kata.MainThread(kata_base_offset + "scripts/BlessedScript.js", "Example.BlessedScript", {
                     space: SpaceURL,
-                    name: name
+                    name: name,
+                    visual: {
+                        mesh: Avatars[0].url
+                    }
                 });
                 graphics = new Kata.GraphicsSimulation(driver, window.kata.getChannel(), document.getElementById("container"));
-                
+
                 chats = new ChatUI(window.kata.getChannel(), name, 200);
                 chats.create("Chat");
             }
-            
+
             if (driver == "GLGE") {
                 g_GLGE_doc = new GLGE.Document();
                 g_GLGE_doc.onLoad = setDocReady;

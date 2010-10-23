@@ -4,4 +4,11 @@
  */
 
 SpaceURL = "loop://localhost";
-//SpaceURL = "sirikata://localhost";
+//SpaceURL = "sirikata://localhost:7777";
+
+Avatars = [
+    {
+        name : "Big Box",
+        url : document.URL + "bigbox.dae"
+    }
+];
