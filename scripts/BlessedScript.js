@@ -15,10 +15,20 @@ var Example;
         SUPER.constructor.call(this, channel, args);
 
         this.connect(args, null, Kata.bind(this.connected, this));
-
-        this.cameraPointX=0;
-        this.cameraPointY=0;
-        this.cameraPos=[0,0,0];
+        this.createObject("examples/simple_script/TestScript.js", "Example.TestScript", {
+            space: args.space,
+            visual: {
+                mesh: document.URL + "bigbox.dae",  // GLGE not happy camper with relative paths
+            }
+        });
+        
+        this.keyIsDown = {};
+        this.avSpeed = 0;
+        this.avVel = [0,0,0]
+        this.avPointX=0;
+        this.avPointY=0;
+        this.avPos=[0,0,0];
+        this.avOrient=[0,0,0,1];
 
         this.mChatBehavior =
             new Kata.Behavior.Chat(
