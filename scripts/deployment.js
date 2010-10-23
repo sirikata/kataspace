@@ -9,6 +9,12 @@ SpaceURL = "loop://localhost";
 Avatars = [
     {
         name : "Big Box",
-        url : document.URL + "bigbox.dae"
+        url : document.URL + "bigbox.dae",
+        preview : document.URL + "_Cube.jpg"
+    },
+    {
+        name : "Big Box",
+        url : document.URL + "bigbox2.dae",
+        preview : document.URL + "_Cube.jpg"
     }
 ];

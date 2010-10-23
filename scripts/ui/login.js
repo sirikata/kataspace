@@ -33,21 +33,55 @@
 /** Provides simple UI in the div you provide and gives a callback
  *  when the Login button is clicked.
  */
-LoginUI = function(dialog_div, cb) {
+LoginUI = function(dialog_div, avatars, cb) {
     this.mDialogDiv = dialog_div;
     this.mCallback = cb;
+    this.mAvatarRadios = [];
     var self = this;
 
     // Build the entry form
-    var label_p = document.createElement('p');
-    label_p.appendChild( document.createTextNode('Name:'));
-    this.mDialogDiv[0].appendChild(label_p);
-
+    /// Name label
+    var name_label_p = document.createElement('p');
+    name_label_p.appendChild( document.createTextNode('Name:'));
+    this.mDialogDiv[0].appendChild(name_label_p);
+    /// Name entry
     this.mNameEntry = document.createElement('input');
     this.mNameEntry.setAttribute('id', '__login');
     this.mNameEntry.setAttribute('type', 'text');
     this.mNameEntry.setAttribute('size', '33');
     this.mDialogDiv[0].appendChild(this.mNameEntry);
+    /// Avatar label
+    var avatar_label_p = document.createElement('p');
+    avatar_label_p.appendChild( document.createTextNode('Avatar:'));
+    this.mDialogDiv[0].appendChild(avatar_label_p);
+    /// Avatar images
+    var av_imgs_div = document.createElement('div');
+    av_imgs_div.setAttribute('id', 'avatar');
+    this.mDialogDiv[0].appendChild(av_imgs_div);
+    for(var av_idx = 0; av_idx < avatars.length; av_idx++) {
+        // Radio button
+        var av_radio = document.createElement('input');
+        av_radio.setAttribute('id', avatars[av_idx].url);
+        av_radio.setAttribute('type', 'radio');
+        av_radio.setAttribute('name', 'avatar');
+        if (av_idx == 0)
+            av_radio.setAttribute('checked', 'true');
+        av_imgs_div.appendChild(av_radio);
+        this.mAvatarRadios.push(av_radio);
+        // Label
+        var av_radio_label = document.createElement('label');
+        av_radio_label.setAttribute('for', avatars[av_idx].url);
+        /// Label image
+        var av_radio_img = document.createElement('img');
+        av_radio_img.setAttribute('src', avatars[av_idx].preview);
+        av_radio_img.setAttribute('width', 100);
+        av_radio_img.setAttribute('height', 100);
+        av_radio_label.appendChild(av_radio_img);
+        av_imgs_div.appendChild(av_radio_label);
+    }
+    // Make the radio options pretty
+    var buttons = $( "#avatar" );
+    buttons.buttonset();
 
     // Finally, turn it into a dialog
     this.mDialogDiv.dialog(
@@ -60,7 +94,7 @@ LoginUI = function(dialog_div, cb) {
 		}
 	    },
             width: 400,
-            height: 240
+            height: 450
 	}
     );
 };
@@ -74,6 +108,11 @@ LoginUI.prototype._handleLoginClicked = function() {
         return;
     }
 
-    this.mCallback(name);
+    var avatar_selected = null;
+    for(var idx = 0; idx < this.mAvatarRadios.length; idx++)
+        if (this.mAvatarRadios[idx].checked)
+            avatar_selected = this.mAvatarRadios[idx].id;
+
+    this.mCallback(name, avatar_selected);
     this.mDialogDiv.dialog( "close" );
 };

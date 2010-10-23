@@ -109,16 +109,18 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             var connectRequested = false;
             var docReady = false;
             var loginName = null;
+            var avatarURL = null;
 
-            function handleLogin(name) {
+            function handleLogin(name, avatar_url) {
                 connectRequested = true;
                 loginName = name;
+                avatarURL = avatar_url;
                 loadGFX();
             }
 
             function onDocReady(){
                 docReady = true;
-                loginui = new LoginUI( $("#login"), handleLogin);
+                loginui = new LoginUI( $("#login"), Avatars, handleLogin);
                 loadGFX();
             }
 
@@ -130,7 +132,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                     space: SpaceURL,
                     name: loginName,
                     visual: {
-                        mesh: Avatars[0].url
+                        mesh: avatarURL
                     }
                 });
                 graphics = new Kata.GraphicsSimulation(driver, window.kata.getChannel(), document.getElementById("container"));
