@@ -83,9 +83,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         </script>
         <script type="text/javascript" src="../scripts/ui/chat.js">
         </script>
-        <!-- "Plugins" - load files which add specific implementations. This
-        is left up to the user since some may be expensive to load.
+
+        <!-- Deployment-specific configuraton. Ideally, everything
+        that nees to be modified to make this run on different servers
+        is isolated in this file.
         -->
+        <script type="text/javascript" src="../scripts/deployment.js">
+        </script>
+
         <script>
             // This gives the offset that Kata.include needs prepended
             // to get to the base of our code directory (it starts at
@@ -110,13 +115,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                 if (!docReady || !connectRequested) 
                     return;
                 
-                var spaceurl = document.getElementById("spaceurl").value;
-                if (!spaceurl) 
-                    spaceurl = document.getElementById("spacedropdown").value;
-                
                 var name = document.getElementById("name").value;
                 window.kata = new Kata.MainThread(kata_base_offset + "scripts/BlessedScript.js", "Example.BlessedScript", {
-                    space: spaceurl,
+                    space: SpaceURL,
                     name: name
                 });
                 graphics = new Kata.GraphicsSimulation(driver, window.kata.getChannel(), document.getElementById("container"));
@@ -138,11 +139,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </head>
     <body>
         <div>
-            <select id="spacedropdown">
-                <option value="loop://localhost">loop://localhost</option>
-                <option value="sirikata://localhost">sirikata://localhost</option>
-            </select>
-            <input type="text" id="spaceurl" value=""><input type="text" id="name" value="(name)"><input type="button" onclick="setConnectRequested()" value="Connect">
+            <input type="text" id="name" value="(name)"><input type="button" onclick="setConnectRequested()" value="Connect">
         </div>
         <div style="width:900px;height:600px;margin:auto;position:relative" id="container">
         </div>
