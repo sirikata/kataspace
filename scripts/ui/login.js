@@ -70,6 +70,7 @@ LoginUI.prototype._handleLoginClicked = function() {
 
     if (!name || name.length == 0) {
         // FIXME do something to notify the user
+        $.jnotify("Please enter a name.", "error", 5000);
         return;
     }
 

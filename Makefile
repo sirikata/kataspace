@@ -15,7 +15,7 @@ ALL_PBJJS += $(THESE_PBJJS)
 
 ### Rules
 
-all : submodules katajs $(ALL_PBJJS) jquery-ui
+all : submodules katajs $(ALL_PBJJS) jquery-ui jnotify
 
 ### PBJ Rules
 
@@ -57,4 +57,15 @@ jquery-ui :
 	wget -O $(JQUERY_UI_ZIP) $(JQUERY_UI_URL) && \
 	unzip $(JQUERY_UI_ZIP)
 
-.PHONY : submodules our-submodules katajs-submodules katajs jquery-ui
+
+JNOTIFY_DIR=externals
+JNOTIFY_URL=http://www.givainc.com/labs/downloads/jquery.jnotify.zip
+JNOTIFY_ZIP=jnotify.zip
+
+jnotify :
+	cd $(JNOTIFY_DIR) && \
+	wget -O $(JNOTIFY_ZIP) $(JNOTIFY_URL) && \
+	unzip $(JNOTIFY_ZIP)
+
+
+.PHONY : submodules our-submodules katajs-submodules katajs jquery-ui jnotify
