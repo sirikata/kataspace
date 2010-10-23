@@ -15,20 +15,10 @@ var Example;
         SUPER.constructor.call(this, channel, args);
 
         this.connect(args, null, Kata.bind(this.connected, this));
-        this.createObject("examples/simple_script/TestScript.js", "Example.TestScript", {
-            space: args.space,
-            visual: {
-                mesh: document.URL + "bigbox.dae",  // GLGE not happy camper with relative paths
-            }
-        });
-        
-        this.keyIsDown = {};
-        this.avSpeed = 0;
-        this.avVel = [0,0,0]
-        this.avPointX=0;
-        this.avPointY=0;
-        this.avPos=[0,0,0];
-        this.avOrient=[0,0,0,1];
+
+        this.cameraPointX=0;
+        this.cameraPointY=0;
+        this.cameraPos=[0,0,0];
 
         this.mChatBehavior =
             new Kata.Behavior.Chat(
@@ -40,15 +30,30 @@ var Example;
     };
     Kata.extend(Example.BlessedScript, SUPER);
 
+    Example.BlessedScript.prototype.createChatEvent = function(action, name, msg) {
+        var evt = {
+            action : action,
+            name : name
+        };
+        if (msg)
+            evt.msg = msg;
+        return new Kata.ScriptProtocol.FromScript.GUIMessage("chat", evt);
+    };
     Example.BlessedScript.prototype.chatEnterEvent = function(remote, name) {
-        Kata.warn("chat enter: " + name);
+        this._sendHostedObjectMessage(this.createChatEvent('enter', name));
     };
     Example.BlessedScript.prototype.chatExitEvent = function(remote, name, msg) {
-        Kata.warn("chat exit: " + name);
+        this._sendHostedObjectMessage(this.createChatEvent('exit', name, msg));
     };
     Example.BlessedScript.prototype.chatMessageEvent = function(remote, name, msg) {
-        Kata.warn("chat: " + name + " says " + msg);
+        this._sendHostedObjectMessage(this.createChatEvent('say', name, msg));
     };
+
+    Example.BlessedScript.prototype.handleChatGUIMessage = function(msg) {
+        var revt = msg.event;
+        this.mChatBehavior.chat(revt.msg);
+    };
+
 
     Example.BlessedScript.prototype.proxEvent = function(remote, added){
         if (added) {
@@ -84,7 +89,10 @@ var Example;
                 rollcos * pitchcos * yawsin - rollsin * pitchsin * yawcos,
                 rollcos * pitchcos * yawcos + rollsin * pitchsin * yawsin];
     };
-    Example.BlessedScript.prototype._handleGUIMessage = function(channel, msg){
+    Example.BlessedScript.prototype._handleGUIMessage = function (channel, msg) {
+        if (msg.msg == 'chat')
+            this.handleChatGUIMessage(msg);
+
         if (msg.msg == "mousedown") {
             if (msg.event.which == 0) 
                 this.leftDown = true;
