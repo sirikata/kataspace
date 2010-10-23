@@ -75,6 +75,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             Kata.include("katajs/oh/impl/BootstrapScript.js");
             Kata.include("katajs/oh/GraphicsScript.js");
         </script>
+
+        <script type="text/javascript" src="../scripts/ui/login.js">
+        </script>
         <!-- FIXME currently, including this explicitly seems to be the only
         way for it not to cause an exception when chat.js is evaluated
         before GUISimulation is.
@@ -101,13 +104,17 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             var driver = "GLGE"; // "o3d" or "GLGE"
             var connectRequested = false;
             var docReady = false;
-            function setDocReady(){
-                docReady = true;
+            var loginName = null;
+
+            function handleLogin(name) {
+                connectRequested = true;
+                loginName = name;
                 loadGFX();
             }
 
-            function setConnectRequested(){
-                connectRequested = true;
+            function onDocReady(){
+                docReady = true;
+                loginui = new LoginUI( $("#login"), handleLogin);
                 loadGFX();
             }
 
@@ -115,35 +122,32 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                 if (!docReady || !connectRequested)
                     return;
 
-                var name = document.getElementById("name").value;
                 window.kata = new Kata.MainThread(kata_base_offset + "scripts/BlessedScript.js", "Example.BlessedScript", {
                     space: SpaceURL,
-                    name: name,
+                    name: loginName,
                     visual: {
                         mesh: Avatars[0].url
                     }
                 });
                 graphics = new Kata.GraphicsSimulation(driver, window.kata.getChannel(), document.getElementById("container"));
 
-                chats = new ChatUI(window.kata.getChannel(), name, 200);
+                chats = new ChatUI(window.kata.getChannel(), loginName, 200);
                 chats.create("Chat");
             }
 
             if (driver == "GLGE") {
                 g_GLGE_doc = new GLGE.Document();
-                g_GLGE_doc.onLoad = setDocReady;
+                g_GLGE_doc.onLoad = onDocReady;
                 g_GLGE_doc.load("glge_level.xml");
             }
             else {
-                window.onload = setDocReady;
+                window.onload = onDocReady;
             }
             Kata.resolveDeferredHeaders();
         </script>
     </head>
     <body>
-        <div>
-            <input type="text" id="name" value="(name)"><input type="button" onclick="setConnectRequested()" value="Connect">
-        </div>
+        <div id="login" title="Login"></div>
         <div style="width:900px;height:600px;margin:auto;position:relative" id="container">
         </div>
     </body>
