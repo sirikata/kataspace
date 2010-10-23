@@ -71,7 +71,7 @@ var Example;
         this.enableGraphicsViewport(presence, 0);
         presence.setQueryHandler(Kata.bind(this.proxEvent, this));
         presence.setQuery(0);
-        presence.setPosition(this.cameraPos);
+        presence.setPosition(this.avPos);
         Kata.warn("Got connected callback.");
     };
 
@@ -94,49 +94,116 @@ var Example;
             this.handleChatGUIMessage(msg);
 
         if (msg.msg == "mousedown") {
-            this.dragStartX = parseInt(msg.event.offsetX)-this.cameraPointX;
-            this.dragStartY = parseInt(msg.event.offsetY)-this.cameraPointY;
+            if (msg.event.which == 0) 
+                this.leftDown = true;
+            if (msg.event.which == 1) 
+                this.middleDown = true;
+            if (msg.event.which == 2) {
+                this.rightDown = true;
+                this.dragStartX = parseInt(msg.event.x) - this.avPointX;
+                this.dragStartY = parseInt(msg.event.y) - this.avPointY;
+            }
+        }
+        if (msg.msg == "mouseup") {
+            if (msg.event.which == 0) 
+                this.leftDown = false;
+            if (msg.event.which == 1) 
+                this.middleDown = false;
+            if (msg.event.which == 2) 
+                this.rightDown = false;
         }
         if (msg.msg == "mousemove") {
-            this.cameraPointX = parseInt(msg.event.offsetX) - this.dragStartX;
-            this.cameraPointY = parseInt(msg.event.offsetY) - this.dragStartY;
-            var q = this._euler2Quat(this.cameraPointX*-.25, this.cameraPointY*-.25, 0);
-            console.log("hackInputMsg:", msg.event.offsetX, this.cameraPointX,this.dragStartX,q);
-            this.mPresence.setOrientation(q);
+            /// Firefox 4 bug: ev.which is always 0, so get it from mousedown/mouseup events
+            if (this.rightDown) {
+                this.avPointX = parseInt(msg.event.x) - this.dragStartX;
+                this.avPointY = parseInt(msg.event.y) - this.dragStartY;
+                var q = this._euler2Quat(this.avPointX * -.25, this.avPointY * -.25, 0);
+                this.mPresence.setOrientation(q);
+            }
         }
+        if (msg.msg == "keyup") {
+            this.keyIsDown[msg.event.keyCode] = false;
+            this.mPresence.setVelocity([0, 0, 0]);
+        }
+        
         if (msg.msg == "keydown") {
-            var ang = this.cameraPointX*-.25 *  0.0174532925;
-            var x = Math.sin(ang);
-            var y = Math.cos(ang);
-            switch(msg.event.keyCode) {
-                case 65:
-                    this.cameraPos[0]-=y;
-                    this.cameraPos[2]+=x;
-                    this.mPresence.setPosition(this.cameraPos);
+            var avMat = Kata.QuaternionToRotation(this.mPresence.orientation(new Date()));
+            var avSpeed = 30
+            var avXX = avMat[0][0] * avSpeed;
+            var avXY = avMat[0][1] * avSpeed;
+            var avXZ = avMat[0][2] * avSpeed;
+            var avZX = avMat[2][0] * avSpeed;
+            var avZY = avMat[2][1] * avSpeed;
+            var avZZ = avMat[2][2] * avSpeed;
+            this.keyIsDown[msg.event.keyCode] = true;
+            var k = "" + msg.event.keyCode
+            if (msg.event.shiftKey) 
+                k += "S"
+            if (msg.event.ctrlKey) 
+                k += "C"
+            switch (k) {
+                case "65": // A -- left
+                    this.mPresence.setVelocity([-avXX, -avXY, -avXZ]);
                     break;
-                case 68:
-                    this.cameraPos[0]+=y;
-                    this.cameraPos[2]-=x;
-                    this.mPresence.setPosition(this.cameraPos);
+                case "68": // D -- right
+                    this.mPresence.setVelocity([avXX, avXY, avXZ]);
                     break;
-                case 87:
-                    this.cameraPos[0]-=x;
-                    this.cameraPos[2]-=y;
-                    this.mPresence.setPosition(this.cameraPos);
+                case "87": // W -- forward
+                case "38": // up arrow
+                    this.mPresence.setVelocity([-avZX, -avZY, -avZZ]);
                     break;
-                case 83:
-                    this.cameraPos[0]+=x;
-                    this.cameraPos[2]+=y;
-                    this.mPresence.setPosition(this.cameraPos);
+                case "83": // S -- reverse
+                case "40": // down arrow
+                    this.mPresence.setVelocity([avZX, avZY, avZZ]);
                     break;
-                case 82:
-                    this.cameraPos[1]+=1.0;
-                    this.mPresence.setPosition(this.cameraPos);
+                case "82": // R -- raise av
+                case "33": // page up
+                    this.mPresence.setVelocity([0, 30, 0]);
                     break;
-                case 76:
-                    this.cameraPos[1]-=1.0;
-                    this.mPresence.setPosition(this.cameraPos);
+                case "70": // F -- lower av
+                case "34": // page down
+                    this.mPresence.setVelocity([0, -30, 0]);
                     break;
+                case "81":
+                case "37": // left arrow: look left
+                    this.avPointX -= 10;
+                    var q = this._euler2Quat(this.avPointX * -.25, this.avPointY * -.25, 0);
+                    this.mPresence.setOrientation(q);
+                    break;
+                case "69":
+                case "39": // right arrow: look right
+                    this.avPointX += 10;
+                    var q = this._euler2Quat(this.avPointX * -.25, this.avPointY * -.25, 0);
+                    this.mPresence.setOrientation(q);
+                    break;
+                case "38S": // shift+up: look up
+                    this.avPointY -= 10;
+                    var q = this._euler2Quat(this.avPointX * -.25, this.avPointY * -.25, 0);
+                    this.mPresence.setOrientation(q);
+                    break;
+                case "40S": // shift+down: look down
+                    this.avPointY += 10;
+                    var q = this._euler2Quat(this.avPointX * -.25, this.avPointY * -.25, 0);
+                    this.mPresence.setOrientation(q);
+                    break;
+            }
+        }
+        if (msg.msg == "wheel") {
+            this.avPos = this.mPresence.position(new Date());
+            if (this.leftDown || this.middleDown || this.rightDown) 
+                return;
+            var ang = this.avPointX * -.25 * 0.0174532925;
+            var x = Math.sin(ang) * 5;
+            var y = Math.cos(ang) * 5;
+            if (msg.event.dy > 0) {
+                this.avPos[0] -= x;
+                this.avPos[2] -= y;
+                this.mPresence.setPosition(this.avPos);
+            }
+            else {
+                this.avPos[0] += x;
+                this.avPos[2] += y;
+                this.mPresence.setPosition(this.avPos);
             }
         }
     };
