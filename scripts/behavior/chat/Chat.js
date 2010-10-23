@@ -174,7 +174,7 @@ Kata.include("../../scripts/behavior/chat/Chat.pbj.js");
         else {
             // When we lose objects, we just make sure we clean up
             // after ourselves
-            this.handleExit(remote);
+            this._handleExit(remote);
         }
     };
 
