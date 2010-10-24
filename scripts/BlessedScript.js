@@ -14,12 +14,11 @@ var Example;
     Example.BlessedScript = function(channel, args){
         SUPER.constructor.call(this, channel, args);
 
+        console.log("args:", args, args.mesh, document.URL + "blue.dae")
         this.connect(args, null, Kata.bind(this.connected, this));
         this.createObject("../../scripts/topscript.js", "Example.TestScript", {
             space: args.space,
-            visual: {
-                mesh: document.URL + "blue.dae",  // GLGE not happy camper with relative paths
-            }
+            visual: args.visual
         });
         
         this.keyIsDown = {};
@@ -50,9 +49,11 @@ var Example;
         return new Kata.ScriptProtocol.FromScript.GUIMessage("chat", evt);
     };
     Example.BlessedScript.prototype.chatEnterEvent = function(remote, name) {
+        console.log("A");
         this._sendHostedObjectMessage(this.createChatEvent('enter', name));
     };
     Example.BlessedScript.prototype.chatExitEvent = function(remote, name, msg) {
+        console.log("B");
         this._sendHostedObjectMessage(this.createChatEvent('exit', name, msg));
     };
     Example.BlessedScript.prototype.chatMessageEvent = function(remote, name, msg) {
