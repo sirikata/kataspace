@@ -22,8 +22,11 @@
 
 <camera id="maincamera" loc_y="20" loc_x="0" loc_z="3" rot_order="ROT_XZY" rot_y="3.14" rot_x="1.56" />
 
-<scene id="mainscene" camera="#maincamera" ambient_color="#777" background_color="#224">
-    <object id="avatar" mesh="#room" scale_x=".20" scale_y=".20" scale_z=".80" loc_z="0" material="#wallmaterial" />
+<scene id="mainscene" camera="#maincamera" ambient_color="#777" background_color="#222">
+    <!--
+    <object id="avatar" mesh="#room" scale_x="10" scale_y="10" scale_z="10" loc_z="10" material="#wallmaterial" />
+    -->
+    <collada document="scenenew2.dae" rot_x="-1.56" loc_x="0" loc_y="-2" scale="25" />
     <light id="keylight" loc_x="15" loc_y="15" loc_z="5"  attenuation_constant="0.5" color="#808080" type="L_POINT" />
     <light id="backlight" loc_x="15" loc_y="-15" loc_z="10"  attenuation_constant="0.5" color="#808080" type="L_POINT" />
     <light id="filllight" loc_x="-15" loc_y="15" loc_z="5"  attenuation_constant="0.5" color="#808080" type="L_POINT" />

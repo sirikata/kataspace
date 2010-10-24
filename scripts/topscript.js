@@ -26,30 +26,8 @@ Kata.include("katajs/oh/behavior/NamedObject.js");
     Example.TestScript.prototype.connected = function(presence){
         this.mPresence = presence;
         // Start periodic movements
-        this.move();
+        this.mPresence.setPosition([0,0,-20]);
     };
 
-    Example.TestScript.prototype.move = function(){
-        if (!this.mPresence)
-            return;
-
-        var loc = this.mPresence.mLocation;
-        var pos = [this.instance * 3,
-                   this.movecount * 3,
-                   -10];
-        console.log("move mPresence.setPosition:", pos[0], pos[1], pos[2]);
-        this.mPresence.setPosition(pos);
-        if(this.instance) this.mPresence.setOrientation([.5,.5,.5,.5])
-        if(this.instance) this.mPresence.setScale([.5,.5,.5])
-        if (this.instance && this.movecount) {
-            this.mPresence.setLocation({orient:[1,0,0,0],pos:[4,4,-12],scale:[4,2,1]})
-        }
-
-        // disabled until updates work
-        if (this.movecount < this.movemax) {
-            this.movecount++;
-            setTimeout(Kata.bind(this.move, this), 3000);
-        }
-    };
     Example.TestScript.instance = 0;
 })();
