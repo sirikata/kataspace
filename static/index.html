@@ -97,6 +97,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         -->
         <script type="text/javascript" src="../scripts/deployment.js">
         </script>
+        <link type="text/css" href="../css/deployment.css" rel="stylesheet" media="all" />
 
         <script>
             // This gives the offset that Kata.include needs prepended
@@ -120,6 +121,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
             function onDocReady(){
                 docReady = true;
+
+                $('#container').hide();
+
                 loginui = new LoginUI( $("#login"), Avatars, handleLogin);
                 loadGFX();
 
@@ -129,6 +133,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             function loadGFX(){
                 if (!docReady || !connectRequested)
                     return;
+
+                $('#container').show();
 
                 window.kata = new Kata.MainThread(kata_base_offset + "scripts/BlessedScript.js", "Example.BlessedScript", {
                     space: SpaceURL,
@@ -156,10 +162,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </head>
     <body>
         <div id="login" title="Login"></div>
-        <div>
+        <div class=".container-fullscreen">
             <div id="title" class="ui-widget" style="width:900px;margin:auto;padding:10px;font-size:250%">
             </div>
-            <div style="width:900px;height:600px;margin:auto;position:relative" id="container">
+            <div style="width:900px;height:500px;margin:auto;position:relative;-webkit-box-shadow: rgba(0, 0, 0, 0.699219) 0px 0px 10px;" id="container">
             </div>
         </div>
     </body>
