@@ -215,5 +215,10 @@ var Example;
                 this.mPresence.setPosition(this.avPos);
             }
         }
+
+        // We could be more selective about this, making sure we
+        // actually made a change, but this is safe: always push an
+        // update to the GFX system for our info.
+        this.updateGFX(this.mPresence);
     };
 })();
