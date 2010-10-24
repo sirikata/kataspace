@@ -138,7 +138,7 @@ var Example;
         }
         
         if (msg.msg == "keydown") {
-            var avMat = Kata.QuaternionToRotation(this.mPresence.orientation(new Date()));
+            var avMat = Kata.QuaternionToRotation(this.mPresence.predictedOrientation(new Date()));
             var avSpeed = 5;
             var avXX = avMat[0][0] * avSpeed;
             var avXY = avMat[0][1] * avSpeed;
