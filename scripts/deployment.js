@@ -6,6 +6,8 @@
 SpaceURL = "loop://localhost";
 //SpaceURL = "sirikata://localhost:7777";
 
+Title = "KataSpace";
+
 Avatars = [
     {
         name : "Big Box Red",

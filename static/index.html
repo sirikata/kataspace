@@ -122,6 +122,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                 docReady = true;
                 loginui = new LoginUI( $("#login"), Avatars, handleLogin);
                 loadGFX();
+
+                $('#title').append(Title);
             }
 
             function loadGFX(){
@@ -154,7 +156,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </head>
     <body>
         <div id="login" title="Login"></div>
-        <div style="width:900px;height:600px;margin:auto;position:relative" id="container">
+        <div>
+            <div id="title" class="ui-widget" style="width:900px;margin:auto;padding:10px;font-size:250%">
+            </div>
+            <div style="width:900px;height:600px;margin:auto;position:relative" id="container">
+            </div>
         </div>
     </body>
 </html>
