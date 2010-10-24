@@ -18,7 +18,7 @@ var Example;
         this.createObject("examples/simple_script/TestScript.js", "Example.TestScript", {
             space: args.space,
             visual: {
-                mesh: document.URL + "bigbox.dae",  // GLGE not happy camper with relative paths
+                mesh: document.URL + "blue.dae",  // GLGE not happy camper with relative paths
             }
         });
         
