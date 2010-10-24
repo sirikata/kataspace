@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<COLLADA version="1.4.0" xmlns="http://www.collada.org/2005/11/COLLADASchema">
+	<asset>
+		<contributor>
+			<author>Illusoft Collada 1.4.0 plugin for Blender - http://colladablender.illusoft.com</author>
+			<authoring_tool>Blender v:249 - Illusoft Collada Exporter v:0.3.161</authoring_tool>
+			<comments></comments>
+			<copyright></copyright>
+			<source_data>file:///home/dbm/bench/blend/happy.blend</source_data>
+		</contributor>
+		<created>2010-10-23T17:10:12.533888</created>
+		<modified>2010-10-23T17:10:12.533909</modified>
+		<unit meter="0.01" name="centimeter"/>
+		<up_axis>Z_UP</up_axis>
+	</asset>
+	<library_cameras>
+		<camera id="Camera-Camera" name="Camera-Camera">
+			<optics>
+				<technique_common>
+					<perspective>
+						<yfov>49.13434</yfov>
+						<znear>0.1</znear>
+						<zfar>100.0</zfar>
+					</perspective>
+				</technique_common>
+			</optics>
+		</camera>
+	</library_cameras>
+	<library_effects>
+		<effect id="i_Cube_tga-fx" name="i_Cube_tga-fx">
+			<profile_COMMON>
+				<newparam sid="i_Cube_tga-surface">
+					<surface type="2D">
+						<init_from>_Cube_tga-img</init_from>
+						<format>A8R8G8B8</format>
+					</surface>
+				</newparam>
+				<newparam sid="i_Cube_tga-sampler">
+					<sampler2D>
+						<source>i_Cube_tga-surface</source>
+						<minfilter>LINEAR_MIPMAP_LINEAR</minfilter>
+						<magfilter>LINEAR</magfilter>
+					</sampler2D>
+				</newparam>
+				<technique sid="blender">
+					<phong>
+						<emission>
+							<color>0.00000 0.00000 0.00000 1</color>
+						</emission>
+						<ambient>
+							<color>0.40000 0.40000 0.40000 1</color>
+						</ambient>
+						<diffuse>
+							<texture texcoord="CHANNEL1" texture="i_Cube_tga-sampler"/>
+						</diffuse>
+						<specular>
+							<color>0.50000 0.50000 0.50000 1</color>
+						</specular>
+						<shininess>
+							<float>12.5</float>
+						</shininess>
+						<reflective>
+							<color>1.00000 1.00000 1.00000 1</color>
+						</reflective>
+						<reflectivity>
+							<float>0.0</float>
+						</reflectivity>
+						<transparent>
+							<color>1 1 1 1</color>
+						</transparent>
+						<transparency>
+							<float>0.0</float>
+						</transparency>
+					</phong>
+				</technique>
+			</profile_COMMON>
+		</effect>
+	</library_effects>
+	<library_images>
+		<image id="_Cube_tga-img" name="_Cube_tga-img">
+			<init_from>blue.jpg</init_from>
+		</image>
+	</library_images>
+	<library_lights>
+		<light id="Spot" name="Spot">
+			<technique_common>
+				<point>
+					<color>1.00000 1.00000 1.00000</color>
+					<constant_attenuation>1.0</constant_attenuation>
+					<linear_attenuation>0.0</linear_attenuation>
+					<quadratic_attenuation>0.0</quadratic_attenuation>
+				</point>
+			</technique_common>
+		</light>
+	</library_lights>
+	<library_materials>
+		<material id="i_Cube_tga" name="i_Cube_tga">
+			<instance_effect url="#i_Cube_tga-fx"/>
+		</material>
+	</library_materials>
+	<library_geometries>
+		<geometry id="Cube_002" name="Cube_002">
+			<mesh>
+				<source id="Cube_002-Position">
+					<float_array count="24" id="Cube_002-Position-array">1.00000 1.00000 -1.00000 1.00000 -1.00000 -1.00000 -1.00000 -1.00000 -1.00000 -1.00000 1.00000 -1.00000 1.00000 1.00000 1.00000 1.00000 -1.00000 1.00000 -1.00000 -1.00000 1.00000 -1.00000 1.00000 1.00000</float_array>
+					<technique_common>
+						<accessor count="8" source="#Cube_002-Position-array" stride="3">
+							<param type="float" name="X"></param>
+							<param type="float" name="Y"></param>
+							<param type="float" name="Z"></param>
+						</accessor>
+					</technique_common>
+				</source>
+				<source id="Cube_002-Normals">
+					<float_array count="18" id="Cube_002-Normals-array">0.00000 0.00000 -1.00000 0.00000 -0.00000 1.00000 1.00000 -0.00000 0.00000 -0.00000 -1.00000 -0.00000 -1.00000 0.00000 -0.00000 0.00000 1.00000 0.00000</float_array>
+					<technique_common>
+						<accessor count="6" source="#Cube_002-Normals-array" stride="3">
+							<param type="float" name="X"></param>
+							<param type="float" name="Y"></param>
+							<param type="float" name="Z"></param>
+						</accessor>
+					</technique_common>
+				</source>
+				<source id="Cube_002-UV">
+					<float_array count="72" id="Cube_002-UV-array">0.00000 0.00000 1.00000 0.00000 1.00000 1.00000 1.00000 1.00000 0.00000 1.00000 0.00000 0.00000 0.00000 0.00000 1.00000 0.00000 1.00000 1.00000 1.00000 1.00000 0.00000 1.00000 0.00000 0.00000 0.00000 0.00000 1.00000 0.00000 1.00000 1.00000 1.00000 1.00000 0.00000 1.00000 0.00000 0.00000 0.00000 0.00000 1.00000 0.00000 1.00000 1.00000 1.00000 1.00000 0.00000 1.00000 0.00000 0.00000 0.00000 0.00000 1.00000 0.00000 1.00000 1.00000 1.00000 1.00000 0.00000 1.00000 0.00000 0.00000 0.00000 0.00000 1.00000 0.00000 1.00000 1.00000 1.00000 1.00000 0.00000 1.00000 0.00000 0.00000</float_array>
+					<technique_common>
+						<accessor count="36" source="#Cube_002-UV-array" stride="2">
+							<param type="float" name="S"></param>
+							<param type="float" name="T"></param>
+						</accessor>
+					</technique_common>
+				</source>
+				<vertices id="Cube_002-Vertex">
+					<input semantic="POSITION" source="#Cube_002-Position"/>
+				</vertices>
+				<triangles count="12" material="i_Cube_tga">
+					<input offset="0" semantic="VERTEX" source="#Cube_002-Vertex"/>
+					<input offset="1" semantic="NORMAL" source="#Cube_002-Normals"/>
+					<input offset="2" semantic="TEXCOORD" source="#Cube_002-UV"/>
+					<p>0 0 0 1 0 1 2 0 2 2 0 3 3 0 4 0 0 5 4 1 6 7 1 7 6 1 8 6 1 9 5 1 10 4 1 11 0 2 12 4 2 13 5 2 14 5 2 15 1 2 16 0 2 17 1 3 18 5 3 19 6 3 20 6 3 21 2 3 22 1 3 23 2 4 24 6 4 25 7 4 26 7 4 27 3 4 28 2 4 29 4 5 30 0 5 31 3 5 32 3 5 33 7 5 34 4 5 35</p>
+				</triangles>
+			</mesh>
+		</geometry>
+	</library_geometries>
+	<library_visual_scenes>
+		<visual_scene id="Scene" name="Scene">
+			<node layer="L1" id="Cube" name="Cube">
+				<matrix>
+					-1.00003 0.00934 0.0 0.0 
+					-0.00342 -2.72773 0.0 0.0 
+					0.0 0.0 0.56638 0.0 
+					0.0 0.0 0.0 1.0 
+				</matrix>
+				<instance_geometry url="#Cube_002">
+					<bind_material>
+						<technique_common>
+							<instance_material symbol="i_Cube_tga" target="#i_Cube_tga">
+								<bind_vertex_input input_semantic="TEXCOORD" input_set="1" semantic="CHANNEL1"/>
+							</instance_material>
+						</technique_common>
+					</bind_material>
+				</instance_geometry>
+			</node>
+			<node layer="L1" id="Lamp" name="Lamp">
+				<matrix>
+					0.46627 -0.68817 0.55589 0.03839 
+					0.88292 0.40121 -0.24389 -0.02849 
+					-0.05519 0.60452 0.79467 4.20117 
+					0.0 0.0 0.0 1.0 
+				</matrix>
+				<instance_light url="#Spot"/>
+			</node>
+			<node layer="L1" id="Camera" name="Camera">
+				<matrix>
+					0.86603 -0.25 0.43301 3.12085 
+					0.5 0.43301 -0.75 -5.40546 
+					-0.0 0.86603 0.5 3.60364 
+					0.0 0.0 0.0 1.0 
+				</matrix>
+				<instance_camera url="#Camera-Camera"/>
+			</node>
+		</visual_scene>
+	</library_visual_scenes>
+	<library_physics_materials>
+		<physics_material id="Cube-PhysicsMaterial" name="Cube-PhysicsMaterial">
+			<technique_common>
+				<dynamic_friction>0.5</dynamic_friction>
+				<restitution>0.0</restitution>
+				<static_friction>0.5</static_friction>
+			</technique_common>
+		</physics_material>
+	</library_physics_materials>
+	<library_physics_models>
+		<physics_model id="Scene-PhysicsModel" name="Scene-PhysicsModel">
+			<rigid_body name="Cube-RigidBody" sid="Cube-RigidBody">
+				<technique_common>
+					<dynamic>false</dynamic>
+					<mass>0</mass>
+					<instance_physics_material url="#Cube-PhysicsMaterial"/>
+					<shape>
+						<instance_geometry url="#Cube_002"/>
+					</shape>
+				</technique_common>
+			</rigid_body>
+		</physics_model>
+	</library_physics_models>
+	<library_physics_scenes>
+		<physics_scene id="Scene-Physics" name="Scene-Physics">
+			<instance_physics_model url="#Scene-PhysicsModel">
+				<instance_rigid_body body="Cube-RigidBody" target="#Cube"/>
+			</instance_physics_model>
+		</physics_scene>
+	</library_physics_scenes>
+	<scene>
+		<instance_physics_scene url="#Scene-Physics"/>
+		<instance_visual_scene url="#Scene"/>
+	</scene>
+</COLLADA>

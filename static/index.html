@@ -39,6 +39,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         <link type="text/css" href="../externals/jquery.ui.chatbox/jquery.ui.chatbox.css" rel="stylesheet" />
         <script type="text/javascript" src="../externals/jquery.ui.chatbox/jquery.ui.chatbox.js">
         </script>
+        <!-- Notifications -->
+        <link type="text/css" href="../externals/css/jquery.jnotify.css" rel="stylesheet" media="all" />
+        <script type="text/javascript" src="../externals/lib/jquery.jnotify.js">
+        </script>
         <!-- Core must be loaded before web-socket-js because it cludges window.console -->
         <script type="text/javascript" src="../externals/katajs/katajs/core/Core.js">
         </script>
@@ -60,7 +64,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         <script type="text/javascript" src="../externals/katajs/externals/GLGE/glge_collada.js">
         </script>
         <script type="text/javascript">
-            
+
             Kata.include("katajs/oh/MainThread.js");
             // "Plugins" - load files which add specific implementations. This is left up to the user since some may be expensive to load.
             Kata.include("katajs/oh/SpaceConnection.js");
@@ -75,6 +79,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             Kata.include("katajs/oh/impl/BootstrapScript.js");
             Kata.include("katajs/oh/GraphicsScript.js");
         </script>
+
+        <script type="text/javascript" src="../scripts/ui/login.js">
+        </script>
         <!-- FIXME currently, including this explicitly seems to be the only
         way for it not to cause an exception when chat.js is evaluated
         before GUISimulation is.
@@ -85,7 +92,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         </script>
 
         <!-- Deployment-specific configuraton. Ideally, everything
-        that nees to be modified to make this run on different servers
+        that needs to be modified to make this run on different servers
         is isolated in this file.
         -->
         <script type="text/javascript" src="../scripts/deployment.js">
@@ -96,51 +103,57 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             // to get to the base of our code directory (it starts at
             // katajs.git, so we need to get out of externals/katajs.git).
             var kata_base_offset = "../../";
-            
+
             var kata, graphics;
             var driver = "GLGE"; // "o3d" or "GLGE"
             var connectRequested = false;
             var docReady = false;
-            function setDocReady(){
-                docReady = true;
-                loadGFX();
-            }
-            
-            function setConnectRequested(){
+            var loginName = null;
+            var avatarURL = null;
+
+            function handleLogin(name, avatar_url) {
                 connectRequested = true;
+                loginName = name;
+                avatarURL = avatar_url;
                 loadGFX();
             }
-            
+
+            function onDocReady(){
+                docReady = true;
+                loginui = new LoginUI( $("#login"), Avatars, handleLogin);
+                loadGFX();
+            }
+
             function loadGFX(){
-                if (!docReady || !connectRequested) 
+                if (!docReady || !connectRequested)
                     return;
-                
-                var name = document.getElementById("name").value;
+
                 window.kata = new Kata.MainThread(kata_base_offset + "scripts/BlessedScript.js", "Example.BlessedScript", {
                     space: SpaceURL,
-                    name: name
+                    name: loginName,
+                    visual: {
+                        mesh: avatarURL
+                    }
                 });
                 graphics = new Kata.GraphicsSimulation(driver, window.kata.getChannel(), document.getElementById("container"));
-                
-                chats = new ChatUI(window.kata.getChannel(), name, 200);
+
+                chats = new ChatUI(window.kata.getChannel(), loginName, 200);
                 chats.create("Chat");
             }
-            
+
             if (driver == "GLGE") {
                 g_GLGE_doc = new GLGE.Document();
-                g_GLGE_doc.onLoad = setDocReady;
+                g_GLGE_doc.onLoad = onDocReady;
                 g_GLGE_doc.load("glge_level.xml");
             }
             else {
-                window.onload = setDocReady;
+                window.onload = onDocReady;
             }
             Kata.resolveDeferredHeaders();
         </script>
     </head>
     <body>
-        <div>
-            <input type="text" id="name" value="(name)"><input type="button" onclick="setConnectRequested()" value="Connect">
-        </div>
+        <div id="login" title="Login"></div>
         <div style="width:900px;height:600px;margin:auto;position:relative" id="container">
         </div>
     </body>
