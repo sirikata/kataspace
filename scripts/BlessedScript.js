@@ -16,10 +16,6 @@ var Example;
 
         console.log("args:", args, args.mesh, document.URL + "blue.dae")
         this.connect(args, null, Kata.bind(this.connected, this));
-        this.createObject("../../scripts/topscript.js", "Example.TestScript", {
-            space: args.space,
-            visual: args.visual
-        });
         
         this.keyIsDown = {};
         this.avSpeed = 0;
