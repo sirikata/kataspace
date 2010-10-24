@@ -123,12 +123,14 @@ var Example;
         }
         if (msg.msg == "mousemove") {
             /// Firefox 4 bug: ev.which is always 0, so get it from mousedown/mouseup events
+            /*
             if (this.rightDown) {
                 this.avPointX = parseInt(msg.event.x) - this.dragStartX;
                 this.avPointY = parseInt(msg.event.y) - this.dragStartY;
                 var q = this._euler2Quat(this.avPointX * -.25, this.avPointY * -.25, 0);
                 this.mPresence.setOrientation(q);
             }
+            */
         }
         if (msg.msg == "keyup") {
             this.keyIsDown[msg.event.keyCode] = false;
@@ -137,7 +139,7 @@ var Example;
         
         if (msg.msg == "keydown") {
             var avMat = Kata.QuaternionToRotation(this.mPresence.orientation(new Date()));
-            var avSpeed = 30
+            var avSpeed = 5;
             var avXX = avMat[0][0] * avSpeed;
             var avXY = avMat[0][1] * avSpeed;
             var avXZ = avMat[0][2] * avSpeed;
@@ -146,73 +148,27 @@ var Example;
             var avZZ = avMat[2][2] * avSpeed;
             this.keyIsDown[msg.event.keyCode] = true;
             var k = "" + msg.event.keyCode
-            if (msg.event.shiftKey) 
+            if (msg.event.shiftKey)
                 k += "S"
-            if (msg.event.ctrlKey) 
+            if (msg.event.ctrlKey)
                 k += "C"
             switch (k) {
-                case "65": // A -- left
-                    this.mPresence.setVelocity([-avXX, -avXY, -avXZ]);
-                    break;
-                case "68": // D -- right
-                    this.mPresence.setVelocity([avXX, avXY, avXZ]);
-                    break;
-                case "87": // W -- forward
                 case "38": // up arrow
                     this.mPresence.setVelocity([-avZX, -avZY, -avZZ]);
                     break;
-                case "83": // S -- reverse
                 case "40": // down arrow
                     this.mPresence.setVelocity([avZX, avZY, avZZ]);
                     break;
-                case "82": // R -- raise av
-                case "33": // page up
-                    this.mPresence.setVelocity([0, 30, 0]);
-                    break;
-                case "70": // F -- lower av
-                case "34": // page down
-                    this.mPresence.setVelocity([0, -30, 0]);
-                    break;
-                case "81":
                 case "37": // left arrow: look left
                     this.avPointX -= 10;
                     var q = this._euler2Quat(this.avPointX * -.25, this.avPointY * -.25, 0);
                     this.mPresence.setOrientation(q);
                     break;
-                case "69":
                 case "39": // right arrow: look right
                     this.avPointX += 10;
                     var q = this._euler2Quat(this.avPointX * -.25, this.avPointY * -.25, 0);
                     this.mPresence.setOrientation(q);
                     break;
-                case "38S": // shift+up: look up
-                    this.avPointY -= 10;
-                    var q = this._euler2Quat(this.avPointX * -.25, this.avPointY * -.25, 0);
-                    this.mPresence.setOrientation(q);
-                    break;
-                case "40S": // shift+down: look down
-                    this.avPointY += 10;
-                    var q = this._euler2Quat(this.avPointX * -.25, this.avPointY * -.25, 0);
-                    this.mPresence.setOrientation(q);
-                    break;
-            }
-        }
-        if (msg.msg == "wheel") {
-            this.avPos = this.mPresence.position(new Date());
-            if (this.leftDown || this.middleDown || this.rightDown) 
-                return;
-            var ang = this.avPointX * -.25 * 0.0174532925;
-            var x = Math.sin(ang) * 5;
-            var y = Math.cos(ang) * 5;
-            if (msg.event.dy > 0) {
-                this.avPos[0] -= x;
-                this.avPos[2] -= y;
-                this.mPresence.setPosition(this.avPos);
-            }
-            else {
-                this.avPos[0] += x;
-                this.avPos[2] += y;
-                this.mPresence.setPosition(this.avPos);
             }
         }
 
