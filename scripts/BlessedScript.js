@@ -49,11 +49,9 @@ var Example;
         return new Kata.ScriptProtocol.FromScript.GUIMessage("chat", evt);
     };
     Example.BlessedScript.prototype.chatEnterEvent = function(remote, name) {
-        console.log("A");
         this._sendHostedObjectMessage(this.createChatEvent('enter', name));
     };
     Example.BlessedScript.prototype.chatExitEvent = function(remote, name, msg) {
-        console.log("B");
         this._sendHostedObjectMessage(this.createChatEvent('exit', name, msg));
     };
     Example.BlessedScript.prototype.chatMessageEvent = function(remote, name, msg) {
