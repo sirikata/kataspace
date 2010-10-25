@@ -77,22 +77,8 @@ var Example;
         presence.setQueryHandler(Kata.bind(this.proxEvent, this));
         presence.setQuery(0);
         presence.setPosition(this.avPos);
+        this.setCameraPosOrient(this._calcCamPos(), this.avOrient);
         Kata.warn("Got connected callback.");
-    };
-
-    Example.BlessedScript.prototype._euler2Quat = function(yaw, pitch, roll){
-        // takes degrees; roll = rotation about z, pitch = x, yaw = y
-        var k = 0.00872664625; // deg2rad/2
-        var yawcos = Math.cos(roll * k);
-        var yawsin = Math.sin(roll * k);
-        var pitchcos = Math.cos(pitch * k);
-        var pitchsin = Math.sin(pitch * k);
-        var rollcos = Math.cos(yaw * k);
-        var rollsin = Math.sin(yaw * k);
-        return [rollcos * pitchsin * yawcos + rollsin * pitchcos * yawsin,
-                rollsin * pitchcos * yawcos - rollcos * pitchsin * yawsin,
-                rollcos * pitchcos * yawsin - rollsin * pitchsin * yawcos,
-                rollcos * pitchcos * yawcos + rollsin * pitchsin * yawsin];
     };
 
     Example.BlessedScript.prototype.Keys = {
@@ -202,8 +188,9 @@ var Example;
         var pos = this.mPresence.position(new Date());
         var x = Math.sin(this.avPointX * 0.0174532925);
         var z = Math.cos(this.avPointX * 0.0174532925);
-        var dist = 10;
+        var dist = 20;
         pos[0] += dist*x;
+        pos[1] += 1;
         pos[2] += dist*z;
         return pos;
     };
