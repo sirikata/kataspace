@@ -12,7 +12,7 @@ var Example;
 
     var SUPER = Kata.GraphicsScript.prototype;
     Example.BlessedScript = function(channel, args){
-        SUPER.constructor.call(this, channel, args);
+        SUPER.constructor.call(this, channel, args, Kata.bind(this.updateAnimation, this));
 
         console.log("args:", args, args.mesh, document.URL + "blue.dae")
         this.connect(args, null, Kata.bind(this.connected, this));
@@ -64,6 +64,7 @@ var Example;
         if (added) {
             Kata.warn("Camera Discover object.");
             this.mPresence.subscribe(remote.id());
+            this.mOther = remote;
         }
         else {
             Kata.warn("Camera Wiped object.");      // FIXME: unsubscribe!
@@ -175,5 +176,18 @@ var Example;
         // actually made a change, but this is safe: always push an
         // update to the GFX system for our info.
         this.updateGFX(this.mPresence);
+    };
+
+    Example.BlessedScript.prototype.updateAnimation = function (presence, remote) {
+        var vel = remote.predictedVelocity();
+        var is_mobile = (vel[0] != 0 || vel[1] != 0 || vel[2] != 0);
+
+        var cur_anim = remote.cur_anim;
+        var new_anim = (is_mobile ? 'walk' : 'idle');
+
+        if (cur_anim != new_anim) {
+            this.animate(presence, remote, new_anim);
+            remote.cur_anim = new_anim;
+        }
     };
 })();
