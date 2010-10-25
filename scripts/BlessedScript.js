@@ -102,6 +102,21 @@ var Example;
         RIGHT : 39
     };
 
+    Example.BlessedScript.prototype._euler2Quat = function(yaw, pitch, roll){
+        // takes degrees; roll = rotation about z, pitch = x, yaw = y
+        var k = 0.00872664625; // deg2rad/2
+        var yawcos = Math.cos(roll * k);
+        var yawsin = Math.sin(roll * k);
+        var pitchcos = Math.cos(pitch * k);
+        var pitchsin = Math.sin(pitch * k);
+        var rollcos = Math.cos(yaw * k);
+        var rollsin = Math.sin(yaw * k);
+        return [rollcos * pitchsin * yawcos + rollsin * pitchcos * yawsin, 
+                rollsin * pitchcos * yawcos - rollcos * pitchsin * yawsin, 
+                rollcos * pitchcos * yawsin - rollsin * pitchsin * yawcos, 
+                rollcos * pitchcos * yawcos + rollsin * pitchsin * yawsin];
+    };
+
     Example.BlessedScript.prototype._handleGUIMessage = function (channel, msg) {
         if (msg.msg == 'chat')
             this.handleChatGUIMessage(msg);
@@ -163,11 +178,13 @@ var Example;
                 this.avPointX -= 10;
                 var q = this._euler2Quat(this.avPointX * -.25, this.avPointY * -.25, 0);
                 this.mPresence.setOrientation(q);
+                this.setCameraPosOrient(null, q);
             }
             if (this.keyIsDown[this.Keys.RIGHT]) {
                 this.avPointX += 10;
                 var q = this._euler2Quat(this.avPointX * -.25, this.avPointY * -.25, 0);
                 this.mPresence.setOrientation(q);
+                this.setCameraPosOrient(null, q);
             }
         }
 
