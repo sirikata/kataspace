@@ -77,7 +77,7 @@ var Example;
         presence.setQueryHandler(Kata.bind(this.proxEvent, this));
         presence.setQuery(0);
         presence.setPosition(this.avPos);
-        this.setCameraPosOrient(this._calcCamPos(), this.avOrient);
+        this.setCameraPosOrient(this._calcCamPos(), this.avOrient, 0);
         Kata.warn("Got connected callback.");
     };
 
@@ -167,13 +167,13 @@ var Example;
                 this.avPointX += 2.5;
                 var q = this._euler2Quat(this.avPointX, this.avPointY, 0);
                 this.mPresence.setOrientation(q);
-                this.setCameraPosOrient(this._calcCamPos(), q);
+                this.setCameraPosOrient(this._calcCamPos(), q, .6);
             }
             if (this.keyIsDown[this.Keys.RIGHT]) {
                 this.avPointX -= 2.5;
                 var q = this._euler2Quat(this.avPointX, this.avPointY, 0);
                 this.mPresence.setOrientation(q);
-                this.setCameraPosOrient(this._calcCamPos(), q);
+                this.setCameraPosOrient(this._calcCamPos(), q, .6);
             }
         }
 
