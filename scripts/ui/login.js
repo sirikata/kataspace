@@ -98,6 +98,12 @@ LoginUI = function(dialog_div, avatars, cb) {
             height: 450
 	}
     );
+
+    $(window).resize(
+        function() {
+            self.mDialogDiv.dialog( "option", "position", 'center' );
+        }
+    );
 };
 
 LoginUI.prototype._handleLoginClicked = function() {
