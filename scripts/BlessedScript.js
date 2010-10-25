@@ -128,8 +128,8 @@ var Example;
                 this.middleDown = true;
             if (msg.event.which == 2) {
                 this.rightDown = true;
-                this.dragStartX = parseInt(msg.event.x) - this.avPointX;
-                this.dragStartY = parseInt(msg.event.y) - this.avPointY;
+                this.dragStartX = parseFloat(msg.event.x)*.25 - this.avPointX;
+                this.dragStartY = parseFloat(msg.event.y)*.25 - this.avPointY;
             }
         }
         if (msg.msg == "mouseup") {
@@ -142,14 +142,14 @@ var Example;
         }
         if (msg.msg == "mousemove") {
             /// Firefox 4 bug: ev.which is always 0, so get it from mousedown/mouseup events
-            /*
+
             if (this.rightDown) {
-                this.avPointX = parseInt(msg.event.x) - this.dragStartX;
-                this.avPointY = parseInt(msg.event.y) - this.dragStartY;
-                var q = this._euler2Quat(this.avPointX * -.25, this.avPointY * -.25, 0);
+                this.avPointX = parseFloat(msg.event.x)*.25 - this.dragStartX;
+                this.avPointY = parseFloat(msg.event.y)*.25 - this.dragStartY;
+                var q = this._euler2Quat(-this.avPointX, -this.avPointY, 0);
                 this.mPresence.setOrientation(q);
             }
-            */
+
         }
         if (msg.msg == "keyup") {
             this.keyIsDown[msg.event.keyCode] = false;
@@ -175,14 +175,14 @@ var Example;
                 this.mPresence.setVelocity([avZX, avZY, avZZ]);
             }
             if (this.keyIsDown[this.Keys.LEFT]) {
-                this.avPointX -= 10;
-                var q = this._euler2Quat(this.avPointX * -.25, this.avPointY * -.25, 0);
+                this.avPointX -= 2.5;
+                var q = this._euler2Quat(-this.avPointX, -this.avPointY, 0);
                 this.mPresence.setOrientation(q);
                 this.setCameraPosOrient(null, q);
             }
             if (this.keyIsDown[this.Keys.RIGHT]) {
-                this.avPointX += 10;
-                var q = this._euler2Quat(this.avPointX * -.25, this.avPointY * -.25, 0);
+                this.avPointX += 2.5;
+                var q = this._euler2Quat(-this.avPointX, -this.avPointY, 0);
                 this.mPresence.setOrientation(q);
                 this.setCameraPosOrient(null, q);
             }
