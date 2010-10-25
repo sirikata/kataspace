@@ -87,11 +87,13 @@
 			 )
 		.attr('outline', 0)
 		.focusin(function(){
+                    self.highlightLock = true;
 		    self.uiChatbox.removeClass("ui-state-error");
 		    self.uiChatboxTitlebar.removeClass("ui-state-error");
 		    self.uiChatboxTitlebar.addClass('ui-state-focus');
 		})
 		.focusout(function(){
+		    self.highlightLock = false;
 		    self.uiChatboxTitlebar.removeClass('ui-state-focus');
 		}),
 	    // titlebar
