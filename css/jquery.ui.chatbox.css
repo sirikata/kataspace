@@ -21,9 +21,10 @@
 
 .ui-chatbox-log {
     padding: 3px 3px 3px 3px;
-    height: 150px;
+    height: 300px;
     overflow-y: auto;
     background: #FFFFFF;
+    font-size: 75%;
 }
 
 .ui-chatbox-input {
@@ -31,6 +32,7 @@
     border-top: 1px solid grey;
     overflow: hidden;
     /* background: #FFFFFF; */
+    font-size: 75%;
 }
 
 .ui-chatbox-input-box {

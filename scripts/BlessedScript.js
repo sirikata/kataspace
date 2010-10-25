@@ -79,6 +79,9 @@ var Example;
         presence.setQuery(0);
         presence.setPosition(this.avPos);
         this.setCameraPosOrient(this._calcCamPos(), this.avOrient, 0.0);
+        // FIXME both this and the camera controls in GraphicsScript
+        // are running on timers because the ones in GraphicsScript
+        // don't accept velocity
         this.mCamUpdateTimer = setInterval(Kata.bind(this.updateCamera, this), 60);
         Kata.warn("Got connected callback.");
     };

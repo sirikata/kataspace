@@ -48,13 +48,10 @@
 		    }
 		},
 		highlightBox: function() {
-		    //this.elem.uiChatbox.addClass("ui-state-highlight");
-		    var self = this;
-		    self.elem.uiChatboxTitlebar.effect("highlight", {}, 300);
-		    self.elem.uiChatbox.effect("bounce", {times:3}, 300, function(){
-			self.highlightLock = false;
-			self._scrollToBottom();
-		    });
+		    this.elem.uiChatbox.addClass("ui-state-error");
+		    this.elem.uiChatboxTitlebar.addClass("ui-state-error");
+                    this.highlightLock = false;
+		    this._scrollToBottom();
 		},
 		toggleBox: function() {
 		    this.elem.uiChatbox.toggle();
@@ -90,8 +87,8 @@
 			 )
 		.attr('outline', 0)
 		.focusin(function(){
-		    // ui-state-highlight is not really helpful here
-		    //self.uiChatbox.removeClass('ui-state-highlight');
+		    self.uiChatbox.removeClass("ui-state-error");
+		    self.uiChatboxTitlebar.removeClass("ui-state-error");
 		    self.uiChatboxTitlebar.addClass('ui-state-focus');
 		})
 		.focusout(function(){
@@ -249,7 +246,7 @@
 	    this.uiChatboxTitlebar.width(width + "px");
 	    this.uiChatboxLog.width(width + "px");
 	    // this is a hack, but i can live with it so far
-	    this.uiChatboxInputBox.css("width", (width - 14) + "px");
+	    this.uiChatboxInputBox.css("width", (width - 24) + "px");
 	},
 
 	_position: function(offset) {
