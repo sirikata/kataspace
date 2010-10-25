@@ -36,6 +36,7 @@
 LoginUI = function(dialog_div, avatars, cb) {
     this.mDialogDiv = dialog_div;
     this.mCallback = cb;
+    this.mAvatars = avatars;
     this.mAvatarRadios = [];
     var self = this;
 
@@ -61,7 +62,7 @@ LoginUI = function(dialog_div, avatars, cb) {
     for(var av_idx = 0; av_idx < avatars.length; av_idx++) {
         // Radio button
         var av_radio = document.createElement('input');
-        av_radio.setAttribute('id', avatars[av_idx].url);
+        av_radio.setAttribute('id', av_idx.toString());
         av_radio.setAttribute('type', 'radio');
         av_radio.setAttribute('name', 'avatar');
         if (av_idx == 0)
@@ -70,7 +71,7 @@ LoginUI = function(dialog_div, avatars, cb) {
         this.mAvatarRadios.push(av_radio);
         // Label
         var av_radio_label = document.createElement('label');
-        av_radio_label.setAttribute('for', avatars[av_idx].url);
+        av_radio_label.setAttribute('for', av_idx.toString());
         /// Label image
         var av_radio_img = document.createElement('img');
         av_radio_img.setAttribute('src', avatars[av_idx].preview);
@@ -112,7 +113,8 @@ LoginUI.prototype._handleLoginClicked = function() {
     for(var idx = 0; idx < this.mAvatarRadios.length; idx++)
         if (this.mAvatarRadios[idx].checked)
             avatar_selected = this.mAvatarRadios[idx].id;
+    avatar_selected = parseInt(avatar_selected);
 
-    this.mCallback(name, avatar_selected);
+    this.mCallback(name, this.mAvatars[avatar_selected]);
     this.mDialogDiv.dialog( "close" );
 };

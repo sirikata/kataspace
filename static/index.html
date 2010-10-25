@@ -111,11 +111,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             var docReady = false;
             var loginName = null;
             var avatarURL = null;
+            var avatarScale = null;
 
-            function handleLogin(name, avatar_url) {
+            function handleLogin(name, avatar) {
                 connectRequested = true;
                 loginName = name;
-                avatarURL = avatar_url;
+                avatarURL = avatar.url;
+                avatarScale = avatar.scale;
                 loadGFX();
             }
 
@@ -139,6 +141,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                 window.kata = new Kata.MainThread(kata_base_offset + "scripts/BlessedScript.js", "Example.BlessedScript", {
                     space: SpaceURL,
                     name: loginName,
+                    scale : avatarScale,
                     visual: {
                         mesh: avatarURL
                     }

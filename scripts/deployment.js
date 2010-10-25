@@ -10,13 +10,15 @@ Title = "KataSpace";
 
 Avatars = [
     {
-        name : "Big Box Red",
+        name : "Big Red Box",
         url : document.URL + "red.dae",
+        scale : 1.0,
         preview : document.URL + "red.jpg"
     },
     {
-        name : "Big Box Blue",
+        name : "Small Blue Box",
         url : document.URL + "blue.dae",
+        scale : 0.3,
         preview : document.URL + "blue.jpg"
     }
 ];
