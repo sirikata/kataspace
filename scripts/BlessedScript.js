@@ -94,6 +94,14 @@ var Example;
                 rollcos * pitchcos * yawsin - rollsin * pitchsin * yawcos,
                 rollcos * pitchcos * yawcos + rollsin * pitchsin * yawsin];
     };
+
+    Example.BlessedScript.prototype.Keys = {
+        UP : 38,
+        DOWN : 40,
+        LEFT : 37,
+        RIGHT : 39
+    };
+
     Example.BlessedScript.prototype._handleGUIMessage = function (channel, msg) {
         if (msg.msg == 'chat')
             this.handleChatGUIMessage(msg);
@@ -130,9 +138,10 @@ var Example;
         }
         if (msg.msg == "keyup") {
             this.keyIsDown[msg.event.keyCode] = false;
-            this.mPresence.setVelocity([0, 0, 0]);
+            if ( !this.keyIsDown[this.Keys.UP] && !this.keyIsDown[this.Keys.DOWN])
+                this.mPresence.setVelocity([0, 0, 0]);
         }
-        
+
         if (msg.msg == "keydown") {
             var avMat = Kata.QuaternionToRotation(this.mPresence.predictedOrientation(new Date()));
             var avSpeed = 5;
@@ -143,28 +152,22 @@ var Example;
             var avZY = avMat[2][1] * avSpeed;
             var avZZ = avMat[2][2] * avSpeed;
             this.keyIsDown[msg.event.keyCode] = true;
-            var k = "" + msg.event.keyCode
-            if (msg.event.shiftKey)
-                k += "S"
-            if (msg.event.ctrlKey)
-                k += "C"
-            switch (k) {
-                case "38": // up arrow
-                    this.mPresence.setVelocity([-avZX, -avZY, -avZZ]);
-                    break;
-                case "40": // down arrow
-                    this.mPresence.setVelocity([avZX, avZY, avZZ]);
-                    break;
-                case "37": // left arrow: look left
-                    this.avPointX -= 10;
-                    var q = this._euler2Quat(this.avPointX * -.25, this.avPointY * -.25, 0);
-                    this.mPresence.setOrientation(q);
-                    break;
-                case "39": // right arrow: look right
-                    this.avPointX += 10;
-                    var q = this._euler2Quat(this.avPointX * -.25, this.avPointY * -.25, 0);
-                    this.mPresence.setOrientation(q);
-                    break;
+
+            if (this.keyIsDown[this.Keys.UP]) {
+                this.mPresence.setVelocity([-avZX, -avZY, -avZZ]);
+            }
+            if (this.keyIsDown[this.Keys.DOWN]) {
+                this.mPresence.setVelocity([avZX, avZY, avZZ]);
+            }
+            if (this.keyIsDown[this.Keys.LEFT]) {
+                this.avPointX -= 10;
+                var q = this._euler2Quat(this.avPointX * -.25, this.avPointY * -.25, 0);
+                this.mPresence.setOrientation(q);
+            }
+            if (this.keyIsDown[this.Keys.RIGHT]) {
+                this.avPointX += 10;
+                var q = this._euler2Quat(this.avPointX * -.25, this.avPointY * -.25, 0);
+                this.mPresence.setOrientation(q);
             }
         }
 
