@@ -171,21 +171,23 @@ var Example;
 
             if (this.keyIsDown[this.Keys.UP]) {
                 this.mPresence.setVelocity([-avZX, -avZY, -avZZ]);
+                this.setCameraPosOrient(this._calcCamPos());
             }
             if (this.keyIsDown[this.Keys.DOWN]) {
                 this.mPresence.setVelocity([avZX, avZY, avZZ]);
+                this.setCameraPosOrient(this._calcCamPos());
             }
             if (this.keyIsDown[this.Keys.LEFT]) {
                 this.avPointX += 2.5;
                 var q = this._euler2Quat(this.avPointX, this.avPointY, 0);
                 this.mPresence.setOrientation(q);
-                this.setCameraPosOrient(null, q);
+                this.setCameraPosOrient(this._calcCamPos(), q);
             }
             if (this.keyIsDown[this.Keys.RIGHT]) {
                 this.avPointX -= 2.5;
                 var q = this._euler2Quat(this.avPointX, this.avPointY, 0);
                 this.mPresence.setOrientation(q);
-                this.setCameraPosOrient(null, q);
+                this.setCameraPosOrient(this._calcCamPos(), q);
             }
         }
 
@@ -193,5 +195,16 @@ var Example;
         // actually made a change, but this is safe: always push an
         // update to the GFX system for our info.
         this.updateGFX(this.mPresence);
+    };
+
+    Example.BlessedScript.prototype._calcCamPos = function(){
+        // calculate camera position from presence
+        var pos = this.mPresence.position(new Date());
+        var x = Math.sin(this.avPointX * 0.0174532925);
+        var z = Math.cos(this.avPointX * 0.0174532925);
+        var dist = 10;
+        pos[0] += dist*x;
+        pos[2] += dist*z;
+        return pos;
     };
 })();
