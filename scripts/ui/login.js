@@ -88,12 +88,18 @@ LoginUI = function(dialog_div, avatars, cb) {
     this.mDialogDiv.dialog(
         {
 	    resizable: false,
-	    modal: true,
+	    modal: false,
+            closeOnEscape: false,
+            draggable: false,
 	    buttons: {
 		"Login": function() {
                     self._handleLoginClicked();
 		}
 	    },
+            close: function(event, ui) {
+                if (!self.mSafeToClose)
+                    self.mDialogDiv.dialog("open");
+            },
             width: 400,
             height: 450
 	}
@@ -122,5 +128,6 @@ LoginUI.prototype._handleLoginClicked = function() {
     avatar_selected = parseInt(avatar_selected);
 
     this.mCallback(name, this.mAvatars[avatar_selected]);
+    this.mSafeToClose = true;
     this.mDialogDiv.dialog( "close" );
 };
