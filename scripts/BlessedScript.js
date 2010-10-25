@@ -78,8 +78,13 @@ var Example;
         presence.setQueryHandler(Kata.bind(this.proxEvent, this));
         presence.setQuery(0);
         presence.setPosition(this.avPos);
-        this.setCameraPosOrient(this._calcCamPos(), this.avOrient, 0);
+        this.setCameraPosOrient(this._calcCamPos(), this.avOrient, 0.0);
+        this.mCamUpdateTimer = setInterval(Kata.bind(this.updateCamera, this), 60);
         Kata.warn("Got connected callback.");
+    };
+
+    Example.BlessedScript.prototype.updateCamera = function() {
+        this.setCameraPosOrient(this._calcCamPos(), this._calcCamOrient(), 0.7);
     };
 
     Example.BlessedScript.prototype.Keys = {
@@ -147,7 +152,7 @@ var Example;
 
         if (msg.msg == "keydown") {
             var avMat = Kata.QuaternionToRotation(this.mPresence.predictedOrientation(new Date()));
-            var avSpeed = 5;
+            var avSpeed = 1;
             var avXX = avMat[0][0] * avSpeed;
             var avXY = avMat[0][1] * avSpeed;
             var avXZ = avMat[0][2] * avSpeed;
@@ -158,23 +163,19 @@ var Example;
 
             if (this.keyIsDown[this.Keys.UP]) {
                 this.mPresence.setVelocity([-avZX, -avZY, -avZZ]);
-                this.setCameraPosOrient(this._calcCamPos());
             }
             if (this.keyIsDown[this.Keys.DOWN]) {
                 this.mPresence.setVelocity([avZX, avZY, avZZ]);
-                this.setCameraPosOrient(this._calcCamPos());
             }
             if (this.keyIsDown[this.Keys.LEFT]) {
                 this.avPointX += 2.5;
                 var q = this._euler2Quat(this.avPointX, this.avPointY, 0);
                 this.mPresence.setOrientation(q);
-                this.setCameraPosOrient(this._calcCamPos(), q, 0.7);
             }
             if (this.keyIsDown[this.Keys.RIGHT]) {
                 this.avPointX -= 2.5;
                 var q = this._euler2Quat(this.avPointX, this.avPointY, 0);
                 this.mPresence.setOrientation(q);
-                this.setCameraPosOrient(this._calcCamPos(), q, 0.7);
             }
         }
 
@@ -199,13 +200,16 @@ var Example;
     };
     Example.BlessedScript.prototype._calcCamPos = function(){
         // calculate camera position from presence
-        var pos = this.mPresence.position(new Date());
+        var pos = this.mPresence.predictedPosition(new Date());
         var x = Math.sin(this.avPointX * 0.0174532925);
         var z = Math.cos(this.avPointX * 0.0174532925);
-        var dist = 20;
+        var dist = 5;
         pos[0] += dist*x;
-        pos[1] += 1;
+        pos[1] += 2;
         pos[2] += dist*z;
         return pos;
+    };
+    Example.BlessedScript.prototype._calcCamOrient = function(){
+        return this.mPresence.predictedOrientation(new Date());
     };
 })();
