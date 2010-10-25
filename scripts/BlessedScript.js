@@ -78,7 +78,15 @@ var Example;
         presence.setQueryHandler(Kata.bind(this.proxEvent, this));
         presence.setQuery(0);
         presence.setPosition(this.avPos);
+        this.setCameraPosOrient(this._calcCamPos(), this.avOrient, 0);
         Kata.warn("Got connected callback.");
+    };
+
+    Example.BlessedScript.prototype.Keys = {
+        UP : 38,
+        DOWN : 40,
+        LEFT : 37,
+        RIGHT : 39
     };
 
     Example.BlessedScript.prototype._euler2Quat = function(yaw, pitch, roll){
@@ -90,17 +98,10 @@ var Example;
         var pitchsin = Math.sin(pitch * k);
         var rollcos = Math.cos(yaw * k);
         var rollsin = Math.sin(yaw * k);
-        return [rollcos * pitchsin * yawcos + rollsin * pitchcos * yawsin,
-                rollsin * pitchcos * yawcos - rollcos * pitchsin * yawsin,
-                rollcos * pitchcos * yawsin - rollsin * pitchsin * yawcos,
+        return [rollcos * pitchsin * yawcos + rollsin * pitchcos * yawsin, 
+                rollsin * pitchcos * yawcos - rollcos * pitchsin * yawsin, 
+                rollcos * pitchcos * yawsin - rollsin * pitchsin * yawcos, 
                 rollcos * pitchcos * yawcos + rollsin * pitchsin * yawsin];
-    };
-
-    Example.BlessedScript.prototype.Keys = {
-        UP : 38,
-        DOWN : 40,
-        LEFT : 37,
-        RIGHT : 39
     };
 
     Example.BlessedScript.prototype._handleGUIMessage = function (channel, msg) {
@@ -114,8 +115,8 @@ var Example;
                 this.middleDown = true;
             if (msg.event.which == 2) {
                 this.rightDown = true;
-                this.dragStartX = parseInt(msg.event.x) - this.avPointX;
-                this.dragStartY = parseInt(msg.event.y) - this.avPointY;
+                this.dragStartX = parseFloat(msg.event.x)*-.25 - this.avPointX;
+                this.dragStartY = parseFloat(msg.event.y)*-.25 - this.avPointY;
             }
         }
         if (msg.msg == "mouseup") {
@@ -128,12 +129,13 @@ var Example;
         }
         if (msg.msg == "mousemove") {
             /// Firefox 4 bug: ev.which is always 0, so get it from mousedown/mouseup events
-            /*
+            /*            
             if (this.rightDown) {
-                this.avPointX = parseInt(msg.event.x) - this.dragStartX;
-                this.avPointY = parseInt(msg.event.y) - this.dragStartY;
-                var q = this._euler2Quat(this.avPointX * -.25, this.avPointY * -.25, 0);
+                this.avPointX = parseFloat(msg.event.x)*-.25 - this.dragStartX;
+                this.avPointY = parseFloat(msg.event.y)*-.25 - this.dragStartY;
+                var q = this._euler2Quat(this.avPointX, this.avPointY, 0);
                 this.mPresence.setOrientation(q);
+                this.setCameraPosOrient(null, q);
             }
             */
         }
@@ -156,19 +158,23 @@ var Example;
 
             if (this.keyIsDown[this.Keys.UP]) {
                 this.mPresence.setVelocity([-avZX, -avZY, -avZZ]);
+                this.setCameraPosOrient(this._calcCamPos());
             }
             if (this.keyIsDown[this.Keys.DOWN]) {
                 this.mPresence.setVelocity([avZX, avZY, avZZ]);
+                this.setCameraPosOrient(this._calcCamPos());
             }
             if (this.keyIsDown[this.Keys.LEFT]) {
-                this.avPointX -= 10;
-                var q = this._euler2Quat(this.avPointX * -.25, this.avPointY * -.25, 0);
+                this.avPointX += 2.5;
+                var q = this._euler2Quat(this.avPointX, this.avPointY, 0);
                 this.mPresence.setOrientation(q);
+                this.setCameraPosOrient(this._calcCamPos(), q, 0.7);
             }
             if (this.keyIsDown[this.Keys.RIGHT]) {
-                this.avPointX += 10;
-                var q = this._euler2Quat(this.avPointX * -.25, this.avPointY * -.25, 0);
+                this.avPointX -= 2.5;
+                var q = this._euler2Quat(this.avPointX, this.avPointY, 0);
                 this.mPresence.setOrientation(q);
+                this.setCameraPosOrient(this._calcCamPos(), q, 0.7);
             }
         }
 
@@ -178,16 +184,28 @@ var Example;
         this.updateGFX(this.mPresence);
     };
 
-    Example.BlessedScript.prototype.updateAnimation = function (presence, remote) {
+
+    Example.BlessedScript.prototype.updateAnimation = function(presence, remote){
         var vel = remote.predictedVelocity();
         var is_mobile = (vel[0] != 0 || vel[1] != 0 || vel[2] != 0);
-
+        
         var cur_anim = remote.cur_anim;
         var new_anim = (is_mobile ? 'walk' : 'idle');
-
+        
         if (cur_anim != new_anim) {
             this.animate(presence, remote, new_anim);
             remote.cur_anim = new_anim;
         }
+    };
+    Example.BlessedScript.prototype._calcCamPos = function(){
+        // calculate camera position from presence
+        var pos = this.mPresence.position(new Date());
+        var x = Math.sin(this.avPointX * 0.0174532925);
+        var z = Math.cos(this.avPointX * 0.0174532925);
+        var dist = 20;
+        pos[0] += dist*x;
+        pos[1] += 1;
+        pos[2] += dist*z;
+        return pos;
     };
 })();

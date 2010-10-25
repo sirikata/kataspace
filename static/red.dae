@@ -8,8 +8,8 @@
 			<copyright></copyright>
 			<source_data>file:///home/dbm/bench/blend/happy.blend</source_data>
 		</contributor>
-		<created>2010-10-24T17:04:03.918010</created>
-		<modified>2010-10-24T17:04:03.918037</modified>
+		<created>2010-10-23T17:10:12.533888</created>
+		<modified>2010-10-23T17:10:12.533909</modified>
 		<unit meter="0.01" name="centimeter"/>
 		<up_axis>Z_UP</up_axis>
 	</asset>
@@ -146,9 +146,9 @@
 		<visual_scene id="Scene" name="Scene">
 			<node layer="L1" id="Cube" name="Cube">
 				<matrix>
-					-0.66325 -0.00032 0.0 0.0 
-					0.00021 -1.0 0.0 -1.2934 
-					0.0 0.0 0.7568 -1.61705 
+					-1.00003 0.00934 0.0 0.0 
+					-0.00342 -2.72773 0.0 0.0 
+					0.0 0.0 0.56638 0.0 
 					0.0 0.0 0.0 1.0 
 				</matrix>
 				<instance_geometry url="#Cube_002">
@@ -163,8 +163,8 @@
 			</node>
 			<node layer="L1" id="Lamp" name="Lamp">
 				<matrix>
-					0.67182 -0.5663 0.47745 0.03839 
-					0.73865 0.56023 -0.37488 -0.02849 
+					0.46627 -0.68817 0.55589 0.03839 
+					0.88292 0.40121 -0.24389 -0.02849 
 					-0.05519 0.60452 0.79467 4.20117 
 					0.0 0.0 0.0 1.0 
 				</matrix>
