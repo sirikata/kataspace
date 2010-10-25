@@ -55,7 +55,7 @@ JQUERY_UI_FILE=jquery-ui
 jquery-ui :
 	cd $(JQUERY_DIR) && \
 	wget -O $(JQUERY_UI_ZIP) $(JQUERY_UI_URL) && \
-	unzip $(JQUERY_UI_ZIP)
+	unzip -u $(JQUERY_UI_ZIP)
 
 
 JNOTIFY_DIR=externals
@@ -65,7 +65,7 @@ JNOTIFY_ZIP=jnotify.zip
 jnotify :
 	cd $(JNOTIFY_DIR) && \
 	wget -O $(JNOTIFY_ZIP) $(JNOTIFY_URL) && \
-	unzip $(JNOTIFY_ZIP)
+	unzip -u $(JNOTIFY_ZIP)
 
 
 .PHONY : submodules our-submodules katajs-submodules katajs jquery-ui jnotify
