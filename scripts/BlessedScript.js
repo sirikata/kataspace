@@ -167,13 +167,13 @@ var Example;
                 this.avPointX += 2.5;
                 var q = this._euler2Quat(this.avPointX, this.avPointY, 0);
                 this.mPresence.setOrientation(q);
-                this.setCameraPosOrient(this._calcCamPos(), q, .6);
+                this.setCameraPosOrient(this._calcCamPos(), q, 0.7);
             }
             if (this.keyIsDown[this.Keys.RIGHT]) {
                 this.avPointX -= 2.5;
                 var q = this._euler2Quat(this.avPointX, this.avPointY, 0);
                 this.mPresence.setOrientation(q);
-                this.setCameraPosOrient(this._calcCamPos(), q, .6);
+                this.setCameraPosOrient(this._calcCamPos(), q, 0.7);
             }
         }
 
