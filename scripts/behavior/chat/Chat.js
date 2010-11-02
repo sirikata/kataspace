@@ -33,9 +33,9 @@
 // We use protocol buffers just to encode the string, we could also
 // setup real messages
 // FIXME we shouldn't have to specify ../../
-Kata.include("../../scripts/behavior/chat/Chat.pbj.js");
-
-(function() {
+Kata.require([
+    ['externals/protojs/protobuf.js','externals/protojs/pbj.js','../../scripts/behavior/chat/Chat.pbj.js']
+], function() {
 
     if (typeof(Kata.Behavior) == "undefined")
         Kata.Behavior = {};
@@ -197,4 +197,4 @@ Kata.include("../../scripts/behavior/chat/Chat.pbj.js");
         }
     };
 
- })();
+}, '../../scripts/behavior/chat/Chat.js');

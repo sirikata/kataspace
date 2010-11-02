@@ -30,9 +30,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-Kata.include("katajs/oh/GUISimulation.js");
-
-Kata.defer(function() {
+Kata.require([
+    'katajs/oh/GUISimulation.js'
+], function() {
 
     var SUPER = Kata.GUISimulation.prototype;
 

@@ -1,11 +1,13 @@
 
-Kata.include("katajs/oh/GraphicsScript.js");
+// Global namespace.
+var Example;
+
+Kata.require([
+    'katajs/oh/GraphicsScript.js',
 // FIXME we want to be able to specify a centralized offset so we
 // don't have to have this ../../ stuff here.
-Kata.include("../../scripts/behavior/chat/Chat.js");
-
-var Example;
-(function(){
+    '../../scripts/behavior/chat/Chat.js'
+], function(){
     if (typeof(Example) === "undefined") {
         Example = {};
     }
@@ -14,12 +16,12 @@ var Example;
     Example.BlessedScript = function(channel, args){
         SUPER.constructor.call(this, channel, args, Kata.bind(this.updateAnimation, this));
 
-        console.log("args:", args, args.mesh, document.URL + "blue.dae")
+        console.log("args:", args, args.visual.mesh, Kata.scriptRoot, "blue.dae");
         this.connect(args, null, Kata.bind(this.connected, this));
         
         this.keyIsDown = {};
         this.avSpeed = 0;
-        this.avVel = [0,0,0]
+        this.avVel = [0,0,0];
         this.avPointX=0;
         this.avPointY=0;
         this.avPos=[0,0,0];
@@ -215,4 +217,4 @@ var Example;
     Example.BlessedScript.prototype._calcCamOrient = function(){
         return this.mPresence.predictedOrientation(new Date());
     };
-})();
+}, '../../scripts/BlessedScript.js');

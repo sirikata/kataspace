@@ -1,3 +1,6 @@
+<!--
+self.onmessage=function(msg){importScripts(msg.data);};
+/* -->
 <!-- KataJS Chat
 index.html
 Copyright (c) 2010, Ewen Cheslack-Postava
@@ -48,20 +51,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         </script>
         <script type="text/javascript">
             Kata.WEB_WORKERS_ENABLED = false;
+            Kata.bootstrapWorker=window.location.href;
         </script>
-        <script type="text/javascript" src="../externals/katajs/katajs/gfx/WebGLCompat.js">
-        </script>
-        <script type="text/javascript" src="../externals/katajs/externals/o3djs/base.js">
-        </script>
-        <script type="text/javascript" src="../externals/katajs/externals/o3d-webgl/base.js">
-        </script>
-        <script type="text/javascript" src="../externals/katajs/externals/GLGE/glge_math.js">
-        </script>
-        <script type="text/javascript" src="../externals/katajs/externals/GLGE/glge.js">
-        </script>
-        <script type="text/javascript" src="../externals/katajs/externals/GLGE/glge_input.js">
-        </script>
-        <script type="text/javascript" src="../externals/katajs/externals/GLGE/glge_collada.js">
+        <script type="text/javascript" src="../externals/katajs/katajs.compiled.js">
         </script>
         <script type="text/javascript">
 
@@ -73,7 +65,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             Kata.include("katajs/core/Location.js");
             Kata.include("katajs/gfx/TextGraphics.js");
             Kata.include("katajs/gfx/glgegfx.js");
-            Kata.include("katajs/gfx/o3dgfx.js");
             Kata.include("katajs/oh/Script.js");
             Kata.include("katajs/oh/ObjectHost.js");
             Kata.include("katajs/oh/impl/BootstrapScript.js");
@@ -82,13 +73,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
         <script type="text/javascript" src="../scripts/ui/login.js">
         </script>
-        <!-- FIXME currently, including this explicitly seems to be the only
-        way for it not to cause an exception when chat.js is evaluated
-        before GUISimulation is.
-        -->
-        <script type="text/javascript" src="../externals/katajs/katajs/oh/GUISimulation.js">
-        </script>
-        <script type="text/javascript" src="../scripts/ui/chat.js">
         </script>
 
         <!-- Deployment-specific configuraton. Ideally, everything
@@ -126,10 +110,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
                 $('#container').hide();
 
-                loginui = new LoginUI( $("#login"), Avatars, handleLogin);
-                loadGFX();
+                Kata.require([
+                    kata_base_offset + 'scripts/ui/login.js'
+                ], function() {
+                    loginui = new LoginUI( $("#login"), Avatars, handleLogin);
+                    loadGFX();
 
-                $('#title').append(Title);
+                    $('#title').append(Title);
+                });
             }
 
             function loadGFX(){
@@ -138,29 +126,56 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
                 $('#container').show();
 
-                window.kata = new Kata.MainThread(kata_base_offset + "scripts/BlessedScript.js", "Example.BlessedScript", {
-                    space: SpaceURL,
-                    name: loginName,
-                    scale : avatarScale,
-                    visual: {
-                        mesh: avatarURL
+                function glgeReady () {
+                    window.kata = new Kata.MainThread(
+                        kata_base_offset + "scripts/BlessedScript.js",
+                        "Example.BlessedScript",
+                        {
+                        space: SpaceURL,
+                        name: loginName,
+                        scale : avatarScale,
+                        visual: {mesh: avatarURL}
+                        });
+                    graphics = new Kata.GraphicsSimulation(driver, window.kata.getChannel(), document.getElementById("container"));
+                    chats = new ChatUI(window.kata.getChannel(), loginName, 300);
+                    chats.create("Chat");
+                }
+
+                Kata.require([
+                    'katajs/oh/MainThread.js',
+                    'katajs/space/loop/Space.js',
+                    'katajs/oh/GraphicsSimulation.js',
+                    'katajs/gfx/TextGraphics.js',
+                    'katajs/gfx/glgegfx.js',
+                    'katajs/oh/Script.js',
+                    'katajs/oh/plugins/loop/LoopbackSpaceConnection.js',
+                    kata_base_offset + 'scripts/ui/chat.js'
+                ], function() {
+                    if (driver == "GLGE") {
+                        g_GLGE_doc = new GLGE.Document();
+                        g_GLGE_doc.onLoad = glgeReady;
+                        g_GLGE_doc.load("glge_level.xml");
+                    } else {
+                        glgeReady();
                     }
                 });
-                graphics = new Kata.GraphicsSimulation(driver, window.kata.getChannel(), document.getElementById("container"));
-
-                chats = new ChatUI(window.kata.getChannel(), loginName, 300);
-                chats.create("Chat");
             }
 
-            if (driver == "GLGE") {
-                g_GLGE_doc = new GLGE.Document();
-                g_GLGE_doc.onLoad = onDocReady;
-                g_GLGE_doc.load("glge_level.xml");
-            }
-            else {
+            if (driver == "o3d") {
+                // o3d uses document.write internally. Must be loaded specially.
+                document.write(
+                    "<script type='text/javascript' src='" +
+                    Kata.scriptRoot + "externals/o3djs/base.js"+"'></scr"+"ipt>" +
+                    "<script type='text/javascript' src='" +
+                    Kata.scriptRoot + "externals/o3d-webgl/base.js"+"'></scr"+"ipt>"+
+                    "<script type='text/javascript' src='" +
+                    Kata.scriptRoot + "katajs/gfx/o3dgfx.js"+"'></scr"+"ipt>" +
+                    "<script type='text/javascript'>\n"+
+                    "Kata.require(['katajs/gfx/o3dgfx.js'], onDocReady);\n"+
+                    "</scr"+"ipt>");
+            } else {
                 window.onload = onDocReady;
             }
-            Kata.resolveDeferredHeaders();
         </script>
     </head>
     <body>
@@ -173,3 +188,4 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         </div>
     </body>
 </html>
+<!-- */ // -->
