@@ -32,6 +32,7 @@ $(CHAT_PROTOCOL_OUTPUT)/%.pbj.js: $(CHAT_PROTOCOL_INPUT)/%.pbj
 
 katajs : katajs-submodules
 	$(MAKE) -C externals/katajs
+	$(MAKE) -C externals/katajs closure
 
 katajs-submodules : our-submodules
 	cd externals/katajs && \
