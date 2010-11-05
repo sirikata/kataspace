@@ -8,17 +8,23 @@ SpaceURL = "loop://localhost";
 
 Title = "KataSpace";
 
+(function(){
+var dirname = window.location.href.substr(0,
+                  window.location.href.lastIndexOf('/')+1);
+
 Avatars = [
     {
         name : "Big Red Box",
-        url : document.URL + "red.dae",
+        url : dirname + "red.dae",
         scale : 1.0,
-        preview : document.URL + "red.jpg"
+        preview : dirname + "red.jpg"
     },
     {
         name : "Small Blue Box",
-        url : document.URL + "blue.dae",
+        url : dirname + "blue.dae",
         scale : 0.3,
-        preview : document.URL + "blue.jpg"
+        preview : dirname + "blue.jpg"
     }
 ];
+
+})();
