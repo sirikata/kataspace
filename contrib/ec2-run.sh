@@ -24,4 +24,7 @@ sudo god -c space.god.rb
 
 # Run lighttpd as the web server
 cd kataspace.git
+# lighttpd on Ubuntu starts itself automatically, so stop it first
+sudo /etc/init.d/lighttpd stop
+# And then run our version
 sudo ./externals/katajs/contrib/lighttpd.py 80 &
