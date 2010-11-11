@@ -20,7 +20,7 @@ sed \
     -e "s|w.stop_timeout|#w.stop_timeout|" \
     <sirikata.git/tools/space/space.god.rb >space.god.rb
 # Run the space server god script
-sudo god -c space.god.rb
+sudo /var/lib/gems/1.8/bin/god -c space.god.rb
 
 # Run lighttpd as the web server
 cd kataspace.git

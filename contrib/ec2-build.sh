@@ -7,17 +7,20 @@
 DIR=`pwd`
 GITHUB_USER=$1
 
-# Install dependencies for Sirikata space server, including god for
-# ensuring the server stays alive
+# Install dependencies for Sirikata space server
 sudo apt-get install -y \
 git-core cmake sed unzip zip automake1.9 jam g++ \
 libzzip-dev autoconf libtool bison patch \
 gperf subversion libtool ruby libgsl0-dev \
-libssl-dev libbz2-dev god
+libssl-dev libbz2-dev
 
 # Install dependencies for KataSpace/KataJS, including web
 # server. protojs requires java to build unfortunately.
 sudo apt-get install -y lighttpd default-jre
+
+# Install the god gem manually. The version in ubuntu is ancient.
+sudo apt-get install -y ruby1.8-dev
+sudo gem install god
 
 # Check out and build Sirikata space server
 git clone git://github.com/sirikata/sirikata.git sirikata.git
