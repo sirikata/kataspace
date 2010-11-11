@@ -50,6 +50,12 @@ LoginUI = function(dialog_div, avatars, cb) {
     this.mNameEntry.setAttribute('id', '__login');
     this.mNameEntry.setAttribute('type', 'text');
     this.mNameEntry.setAttribute('size', '33');
+    $(this.mNameEntry).keypress(
+        function(event) {
+            if (event.keyCode == '13')
+                self._handleLoginClicked();
+        }
+    );
     this.mDialogDiv[0].appendChild(this.mNameEntry);
     /// Avatar label
     var avatar_label_p = document.createElement('p');
