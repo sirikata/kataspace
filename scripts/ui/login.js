@@ -100,6 +100,7 @@ LoginUI = function(dialog_div, avatars, cb) {
                 if (!self.mSafeToClose)
                     self.mDialogDiv.dialog("open");
             },
+            open: function(event, ui) { $(this).parent().children().children('.ui-dialog-titlebar-close').hide(); },
             width: 400,
             height: 450
 	}
