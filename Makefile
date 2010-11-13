@@ -51,22 +51,30 @@ JQUERY_DIR=externals
 JQUERY_UI_VERSION=1.8.6
 JQUERY_UI_URL=http://jqueryui.com/download/jquery-ui-$(JQUERY_UI_VERSION).custom.zip
 JQUERY_UI_ZIP=jquery-ui-$(JQUERY_UI_VERSION).custom.zip
+JQUERY_UI_FULL_ZIP=$(JQUERY_DIR)/$(JQUERY_UI_ZIP)
 JQUERY_UI_FILE=jquery-ui
 
-jquery-ui :
+jquery-ui : $(JQUERY_UI_FULL_ZIP)
 	cd $(JQUERY_DIR) && \
-	wget -O $(JQUERY_UI_ZIP) $(JQUERY_UI_URL) && \
 	unzip -u $(JQUERY_UI_ZIP)
+
+$(JQUERY_UI_FULL_ZIP) :
+	cd $(JQUERY_DIR) && \
+	wget -O $(JQUERY_UI_ZIP) $(JQUERY_UI_URL)
 
 
 JNOTIFY_DIR=externals
 JNOTIFY_URL=http://www.givainc.com/labs/downloads/jquery.jnotify.zip
 JNOTIFY_ZIP=jnotify.zip
+JNOTIFY_FULL_ZIP=$(JNOTIFY_DIR)/$(JNOTIFY_ZIP)
 
-jnotify :
+jnotify : $(JNOTIFY_FULL_ZIP)
 	cd $(JNOTIFY_DIR) && \
-	wget -O $(JNOTIFY_ZIP) $(JNOTIFY_URL) && \
 	unzip -u $(JNOTIFY_ZIP)
+
+$(JNOTIFY_FULL_ZIP) :
+	cd $(JNOTIFY_DIR) && \
+	wget -O $(JNOTIFY_ZIP) $(JNOTIFY_URL)
 
 
 .PHONY : submodules our-submodules katajs-submodules katajs jquery-ui jnotify
