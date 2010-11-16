@@ -1,6 +1,81 @@
 This is a simple interactive, multi-user, 3D, online application,
 based on KataJS and Sirikata.
 
+Easy Deployment
+===============
+Probably the easiest way to get the application up and running for
+testing is to install using the EC2 scripts. Note that these are
+really just a scripted version of the full instructions below, so they
+will also work on a regular Ubuntu installation and could be easily
+adapted to other distributions and platforms. However, many services
+run as root (god for monitoring the space server and the web server
+for running on port 80), so an isolated environment is encouraged.
+
+(NOTE: The ec2-build.sh script installed default-jre, which currently
+ hangs on some micro instances on EC2. If you want to host on a micro
+ instance, you might need to run the install portion with an EBS image
+ on a larger instance, then move it back to a micro instance.)
+
+To build and deploy, use the ec2 scripts in contrib as follows:
+1. Setup a security group that leaves TCP connections for SSH (22),
+   Web (80) and Sirikata (7777 by default).
+2. Boot up a base image, e.g.
+   099720109477/ebs/ubuntu-images/ubuntu-maverick-10.10-i386-server-20101007.1
+   using this security group.
+3. Copy the ec2 scripts onto the server:
+    local> scp -i me.pem contrib/ec2-build.sh contrib/ec2-run.sh ec2-x-y-z-w.compute.amazonaws.com
+4. SSH into the server
+    local> ssh -i me.pem ubuntu@ec2-x-y-z-w.compute.amazonaws.com
+5. Run the build script. This installs system dependencies (will ask
+   for sudo password), checkout out both source trees, compile the
+   space server and grab some extra dependencies for KataJS/Kataspace.
+    remote> ./ec2-build.sh my_github_account
+   Currently you need to provide your GitHub account to access the
+   private Kataspace repository.  Note that unless you update any
+   source code, you should only need to perform this step once.
+6. Customize your deployment. At a minimum, you need to edit
+   scripts/deployment.js to point to your server. For example
+    SpaceURL = "loop://localhost";
+   would become
+    SpaceURL = "sirikata://ec2-x-y-z-w.compute.amazonaws.com:7777";
+   Currently you need to do this manually to make sure you get the
+   hostname correct.  Also feel free to modify other setings in this
+   file, for example to add your own avatars.
+6. Run the servers.
+    remote> ./ec2-run.sh
+   This starts the God, which in turn starts the Sirikata space
+   server. It also starts lighttpd on port 80, serving files directly
+   from the Kataspace directory.
+7. Connect to the server. Visit
+   http://ec2-x-y-z-w.compute.amazonaws.com/static/ to start using the
+   space.
+
+Full Instructions
+=================
+The following gives the full instructions for compiling the space
+server, running it, and running the application, based on KataJS, from
+on a web server.
+
+Server
+------
+To interact with other users we connect to a Sirikata space server.
+See http://sirikata.com for details.  If you want to set up a server
+to connect to, download the code for Sirikata and build the space
+server. Using the minimal set of dependencies is sufficient because
+only the server component is used -- KataJS provides the client-side
+code for connecting to a Sirikata space.
+
+Once you have the code, simply run the space server
+(sirikata/build/cmake/space, append _d for the debug version). The
+appropriate ports are hard-coded into the application to work with the
+defaults.  If you need to use different ports, or want to point to a
+server other than localhost, make the appropriate changes in index.html.
+
+To "protect" against crashes, you can use monitoring software to
+ensure the server is restored in case of a crash. The EC2 scripts use
+God (http://god.rubyforge.org/), and the Sirikata code has a sample
+God script (under tools/space/space.god.rb).
+
 Client
 ------
 The code in this repository, along with KataJS, included as an
@@ -23,18 +98,3 @@ localhost:8888.  To view the application, enter
 http://localhost:8888/static/
 
 into your browser.
-
-Server
-------
-To interact with other users we connect to a Sirikata space server.
-See http://sirikata.com for details.  If you want to set up a server
-to connect to, download the code for Sirikata and build the space
-server. Using the minimal set of dependencies is sufficient because
-only the server component is used -- KataJS provides the client-side
-code for connecting to a Sirikata space.
-
-Once you have the code, simply run the space server
-(sirikata/build/cmake/space, append _d for the debug version). The
-appropriate ports are hard-coded into the application to work with the
-defaults.  If you need to use different ports, or want to point to a
-server other than localhost, make the appropriate changes in index.html.
