@@ -34,26 +34,26 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         <title>Chat</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <!-- Chat UI -->
-        <link rel="stylesheet" href="../externals/css/smoothness/jquery-ui-1.8.6.custom.css" />
-        <script type="text/javascript" src="../externals/js/jquery-1.4.2.min.js">
+        <link rel="stylesheet" href="externals/css/smoothness/jquery-ui-1.8.6.custom.css" />
+        <script type="text/javascript" src="externals/js/jquery-1.4.2.min.js">
         </script>
-        <script type="text/javascript" src="../externals/js/jquery-ui-1.8.6.custom.min.js">
+        <script type="text/javascript" src="externals/js/jquery-ui-1.8.6.custom.min.js">
         </script>
-        <link type="text/css" href="../css/jquery.ui.chatbox.css" rel="stylesheet" />
-        <script type="text/javascript" src="../scripts/jquery.ui.chatbox.js">
+        <link type="text/css" href="css/jquery.ui.chatbox.css" rel="stylesheet" />
+        <script type="text/javascript" src="scripts/jquery.ui.chatbox.js">
         </script>
         <!-- Notifications -->
-        <link type="text/css" href="../externals/css/jquery.jnotify.css" rel="stylesheet" media="all" />
-        <script type="text/javascript" src="../externals/lib/jquery.jnotify.js">
+        <link type="text/css" href="externals/css/jquery.jnotify.css" rel="stylesheet" media="all" />
+        <script type="text/javascript" src="externals/lib/jquery.jnotify.js">
         </script>
         <!-- Core must be loaded before web-socket-js because it cludges window.console -->
-        <script type="text/javascript" src="../externals/katajs/katajs/core/Core.js">
+        <script type="text/javascript" src="externals/katajs/katajs/core/Core.js">
         </script>
         <script type="text/javascript">
             Kata.WEB_WORKERS_ENABLED = false;
             Kata.bootstrapWorker=window.location.href;
         </script>
-        <script type="text/javascript" src="../externals/katajs/katajs.compiled.js">
+        <script type="text/javascript" src="externals/katajs/katajs.compiled.js">
         </script>
         <script type="text/javascript">
 
@@ -71,7 +71,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             Kata.include("katajs/oh/GraphicsScript.js");
         </script>
 
-        <script type="text/javascript" src="../scripts/ui/login.js">
+        <script type="text/javascript" src="scripts/ui/login.js">
         </script>
         </script>
 
@@ -79,9 +79,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         that needs to be modified to make this run on different servers
         is isolated in this file.
         -->
-        <script type="text/javascript" src="../scripts/deployment.js">
+        <script type="text/javascript" src="scripts/deployment.js">
         </script>
-        <link type="text/css" href="../css/deployment.css" rel="stylesheet" media="all" />
+        <link type="text/css" href="css/deployment.css" rel="stylesheet" media="all" />
 
         <script>
             // This gives the offset that Kata.include needs prepended
@@ -155,7 +155,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                     if (driver == "GLGE") {
                         g_GLGE_doc = new GLGE.Document();
                         g_GLGE_doc.onLoad = glgeReady;
-                        g_GLGE_doc.load("glge_level.xml");
+                        g_GLGE_doc.load("static/glge_level.xml");
                     } else {
                         glgeReady();
                     }

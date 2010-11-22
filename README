@@ -47,7 +47,7 @@ To build and deploy, use the ec2 scripts in contrib as follows:
    server. It also starts lighttpd on port 80, serving files directly
    from the Kataspace directory.
 7. Connect to the server. Visit
-   http://ec2-x-y-z-w.compute.amazonaws.com/static/ to start using the
+   http://ec2-x-y-z-w.compute.amazonaws.com/ to start using the
    space.
 
 Full Instructions
@@ -95,6 +95,6 @@ convenient way to do that is to run
 from this directory, which uses lighttp to serve this directory from
 localhost:8888.  To view the application, enter
 
-http://localhost:8888/static/
+http://localhost:8888/
 
 into your browser.
