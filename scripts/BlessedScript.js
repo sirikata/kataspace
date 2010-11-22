@@ -149,7 +149,7 @@ Kata.require([
                 this.mPresence.setVelocity([-avZX, -avZY, -avZZ]);
             }
             if (this.keyIsDown[this.Keys.DOWN]) {
-                this.mPresence.setVelocity([avZX, avZY, avZZ]);
+                //this.mPresence.setVelocity([avZX, avZY, avZZ]);
             }
             if (this.keyIsDown[this.Keys.LEFT]) {
                 this.mPresence.setAngularVelocity(
