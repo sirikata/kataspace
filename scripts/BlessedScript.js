@@ -20,12 +20,6 @@ Kata.require([
         this.connect(args, null, Kata.bind(this.connected, this));
         
         this.keyIsDown = {};
-        this.avSpeed = 0;
-        this.avVel = [0,0,0];
-        this.avPointX=0;
-        this.avPointY=0;
-        this.avPos=[0,0,0];
-        this.avOrient=[0,0,0,1];
 
         this.mChatBehavior =
             new Kata.Behavior.Chat(
@@ -79,8 +73,8 @@ Kata.require([
         this.enableGraphicsViewport(presence, 0);
         presence.setQueryHandler(Kata.bind(this.proxEvent, this));
         presence.setQuery(0);
-        presence.setPosition(this.avPos);
-        this.setCameraPosOrient(this._calcCamPos(), this.avOrient, 0.0);
+        presence.setPosition([0,0,0]);
+        this.setCameraPosOrient(this._calcCamPos(), [0,0,0,1], 0.0);
         // FIXME both this and the camera controls in GraphicsScript
         // are running on timers because the ones in GraphicsScript
         // don't accept velocity
@@ -89,7 +83,7 @@ Kata.require([
     };
 
     Example.BlessedScript.prototype.updateCamera = function() {
-        this.setCameraPosOrient(this._calcCamPos(), this._calcCamOrient(), 0.7);
+        this.setCameraPosOrient(this._calcCamPos(), this._calcCamOrient(), 0.90);
     };
 
     Example.BlessedScript.prototype.Keys = {
@@ -97,21 +91,6 @@ Kata.require([
         DOWN : 40,
         LEFT : 37,
         RIGHT : 39
-    };
-
-    Example.BlessedScript.prototype._euler2Quat = function(yaw, pitch, roll){
-        // takes degrees; roll = rotation about z, pitch = x, yaw = y
-        var k = 0.00872664625; // deg2rad/2
-        var yawcos = Math.cos(roll * k);
-        var yawsin = Math.sin(roll * k);
-        var pitchcos = Math.cos(pitch * k);
-        var pitchsin = Math.sin(pitch * k);
-        var rollcos = Math.cos(yaw * k);
-        var rollsin = Math.sin(yaw * k);
-        return [rollcos * pitchsin * yawcos + rollsin * pitchcos * yawsin, 
-                rollsin * pitchcos * yawcos - rollcos * pitchsin * yawsin, 
-                rollcos * pitchcos * yawsin - rollsin * pitchsin * yawcos, 
-                rollcos * pitchcos * yawcos + rollsin * pitchsin * yawsin];
     };
 
     Example.BlessedScript.prototype._handleGUIMessage = function (channel, msg) {
@@ -125,8 +104,6 @@ Kata.require([
                 this.middleDown = true;
             if (msg.event.which == 2) {
                 this.rightDown = true;
-                this.dragStartX = parseFloat(msg.event.x)*-.25 - this.avPointX;
-                this.dragStartY = parseFloat(msg.event.y)*-.25 - this.avPointY;
             }
         }
         if (msg.msg == "mouseup") {
@@ -153,6 +130,8 @@ Kata.require([
             this.keyIsDown[msg.event.keyCode] = false;
             if ( !this.keyIsDown[this.Keys.UP] && !this.keyIsDown[this.Keys.DOWN])
                 this.mPresence.setVelocity([0, 0, 0]);
+            if ( !this.keyIsDown[this.Keys.LEFT] && !this.keyIsDown[this.Keys.RIGHT])
+                this.mPresence.setAngularVelocity(Kata.Quaternion.identity());
         }
 
         if (msg.msg == "keydown") {
@@ -173,14 +152,14 @@ Kata.require([
                 this.mPresence.setVelocity([avZX, avZY, avZZ]);
             }
             if (this.keyIsDown[this.Keys.LEFT]) {
-                this.avPointX += 2.5;
-                var q = this._euler2Quat(this.avPointX, this.avPointY, 0);
-                this.mPresence.setOrientation(q);
+                this.mPresence.setAngularVelocity(
+                    Kata.Quaternion.fromAxisAngle([0, 1, 0], 2.0*Math.PI/5.0)
+                );
             }
             if (this.keyIsDown[this.Keys.RIGHT]) {
-                this.avPointX -= 2.5;
-                var q = this._euler2Quat(this.avPointX, this.avPointY, 0);
-                this.mPresence.setOrientation(q);
+                this.mPresence.setAngularVelocity(
+                    Kata.Quaternion.fromAxisAngle([0, 1, 0], -2.0*Math.PI/5.0)
+                );
             }
         }
 
@@ -203,16 +182,14 @@ Kata.require([
             remote.cur_anim = new_anim;
         }
     };
-    Example.BlessedScript.prototype._calcCamPos = function(){
-        // calculate camera position from presence
+    Example.BlessedScript.prototype._calcCamPos = function() {
+        var orient = new Kata.Quaternion(this._calcCamOrient());
         var pos = this.mPresence.predictedPosition(new Date());
-        var x = Math.sin(this.avPointX * 0.0174532925);
-        var z = Math.cos(this.avPointX * 0.0174532925);
-        var dist = 5;
-        pos[0] += dist*x;
-        pos[1] += 2;
-        pos[2] += dist*z;
-        return pos;
+        var offset = [0, 2, 5];
+        var oriented_offset = orient.multiply(offset);
+        return [pos[0] + oriented_offset[0],
+                pos[1] + oriented_offset[1],
+                pos[2] + oriented_offset[2]];
     };
     Example.BlessedScript.prototype._calcCamOrient = function(){
         return this.mPresence.predictedOrientation(new Date());
