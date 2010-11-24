@@ -18,7 +18,7 @@ libssl-dev libbz2-dev
 sudo apt-get install -y lighttpd default-jre
 
 # Install the god gem manually. The version in ubuntu is ancient.
-sudo apt-get install -y ruby1.8-dev
+sudo apt-get install -y ruby1.8-dev rubygems
 sudo gem install god
 
 # Check out and build Sirikata space server
