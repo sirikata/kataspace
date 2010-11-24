@@ -216,6 +216,9 @@
 
 	    self.options.boxManager.init(self);
 
+            // No close buttons
+            uiChatboxTitlebarClose.hide();
+
 	    if(!self.options.hidden) {
 		uiChatbox.show();
 	    }
