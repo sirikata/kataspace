@@ -172,7 +172,8 @@ Kata.require([
 
     Example.BlessedScript.prototype.updateAnimation = function(presence, remote){
         var vel = remote.predictedVelocity();
-        var is_mobile = (vel[0] != 0 || vel[1] != 0 || vel[2] != 0);
+        var angspeed = remote.predictedAngularSpeed();
+        var is_mobile = (vel[0] != 0 || vel[1] != 0 || vel[2] != 0 || angspeed != 0);
         
         var cur_anim = remote.cur_anim;
         var new_anim = (is_mobile ? 'walk' : 'idle');
