@@ -29,9 +29,8 @@ To build and deploy, use the ec2 scripts in contrib as follows:
 5. Run the build script. This installs system dependencies (will ask
    for sudo password), checkout out both source trees, compile the
    space server and grab some extra dependencies for KataJS/Kataspace.
-    remote> ./ec2-build.sh my_github_account
-   Currently you need to provide your GitHub account to access the
-   private Kataspace repository.  Note that unless you update any
+    remote> ./ec2-build.sh
+   Note that unless you update any
    source code, you should only need to perform this step once.
 6. Customize your deployment. At a minimum, you need to edit
    scripts/deployment.js to point to your server. For example

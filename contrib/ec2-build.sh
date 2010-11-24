@@ -5,7 +5,6 @@
 # provided by Amazon is not supported).
 
 DIR=`pwd`
-GITHUB_USER=$1
 
 # Install dependencies for Sirikata space server
 sudo apt-get install -y \
@@ -32,7 +31,6 @@ make space tcpsst servermap-tabular core-local weight-exp weight-sqr weight-cons
 
 # Checkout and "build" Kataspace
 cd ${DIR}
-# Note that this is currently private, so you need to specify your GitHub user account
-git clone https://${GITHUB_USER}@github.com/katalabs/kataspace.git kataspace.git
+git clone git://github.com/katalabs/kataspace.git kataspace.git
 cd kataspace.git
 make
