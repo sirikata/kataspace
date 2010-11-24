@@ -151,14 +151,15 @@ Kata.require([
             if (this.keyIsDown[this.Keys.DOWN]) {
                 //this.mPresence.setVelocity([avZX, avZY, avZZ]);
             }
+            var full_rot_seconds = 10.0;
             if (this.keyIsDown[this.Keys.LEFT]) {
                 this.mPresence.setAngularVelocity(
-                    Kata.Quaternion.fromAxisAngle([0, 1, 0], 2.0*Math.PI/5.0)
+                    Kata.Quaternion.fromAxisAngle([0, 1, 0], 2.0*Math.PI/full_rot_seconds)
                 );
             }
             if (this.keyIsDown[this.Keys.RIGHT]) {
                 this.mPresence.setAngularVelocity(
-                    Kata.Quaternion.fromAxisAngle([0, 1, 0], -2.0*Math.PI/5.0)
+                    Kata.Quaternion.fromAxisAngle([0, 1, 0], -2.0*Math.PI/full_rot_seconds)
                 );
             }
         }
