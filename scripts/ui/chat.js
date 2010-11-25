@@ -31,7 +31,8 @@
  */
 
 Kata.require([
-    'katajs/oh/GUISimulation.js'
+    'katajs/oh/GUISimulation.js',
+    '../../scripts/util/url.js'
 ], function() {
 
     var SUPER = Kata.GUISimulation.prototype;
@@ -90,7 +91,8 @@ Kata.require([
     ChatUI.prototype._handleMessageSent = function(id, user, msg) {
         // Update the box
         var chatdiv = $("#"+this.mChats[0]); // FIXME only works for single mode
-        chatdiv.chatbox("option", "boxManager").addMsg(this.mName, msg);
+        var display_msg = URL.convertURLsToLinks(msg, true);
+        chatdiv.chatbox("option", "boxManager").addMsg(this.mName, display_msg);
         // Send the message
         this.mChannel.sendMessage(
             new Kata.ScriptProtocol.ToScript.GUIMessage(
@@ -133,7 +135,8 @@ Kata.require([
         }
         else if (revt.action == 'say') {
             var chatdiv = $("#"+this.mChats[0]); // FIXME only works for single mode
-            chatdiv.chatbox("option", "boxManager").addMsg(revt.name, revt.msg);
+            var display_msg = URL.convertURLsToLinks(revt.msg, true);
+            chatdiv.chatbox("option", "boxManager").addMsg(revt.name, display_msg);
         }
         else if (revt.action == 'exit') {
             var chatdiv = $("#"+this.mChats[0]); // FIXME only works for single mode
