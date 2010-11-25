@@ -33,6 +33,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <head>
         <title>Chat</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+        <script type="text/javascript" src="scripts/modernizr-1.6.min.js">
+        </script>
         <!-- Chat UI -->
         <link rel="stylesheet" href="externals/css/smoothness/jquery-ui-1.8.6.custom.css" />
         <script type="text/javascript" src="externals/js/jquery-1.4.2.min.js">
@@ -74,7 +77,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
         <script type="text/javascript" src="scripts/ui/login.js">
         </script>
-        </script>
 
         <!-- Deployment-specific configuraton. Ideally, everything
         that needs to be modified to make this run on different servers
@@ -110,6 +112,25 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                 docReady = true;
 
                 $('#container').hide();
+
+                var have_deps = true;
+                if (!Modernizr.webgl) {
+                    $.jnotify("Your browser doesn't support WebGL.", 'error', true);
+                    have_deps = false;
+                }
+                if (!Modernizr.websockets) {
+                    $.jnotify("Your browser doesn't support WebSockets.", 'error', true);
+                    have_deps = false;
+                }
+                if (!Modernizr.webworkers) {
+                    $.jnotify("Your browser doesn't support WebWorkers.", 'error', true);
+                    have_deps = false;
+                }
+
+                if (!have_deps) {
+                    $.jnotify("Currently we recommend the latest <a href=\"http://www.mozilla.com/en-US/firefox/all-beta.html\">Firefox 4 Beta</a> for all platforms.", 'error', true);
+                    return;
+                }
 
                 Kata.require([
                     kata_base_offset + 'scripts/ui/login.js'
