@@ -111,6 +111,29 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             function onDocReady(){
                 docReady = true;
 
+                // Disable scrolling since it interferes with normal navigation
+                var scrollPosition = [
+                    self.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft,
+                    self.pageYOffset || document.documentElement.scrollTop  || document.body.scrollTop
+                ];
+                $('html').
+                   data('scroll-position', scrollPosition).
+                   data('previous-overflow', $('html').css('overflow')).
+                   css('overflow', 'hidden');
+                window.scrollTo(scrollPosition[0], scrollPosition[1]);
+                $(window).
+                    scroll( function() {
+                        window.scrollTo(scrollPosition[0], scrollPosition[1]);
+                        return false;
+                    } ).
+                    keydown( function(e) {
+                        var k = e.keyCode;
+                        if(k >= 37 && k <= 40)
+                            return false;
+                    } )
+                ;
+
+
                 $('#container').hide();
 
                 var have_deps = true;
