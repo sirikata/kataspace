@@ -139,6 +139,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                     loadGFX();
 
                     $('#title').append(Title);
+                    $('#help').button().click(
+                        function() {
+                            $('#helpcontents').dialog("open");
+                        }
+                    ).hide();
+                    $('#helpcontents').dialog({
+                        autoOpen: false
+                    });
                 });
             }
 
@@ -147,6 +155,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                     return;
 
                 $('#container').show();
+
+                $('#help').show();
+                var positionHelp = function() {
+                    $('#help').position(
+                        { my: "left bottom", at: "left bottom", of: window }
+                    );
+                }
+                $(window).resize(positionHelp).scroll(positionHelp);
+                positionHelp();
 
                 function glgeReady () {
                     window.kata = new Kata.MainThread(
@@ -203,11 +220,17 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </head>
     <body>
         <div id="login" title="Login"></div>
-        <div class=".container-fullscreen">
+        <div class=".container-fullscreen" id="main">
             <div id="title" class="ui-widget" style="width:900px;margin:auto;padding:15px;font-size:150%">
             </div>
             <div class="view" style="margin:auto;position:relative;-webkit-box-shadow: rgba(0, 0, 0, 0.699219) 0px 0px 10px;" id="container">
             </div>
+        </div>
+        <div id="help">Help</div>
+        <div id="helpcontents" title="Help">
+          Use the arrow keys (up, left, and right) to make your avatar
+          walk around. Type messages into the box on the right to chat
+          with other participants.
         </div>
     </body>
 </html>

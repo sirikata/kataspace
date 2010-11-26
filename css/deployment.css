@@ -26,3 +26,7 @@ body {
 }
 
 .ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active { border: 1px solid #1971eb; }
+
+#help {
+    font-size: 75%;
+}
