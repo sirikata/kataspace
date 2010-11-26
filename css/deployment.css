@@ -30,3 +30,7 @@ body {
 #help {
     font-size: 75%;
 }
+
+.ui-chatbox-input-box {
+    resize: none;
+}

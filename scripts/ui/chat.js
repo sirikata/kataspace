@@ -77,7 +77,7 @@ Kata.require([
 
     // Reflow the layout of the chat boxes
     ChatUI.prototype.reflow = function() {
-        var cur_offset = 0;
+        var cur_offset = 10;
         for(var idx = 0; idx < this.mChats.length; idx++) {
             var chatdiv = $("#"+this.mChats[idx]);
             // Set to current offest
