@@ -16,9 +16,9 @@ Kata.require([
     Example.BlessedScript = function(channel, args){
         SUPER.constructor.call(this, channel, args, Kata.bind(this.updateAnimation, this));
 
-        console.log("args:", args, args.visual.mesh, Kata.scriptRoot, "blue.dae");
+        this._scale = args.scale;
         this.connect(args, null, Kata.bind(this.connected, this));
-        
+
         this.keyIsDown = {};
 
         this.mChatBehavior =
@@ -73,7 +73,7 @@ Kata.require([
         this.enableGraphicsViewport(presence, 0);
         presence.setQueryHandler(Kata.bind(this.proxEvent, this));
         presence.setQuery(0);
-        presence.setPosition([0,0,0]);
+        presence.setPosition([0, this._scale, 0]);
         this.setCameraPosOrient(this._calcCamPos(), [0,0,0,1], 0.0);
         // FIXME both this and the camera controls in GraphicsScript
         // are running on timers because the ones in GraphicsScript
