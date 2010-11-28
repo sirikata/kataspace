@@ -48,9 +48,9 @@ Kata.require([
 
         if (evt.msg !== 'disconnected') return;
 
-        var msg = "Lost connection to space.";
+        var msg = "You are no longer connected to the server. Please try to login again.";
         if (revt.reason !== undefined && revt.reason.length > 0)
-            msg = msg + " Reason: " + revt.reason;
+            msg = msg + "<br><br>Reason: " + revt.reason;
 
         var dialog_div = $('<div>' + msg + '</div>').appendTo($('body'));
         dialog_div.dialog(
@@ -59,7 +59,15 @@ Kata.require([
 	        modal: false,
                 closeOnEscape: false,
                 draggable: false,
-                open: function(event, ui) { $(this).parent().children().children('.ui-dialog-titlebar-close').hide(); }
+                title: "Connection Lost",
+	        buttons: {
+		    "OK": function() {
+                        location.reload(true);
+		    }
+	        },
+                close: function(event, ui) {
+                    location.reload(true);
+                }
             }
         );
     };
