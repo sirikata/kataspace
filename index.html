@@ -185,7 +185,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                 $('#help').show();
                 var positionHelp = function() {
                     $('#help').position(
-                        { my: "left bottom", at: "left bottom", of: window }
+                        { my: "right bottom", at: "right top", of: $('#container') }
                     );
                 }
                 $(window).resize(positionHelp).scroll(positionHelp);
