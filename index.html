@@ -176,6 +176,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                             $('#helpcontents').dialog("open");
                         }
                     ).hide();
+                     $('#help').addClass('gui-button').width(100).height(20);
                     $('#helpcontents').dialog({
                         autoOpen: false
                     });
@@ -260,7 +261,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             <div class="view" style="margin:auto;position:relative;-webkit-box-shadow: rgba(0, 0, 0, 0.699219) 0px 0px 10px;" id="container">
             </div>
         </div>
-        <div id="help">Help</div>
+        <div id="help" class="gui-button">Help</div>
         <div id="helpcontents" title="Help">
           Use the arrow keys (up, left, and right) to make your avatar
           walk around. Type messages into the box on the right to chat

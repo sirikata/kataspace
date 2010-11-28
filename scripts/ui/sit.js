@@ -48,8 +48,9 @@ Kata.require([
         };
         $(window).resize(posHelp).scroll(posHelp);
         button_div.button().click(
-            Kata.bind(this.toggleSit, this)
+            Kata.bind(this.toggleSit, this, button_div)
         );
+        button_div.addClass('gui-button').width(100).height(20);
         posHelp();
     };
     Kata.extend(SitUI, SUPER);
@@ -58,7 +59,12 @@ Kata.require([
     SitUI.prototype.handleGUIMessage = function(evt) {
     };
 
-    SitUI.prototype.toggleSit = function() {
+    SitUI.prototype.toggleSit = function(button) {
+        if (button.text() == "Sit")
+            button.text("Stand Up");
+        else
+            button.text("Sit");
+
         // Send the message
         this.mChannel.sendMessage(
             new Kata.ScriptProtocol.ToScript.GUIMessage(
