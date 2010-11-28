@@ -6,7 +6,8 @@ Kata.require([
     'katajs/oh/GraphicsScript.js',
 // FIXME we want to be able to specify a centralized offset so we
 // don't have to have this ../../ stuff here.
-    '../../scripts/behavior/chat/Chat.js'
+    '../../scripts/behavior/chat/Chat.js',
+    '../../scripts/behavior/animated/Animated.js'
 ], function(){
     if (typeof(Example) === "undefined") {
         Example = {};
@@ -28,6 +29,15 @@ Kata.require([
                 Kata.bind(this.chatExitEvent, this),
                 Kata.bind(this.chatMessageEvent, this)
             );
+        this.mAnimatedBehavior =
+            new Kata.Behavior.Animated(
+                this,
+                {
+                    idle: 'idle',
+                    forward: 'walk'
+                },
+                Kata.bind(this.animatedSetState, this)
+            );
     };
     Kata.extend(Example.BlessedScript, SUPER);
 
@@ -48,6 +58,11 @@ Kata.require([
     };
     Example.BlessedScript.prototype.chatMessageEvent = function(remote, name, msg) {
         this._sendHostedObjectMessage(this.createChatEvent('say', name, msg));
+    };
+
+
+    Example.BlessedScript.prototype.animatedSetState = function(remote, state) {
+        Kata.warn("animatedSetState");
     };
 
     Example.BlessedScript.prototype.handleChatGUIMessage = function(msg) {
@@ -140,6 +155,7 @@ Kata.require([
         }
         if (msg.msg == "keyup") {
             this.keyIsDown[msg.event.keyCode] = false;
+
             if ( !this.keyIsDown[this.Keys.UP] && !this.keyIsDown[this.Keys.DOWN])
                 this.mPresence.setVelocity([0, 0, 0]);
             if ( !this.keyIsDown[this.Keys.LEFT] && !this.keyIsDown[this.Keys.RIGHT])
@@ -190,7 +206,7 @@ Kata.require([
         
         var cur_anim = remote.cur_anim;
         var new_anim = (is_mobile ? 'walk' : 'idle');
-        
+
         if (cur_anim != new_anim) {
             this.animate(presence, remote, new_anim);
             remote.cur_anim = new_anim;

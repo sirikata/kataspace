@@ -11,6 +11,12 @@ CHAT_PROTOCOL_OUTPUT=scripts/behavior/chat
 THESE_PBJ=$(wildcard $(CHAT_PROTOCOL_INPUT)/*.pbj)
 THESE_PBJJS=$(patsubst $(CHAT_PROTOCOL_INPUT)/%,$(CHAT_PROTOCOL_OUTPUT)/%.js,$(THESE_PBJ))
 ALL_PBJJS += $(THESE_PBJJS)
+### Animated
+ANIMATED_PROTOCOL_INPUT=scripts/behavior/animated
+ANIMATED_PROTOCOL_OUTPUT=scripts/behavior/animated
+THESE_PBJ=$(wildcard $(ANIMATED_PROTOCOL_INPUT)/*.pbj)
+THESE_PBJJS=$(patsubst $(ANIMATED_PROTOCOL_INPUT)/%,$(ANIMATED_PROTOCOL_OUTPUT)/%.js,$(THESE_PBJ))
+ALL_PBJJS += $(THESE_PBJJS)
 
 
 ### Rules
@@ -26,6 +32,10 @@ $(PBJBIN) :
 
 $(CHAT_PROTOCOL_OUTPUT)/%.pbj.js: $(CHAT_PROTOCOL_INPUT)/%.pbj
 	@mkdir $(CHAT_PROTOCOL_OUTPUT) 2>/dev/null || true
+	$(PBJBIN) $< $@
+
+$(ANIMATED_PROTOCOL_OUTPUT)/%.pbj.js: $(ANIMATED_PROTOCOL_INPUT)/%.pbj
+	@mkdir $(ANIMATED_PROTOCOL_OUTPUT) 2>/dev/null || true
 	$(PBJBIN) $< $@
 
 # Submodules intialization
