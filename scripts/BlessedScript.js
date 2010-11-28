@@ -22,6 +22,8 @@ Kata.require([
 
         this.keyIsDown = {};
 
+        this.sitting = false;
+
         this.mChatBehavior =
             new Kata.Behavior.Chat(
                 args.name, this,
@@ -62,7 +64,8 @@ Kata.require([
 
 
     Example.BlessedScript.prototype.animatedSetState = function(remote, state) {
-        Kata.warn("animatedSetState");
+        remote._animatedState = state;
+        this.updateGFX(remote);
     };
 
     Example.BlessedScript.prototype.handleChatGUIMessage = function(msg) {
@@ -117,7 +120,8 @@ Kata.require([
         UP : 38,
         DOWN : 40,
         LEFT : 37,
-        RIGHT : 39
+        RIGHT : 39,
+        S : 83
     };
 
     Example.BlessedScript.prototype._handleGUIMessage = function (channel, msg) {
@@ -190,6 +194,14 @@ Kata.require([
                     Kata.Quaternion.fromAxisAngle([0, 1, 0], -2.0*Math.PI/full_rot_seconds)
                 );
             }
+
+            if (msg.event.keyCode == this.Keys.S) {
+                this.sitting = !this.sitting;
+                this.mAnimatedBehavior.setState({
+                    idle: (this.sitting ? 'sit' : 'idle'),
+                    forward: 'walk'
+                });
+            }
         }
 
         // We could be more selective about this, making sure we
@@ -205,7 +217,13 @@ Kata.require([
         var is_mobile = (vel[0] != 0 || vel[1] != 0 || vel[2] != 0 || angspeed != 0);
         
         var cur_anim = remote.cur_anim;
-        var new_anim = (is_mobile ? 'walk' : 'idle');
+        var cur_state = remote._animatedState;
+        if (cur_state === undefined)
+            cur_state = {
+                idle: 'idle',
+                forward: 'walk'
+            };
+        var new_anim = (is_mobile ? cur_state.forward : cur_state.idle);
 
         if (cur_anim != new_anim) {
             this.animate(presence, remote, new_anim);

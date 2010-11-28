@@ -105,7 +105,7 @@ Kata.require([
     Kata.Behavior.Animated.prototype._handleSetStateMessage = function(remoteID, msg) {
         if (this.mTrackedObjects[remoteID]) {
             var objdata = this.mTrackedObjects[remoteID];
-            this.mUpdateCallback(remoteID, msg);
+            this.mUpdateCallback( this.mParent.getRemotePresence(remoteID), msg);
         }
     };
 
@@ -174,7 +174,7 @@ Kata.require([
         }
 
         if (container_msg.HasField("state")) {
-            this._handleSetStateMessage(src.presenceID(), container_msg.chat);
+            this._handleSetStateMessage(src.presenceID(), container_msg.state);
         }
     };
 
