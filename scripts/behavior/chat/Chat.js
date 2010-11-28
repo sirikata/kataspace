@@ -174,7 +174,7 @@ Kata.require([
         else {
             // When we lose objects, we just make sure we clean up
             // after ourselves
-            this._handleExit(remote);
+            this._handleExit(remote.presenceID());
         }
     };
 
