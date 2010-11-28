@@ -73,6 +73,16 @@ Kata.require([
         this.mChatBehavior.chat(revt.msg);
     };
 
+    Example.BlessedScript.prototype.handleSitGUIMessage = function(msg) {
+        this.sitting = !this.sitting;
+        var new_state = {
+            idle: (this.sitting ? 'sit' : 'idle'),
+            forward: 'walk'
+        };
+        this.mPresence._animatedState = new_state;
+        this.mAnimatedBehavior.setState(new_state);
+    };
+
 
     Example.BlessedScript.prototype.proxEvent = function(remote, added){
         if (added) {
@@ -120,13 +130,15 @@ Kata.require([
         UP : 38,
         DOWN : 40,
         LEFT : 37,
-        RIGHT : 39,
-        S : 83
+        RIGHT : 39
     };
 
     Example.BlessedScript.prototype._handleGUIMessage = function (channel, msg) {
         if (msg.msg == 'chat')
             this.handleChatGUIMessage(msg);
+
+        if (msg.msg == 'sit')
+            this.handleSitGUIMessage(msg);
 
         if (msg.msg == "mousedown") {
             if (msg.event.which == 0) 
@@ -193,14 +205,6 @@ Kata.require([
                 this.mPresence.setAngularVelocity(
                     Kata.Quaternion.fromAxisAngle([0, 1, 0], -2.0*Math.PI/full_rot_seconds)
                 );
-            }
-
-            if (msg.event.keyCode == this.Keys.S) {
-                this.sitting = !this.sitting;
-                this.mAnimatedBehavior.setState({
-                    idle: (this.sitting ? 'sit' : 'idle'),
-                    forward: 'walk'
-                });
             }
         }
 
