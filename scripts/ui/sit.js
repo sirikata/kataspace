@@ -41,18 +41,16 @@ Kata.require([
         SUPER.constructor.call(this, channel);
 
         var button_div = $('<div>Sit</div>').appendTo($('body'));
-        button_div.show();
-/*
-        var positionHelp = function() {
+        var posHelp = function() {
             button_div.position(
-                { my: "right bottom", at: "center top", of: $('#container') }
+                { my: "center bottom", at: "center top", of: $('#container') }
             );
         };
-        positionHelp();
-*/
+        $(window).resize(posHelp).scroll(posHelp);
         button_div.button().click(
             Kata.bind(this.toggleSit, this)
         );
+        posHelp();
     };
     Kata.extend(SitUI, SUPER);
 
