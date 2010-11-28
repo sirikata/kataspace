@@ -77,6 +77,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
         <script type="text/javascript" src="scripts/ui/login.js">
         </script>
+        <script type="text/javascript" src="scripts/ui/session.js">
+        </script>
 
         <!-- Deployment-specific configuraton. Ideally, everything
         that needs to be modified to make this run on different servers
@@ -156,7 +158,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                 }
 
                 Kata.require([
-                    kata_base_offset + 'scripts/ui/login.js'
+                    kata_base_offset + 'scripts/ui/login.js',
+                    kata_base_offset + 'scripts/ui/session.js'
                 ], function() {
                     loginui = new LoginUI( $("#login"), Avatars, handleLogin);
                     loadGFX();
@@ -199,6 +202,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                         visual: {mesh: avatarURL}
                         });
                     graphics = new Kata.GraphicsSimulation(driver, window.kata.getChannel(), document.getElementById("container"));
+                    session = new SessionUI(window.kata.getChannel());
                     chats = new ChatUI(window.kata.getChannel(), loginName, 300);
                     chats.create("Chat");
                 }

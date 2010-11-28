@@ -67,7 +67,7 @@ Kata.require([
         }
     };
 
-    Example.BlessedScript.prototype.connected = function(presence){
+    Example.BlessedScript.prototype.connected = function(presence) {
         this.mPresence = presence;
 
         this.enableGraphicsViewport(presence, 0);
@@ -84,6 +84,14 @@ Kata.require([
         // don't accept velocity
         this.mCamUpdateTimer = setInterval(Kata.bind(this.updateCamera, this), 60);
         Kata.warn("Got connected callback.");
+    };
+
+    Example.BlessedScript.prototype.presenceInvalidated = function(presence, reason) {
+        SUPER.presenceInvalidated.call(this, presence, reason);
+        // Notify the GUI so it can present an error message
+        var evt = { reason : reason };
+        var msg = new Kata.ScriptProtocol.FromScript.GUIMessage("disconnected", evt);
+        this._sendHostedObjectMessage(msg);
     };
 
     Example.BlessedScript.prototype.updateCamera = function() {
