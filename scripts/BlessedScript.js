@@ -73,7 +73,11 @@ Kata.require([
         this.enableGraphicsViewport(presence, 0);
         presence.setQueryHandler(Kata.bind(this.proxEvent, this));
         presence.setQuery(0);
-        presence.setPosition([0, this._scale, 0]);
+        // Radius of avatars is about 2.5, with height about 4.33 ->
+        // normalized to radius 1 and height about 1.7. Shift by about
+        // .85 (1.7/2) instead of full scale. Would be nice to have a
+        // reliable, non-magic-numbers approach for this.
+        presence.setPosition([0, this._scale * .92, 0]);
         this.setCameraPosOrient(this._calcCamPos(), [0,0,0,1], 0.0);
         // FIXME both this and the camera controls in GraphicsScript
         // are running on timers because the ones in GraphicsScript
