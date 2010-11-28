@@ -123,7 +123,7 @@ Kata.require([
     };
 
     Example.BlessedScript.prototype.updateCamera = function() {
-        this.setCameraPosOrient(this._calcCamPos(), this._calcCamOrient(), 0.90);
+//        this.setCameraPosOrient(this._calcCamPos(), this._calcCamOrient(), 0.90);
     };
 
     Example.BlessedScript.prototype.Keys = {

@@ -14,16 +14,16 @@ var dirname = window.location.href.substr(0,
 
 Avatars = [
     {
-        name : "Big Red Box",
-        url : dirname + "static/red.dae",
-        scale : 1.0,
-        preview : dirname + "static/red.jpg"
+        name : "Male",
+        url : dirname + "static/maleWalkIdleSit.dae",
+        scale : 2.0,
+        preview : dirname + "static/maleheadshot.jpg"
     },
     {
-        name : "Small Blue Box",
-        url : dirname + "static/blue.dae",
-        scale : 0.3,
-        preview : dirname + "static/blue.jpg"
+        name : "Female",
+        url : dirname + "static/femaleWalkIdleSit.dae",
+        scale : 2.0,
+        preview : dirname + "static/femaleheadshot.jpg"
     }
 ];
 
