@@ -1,7 +1,9 @@
 <?xml version="1.0" ?><COLLADA version="1.4.1" xmlns="http://www.collada.org/2005/11/COLLADASchema">
   <asset>
     <contributor>
-      <author>Stein</author>
+      <author>Stein Lotveit</author>
+      <comments>Avatar modeling, texture and animation by Stein Lotveit - lotveit.stein@gmail.com</comments>
+      <copyright>Creative Commons Attribution http://creativecommons.org/licenses/by/2.0/</copyright>
       <authoring_tool>OpenCOLLADA for 3ds Max;  Version: 1.2.5;  Revision: 734:737M;  Platform: Win32;  Configuration: Release_Max2010_static</authoring_tool>
       <source_data>file:///C:/Users/Stein/Desktop/CLIENT.ME/ProjectHenrik/Scenes/Eve/Eve06Anim006-afterUV.max</source_data>
     </contributor>
