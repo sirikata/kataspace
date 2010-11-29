@@ -1,5 +1,5 @@
 /*  KataSpace
- *  sit.js
+ *  help.js
  *
  *  Copyright (c) 2010, Ewen Cheslack-Postava
  *  All rights reserved.
@@ -37,35 +37,33 @@ Kata.require([
     var SUPER = Kata.GUISimulation.prototype;
 
     /** Tracks session events, presenting an error message if on disconnection. */
-    SitUI = function(channel, parent) {
+    HelpUI = function(channel, parent) {
         SUPER.constructor.call(this, channel);
 
-        var button_div = $('<div>Sit</div>').appendTo($('body'));
-        button_div.button().click(
-            Kata.bind(this.toggleSit, this, button_div)
-        );
+        var button_div = $('<div>Help</div>').appendTo($('body'));
+        this.mButtonDiv = button_div;
+        button_div.
+            button().
+            click(
+                Kata.bind(this.displayHelp, this, button_div)
+            );
         parent.addButton(button_div);
-        this.parent = parent;
+
+        var dialog_div = $('<div title="Help">Use the arrow keys (up, left, and right) to make your avatar walk around. Type messages into the box on the right to chat with other participants.</div>').appendTo($('body'));
+        this.mDialogDiv = dialog_div;
+        dialog_div.dialog(
+            {
+                autoOpen: false
+            }
+        );
     };
-    Kata.extend(SitUI, SUPER);
+    Kata.extend(HelpUI, SUPER);
 
     // GUISimulation interface
-    SitUI.prototype.handleGUIMessage = function(evt) {
+    HelpUI.prototype.handleGUIMessage = function(evt) {
     };
 
-    SitUI.prototype.toggleSit = function(button) {
-        if (button.text() == "Sit")
-            button.text("Stand Up");
-        else
-            button.text("Sit");
-        this.parent.reflow();
-
-        // Send the message
-        this.mChannel.sendMessage(
-            new Kata.ScriptProtocol.ToScript.GUIMessage(
-                'sit',
-                {}
-            )
-        );
+    HelpUI.prototype.displayHelp = function(button) {
+        this.mDialogDiv.dialog("open");
     };
 });

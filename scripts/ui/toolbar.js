@@ -38,10 +38,11 @@ Kata.require([
     ToolbarUI = function(on) {
         var mDiv = $('<span id="toolbar" class="ui-widget-header ui-corner-all"></span>').appendTo($('body'));
         this.mDiv = mDiv;
+        this.mDiv.css('padding', '10px 4px');
 
         var posHelp = function() {
             mDiv.position(
-                { my: "right top", at: "right top", of: on, offset: "-100 10" }
+                { my: "right top", at: "right top", of: on, offset: "-10 10" }
             );
         };
         this.posHelp = posHelp;
@@ -51,7 +52,7 @@ Kata.require([
     };
 
     ToolbarUI.prototype.addButton = function(button) {
-        button.addClass('gui-button').width(75).height(20);
+        button.addClass('gui-button').width(100).height(25);
         this.mDiv.append(button);
         this.posHelp();
     };

@@ -85,6 +85,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         </script>
         <script type="text/javascript" src="scripts/ui/sit.js">
         </script>
+        <script type="text/javascript" src="scripts/ui/help.js">
+        </script>
 
         <!-- Deployment-specific configuraton. Ideally, everything
         that needs to be modified to make this run on different servers
@@ -168,21 +170,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                     kata_base_offset + 'scripts/ui/session.js',
                     kata_base_offset + 'scripts/ui/chat.js',
                     kata_base_offset + 'scripts/ui/toolbar.js',
-                    kata_base_offset + 'scripts/ui/sit.js'
+                    kata_base_offset + 'scripts/ui/sit.js',
+                    kata_base_offset + 'scripts/ui/help.js'
                 ], function() {
                     loginui = new LoginUI( $("#login"), Avatars, handleLogin);
                     loadGFX();
 
                     $('#title').append(Title);
-                    $('#help').button().click(
-                        function() {
-                            $('#helpcontents').dialog("open");
-                        }
-                    ).hide();
-                     $('#help').addClass('gui-button').width(100).height(20);
-                    $('#helpcontents').dialog({
-                        autoOpen: false
-                    });
                 });
             }
 
@@ -193,14 +187,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                 $('#container').show();
 
                 toolbar = new ToolbarUI($('#container'));
-
-                $('#help').show();
-                var positionHelp = function() {
-                    $('#help').position(
-                        { my: "right top", at: "right top", of: $('#container') }
-                    );
-                }
-                positionHelp();
 
                 function glgeReady () {
                     window.kata = new Kata.MainThread(
@@ -215,6 +201,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                     graphics = new Kata.GraphicsSimulation(driver, window.kata.getChannel(), document.getElementById("container"));
                     session = new SessionUI(window.kata.getChannel());
                     situi = new SitUI(window.kata.getChannel(), toolbar);
+                    helpui = new HelpUI(window.kata.getChannel(), toolbar);
                     chats = new ChatUI(window.kata.getChannel(), loginName, 300);
                     chats.create("Chat");
                 }
@@ -264,12 +251,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             </div>
             <div class="view" style="margin:auto;position:relative;-webkit-box-shadow: rgba(0, 0, 0, 0.699219) 0px 0px 10px;" id="container">
             </div>
-        </div>
-        <div id="help" class="gui-button">Help</div>
-        <div id="helpcontents" title="Help">
-          Use the arrow keys (up, left, and right) to make your avatar
-          walk around. Type messages into the box on the right to chat
-          with other participants.
         </div>
     </body>
 </html>
