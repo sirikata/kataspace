@@ -73,14 +73,27 @@ Kata.require([
         this.mChatBehavior.chat(revt.msg);
     };
 
-    Example.BlessedScript.prototype.handleSitGUIMessage = function(msg) {
-        this.sitting = !this.sitting;
+    Example.BlessedScript.prototype.updateSittingAnimation = function() {
         var new_state = {
             idle: (this.sitting ? 'sit' : 'idle'),
             forward: 'walk'
         };
         this.mPresence._animatedState = new_state;
         this.mAnimatedBehavior.setState(new_state);
+    };
+
+    Example.BlessedScript.prototype.disableSitting = function() {
+        this.sitting = false;
+        // Notify the GUI so it can reset the button
+        var evt = { sitting: false };
+        var msg = new Kata.ScriptProtocol.FromScript.GUIMessage("sit", evt);
+        this._sendHostedObjectMessage(msg);
+        this.updateSittingAnimation();
+    };
+
+    Example.BlessedScript.prototype.handleSitGUIMessage = function(msg) {
+        this.sitting = !this.sitting;
+        this.updateSittingAnimation();
     };
 
 
@@ -191,6 +204,7 @@ Kata.require([
 
             if (this.keyIsDown[this.Keys.UP]) {
                 this.mPresence.setVelocity([-avZX, -avZY, -avZZ]);
+                this.disableSitting();
             }
             if (this.keyIsDown[this.Keys.DOWN]) {
                 //this.mPresence.setVelocity([avZX, avZY, avZZ]);
@@ -200,11 +214,13 @@ Kata.require([
                 this.mPresence.setAngularVelocity(
                     Kata.Quaternion.fromAxisAngle([0, 1, 0], 2.0*Math.PI/full_rot_seconds)
                 );
+                this.disableSitting();
             }
             if (this.keyIsDown[this.Keys.RIGHT]) {
                 this.mPresence.setAngularVelocity(
                     Kata.Quaternion.fromAxisAngle([0, 1, 0], -2.0*Math.PI/full_rot_seconds)
                 );
+                this.disableSitting();
             }
         }
 

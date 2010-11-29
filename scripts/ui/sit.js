@@ -40,9 +40,12 @@ Kata.require([
     SitUI = function(channel, parent) {
         SUPER.constructor.call(this, channel);
 
+        this.sitting = false; // Whether we are sitting or not
+
         var button_div = $('<div>Sit</div>').appendTo($('body'));
+        this.button = button_div;
         button_div.button().click(
-            Kata.bind(this.toggleSit, this, button_div)
+            Kata.bind(this.toggleSit, this)
         );
         parent.addButton(button_div);
         this.parent = parent;
@@ -51,17 +54,21 @@ Kata.require([
 
     // GUISimulation interface
     SitUI.prototype.handleGUIMessage = function(evt) {
+        var revt = evt.event;
+        if (evt.msg !== 'sit') return;
+        this.sitting = revt.sitting;
+        this._updateButton();
     };
 
-    SitUI.prototype.toggleSit = function(button) {
-        var label = button.button( "option", "label" );
-        if (label == "Sit")
-            button.button( "option", "label", "Stand Up" );
-        else
-            button.button( "option", "label", "Sit" );
-        button.button();
+    SitUI.prototype._updateButton = function() {
+        var label = (this.sitting ? 'Stand Up' : 'Sit');
+        this.button.button( "option", "label", label );
         this.parent.reflow();
+    };
 
+    SitUI.prototype.toggleSit = function() {
+        this.sitting = !this.sitting;
+        this._updateButton();
         // Send the message
         this.mChannel.sendMessage(
             new Kata.ScriptProtocol.ToScript.GUIMessage(
