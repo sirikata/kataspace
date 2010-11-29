@@ -1,5 +1,5 @@
 /*  KataSpace
- *  sit.js
+ *  toolbar.js
  *
  *  Copyright (c) 2010, Ewen Cheslack-Postava
  *  All rights reserved.
@@ -34,36 +34,30 @@ Kata.require([
     'katajs/oh/GUISimulation.js'
 ], function() {
 
-    var SUPER = Kata.GUISimulation.prototype;
-
     /** Tracks session events, presenting an error message if on disconnection. */
-    SitUI = function(channel, parent) {
-        SUPER.constructor.call(this, channel);
+    ToolbarUI = function(on) {
+        var mDiv = $('<span id="toolbar" class="ui-widget-header ui-corner-all"></span>').appendTo($('body'));
+        this.mDiv = mDiv;
 
-        var button_div = $('<div>Sit</div>').appendTo($('body'));
-        button_div.button().click(
-            Kata.bind(this.toggleSit, this, button_div)
-        );
-        parent.addButton(button_div);
+        var posHelp = function() {
+            mDiv.position(
+                { my: "right top", at: "right top", of: on, offset: "-100 10" }
+            );
+        };
+        this.posHelp = posHelp;
+        on.resize(posHelp);
+        $(window).scroll(posHelp).resize(posHelp);
+        posHelp();
     };
-    Kata.extend(SitUI, SUPER);
 
-    // GUISimulation interface
-    SitUI.prototype.handleGUIMessage = function(evt) {
+    ToolbarUI.prototype.addButton = function(button) {
+        button.addClass('gui-button').width(75).height(20);
+        this.mDiv.append(button);
+        this.posHelp();
     };
 
-    SitUI.prototype.toggleSit = function(button) {
-        if (button.text() == "Sit")
-            button.text("Stand Up");
-        else
-            button.text("Sit");
-
-        // Send the message
-        this.mChannel.sendMessage(
-            new Kata.ScriptProtocol.ToScript.GUIMessage(
-                'sit',
-                {}
-            )
-        );
+    ToolbarUI.prototype.reflow = function() {
+        this.posHelp();
     };
+
 });

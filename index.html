@@ -81,6 +81,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         </script>
         <script type="text/javascript" src="scripts/ui/chat.js">
         </script>
+        <script type="text/javascript" src="scripts/ui/toolbar.js">
+        </script>
         <script type="text/javascript" src="scripts/ui/sit.js">
         </script>
 
@@ -165,6 +167,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                     kata_base_offset + 'scripts/ui/login.js',
                     kata_base_offset + 'scripts/ui/session.js',
                     kata_base_offset + 'scripts/ui/chat.js',
+                    kata_base_offset + 'scripts/ui/toolbar.js',
                     kata_base_offset + 'scripts/ui/sit.js'
                 ], function() {
                     loginui = new LoginUI( $("#login"), Avatars, handleLogin);
@@ -189,13 +192,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
                 $('#container').show();
 
+                toolbar = new ToolbarUI($('#container'));
+
                 $('#help').show();
                 var positionHelp = function() {
                     $('#help').position(
-                        { my: "right bottom", at: "right top", of: $('#container') }
+                        { my: "right top", at: "right top", of: $('#container') }
                     );
                 }
-                $(window).resize(positionHelp).scroll(positionHelp);
                 positionHelp();
 
                 function glgeReady () {
@@ -210,7 +214,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                         });
                     graphics = new Kata.GraphicsSimulation(driver, window.kata.getChannel(), document.getElementById("container"));
                     session = new SessionUI(window.kata.getChannel());
-                    situi = new SitUI(window.kata.getChannel());
+                    situi = new SitUI(window.kata.getChannel(), toolbar);
                     chats = new ChatUI(window.kata.getChannel(), loginName, 300);
                     chats.create("Chat");
                 }
