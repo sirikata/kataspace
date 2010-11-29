@@ -237,7 +237,7 @@ Kata.require([
     Example.BlessedScript.prototype._calcCamPos = function() {
         var orient = new Kata.Quaternion(this._calcCamOrient());
         var pos = this.mPresence.predictedPosition(new Date());
-        var offset = [0, 1, 3];
+        var offset = [0, (this.sitting ? 0 : 1), 3];
         var oriented_offset = orient.multiply(offset);
         return [pos[0] + oriented_offset[0],
                 pos[1] + oriented_offset[1],
