@@ -54,10 +54,12 @@ Kata.require([
     };
 
     SitUI.prototype.toggleSit = function(button) {
-        if (button.text() == "Sit")
-            button.text("Stand Up");
+        var label = button.button( "option", "label" );
+        if (label == "Sit")
+            button.button( "option", "label", "Stand Up" );
         else
-            button.text("Sit");
+            button.button( "option", "label", "Sit" );
+        button.button();
         this.parent.reflow();
 
         // Send the message
