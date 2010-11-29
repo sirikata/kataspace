@@ -17,13 +17,13 @@ Avatars = [
         name : "Male",
         url : dirname + "static/maleWalkIdleSit.dae",
         scale : 1.0,
-        preview : dirname + "static/maleheadshot.jpg"
+        preview : dirname + "static/maleheadshot.png"
     },
     {
         name : "Female",
         url : dirname + "static/femaleWalkIdleSit.dae",
         scale : 1.0,
-        preview : dirname + "static/femaleheadshot.jpg"
+        preview : dirname + "static/femaleheadshot.png"
     }
 ];
 
