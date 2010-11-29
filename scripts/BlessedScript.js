@@ -15,7 +15,7 @@ Kata.require([
 
     var SUPER = Kata.GraphicsScript.prototype;
     Example.BlessedScript = function(channel, args){
-        SUPER.constructor.call(this, channel, args, Kata.bind(this.updateAnimation, this));
+        SUPER.constructor.call(this, channel, args, Kata.bind(this.updateRenderState, this));
 
         this._scale = args.scale;
         this.connect(args, null, Kata.bind(this.connected, this));
@@ -54,6 +54,8 @@ Kata.require([
     };
     Example.BlessedScript.prototype.chatEnterEvent = function(remote, name) {
         this._sendHostedObjectMessage(this.createChatEvent('enter', name));
+        var remote_pres = this.getRemotePresence(remote);
+        if (remote_pres) this.updateGFX(remote_pres);
     };
     Example.BlessedScript.prototype.chatExitEvent = function(remote, name, msg) {
         this._sendHostedObjectMessage(this.createChatEvent('exit', name, msg));
@@ -230,6 +232,33 @@ Kata.require([
         this.updateGFX(this.mPresence);
     };
 
+    Example.BlessedScript.prototype.updateRenderState = function(presence, remote) {
+        this.updateLabel(presence, remote);
+        this.updateAnimation(presence, remote);
+    };
+
+    Example.BlessedScript.prototype._getVerticalOffset = function(remote) {
+        // FIXME there should be a better way of deciding this
+        return (remote._animatedState && (remote._animatedState.idle == 'sit')) ? 0 : 1;
+    };
+    Example.BlessedScript.prototype._getHorizontalOffset = function() {
+        return 3;
+    };
+
+    Example.BlessedScript.prototype.updateLabel = function(presence, remote) {
+        if (presence.id() == remote.id()) return;
+        var name = this.mChatBehavior.getName(remote);
+        if (!name) return;
+        var vert_off = this._getVerticalOffset(remote) + .25;
+        if (!remote._lastLabel || remote._lastLabel != name || remote._lastLabelOffset != vert_off) {
+            this.setLabel(
+                presence, remote.presenceID(), name,
+                [0, vert_off, 0]
+            );
+            remote._lastLabel = name;
+            remote._lastLabelOffset = vert_off;
+        }
+    };
 
     Example.BlessedScript.prototype.updateAnimation = function(presence, remote){
         var vel = remote.predictedVelocity();
@@ -253,7 +282,7 @@ Kata.require([
     Example.BlessedScript.prototype._calcCamPos = function() {
         var orient = new Kata.Quaternion(this._calcCamOrient());
         var pos = this.mPresence.predictedPosition(new Date());
-        var offset = [0, (this.sitting ? 0 : 1), 3];
+        var offset = [0, this._getVerticalOffset(this.mPresence), this._getHorizontalOffset()];
         var oriented_offset = orient.multiply(offset);
         return [pos[0] + oriented_offset[0],
                 pos[1] + oriented_offset[1],

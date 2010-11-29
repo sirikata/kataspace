@@ -98,6 +98,12 @@ Kata.require([
         }
     };
 
+    Kata.Behavior.Chat.prototype.getName = function(remote) {
+        var obj = this.mTrackedObjects[remote.presenceID()];
+        if (!obj) return null;
+        return obj.name;
+    };
+
     Kata.Behavior.Chat.prototype._serializeMessage = function(msg) {
         var serialized = new PROTO.ByteArrayStream();
         msg.SerializeToStream(serialized);
