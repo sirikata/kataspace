@@ -31,6 +31,6 @@ make space tcpsst servermap-tabular core-local weight-exp weight-sqr weight-cons
 
 # Checkout and "build" Kataspace
 cd ${DIR}
-git clone git://github.com/katalabs/kataspace.git kataspace.git
+git clone git://github.com/sirikata/kataspace.git kataspace.git
 cd kataspace.git
 make
