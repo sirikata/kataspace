@@ -26,5 +26,8 @@ sudo /var/lib/gems/1.8/bin/god -c space.god.rb
 cd kataspace.git
 # lighttpd on Ubuntu starts itself automatically, so stop it first
 sudo /etc/init.d/lighttpd stop
+# Setup caching directory
+mkdir -p /tmp/lighttpdcompress
+chown root:root /tmp/lighttpdcompress
 # And then run our version
-sudo ./externals/katajs/contrib/lighttpd.py 80 &
+sudo ./externals/katajs/contrib/lighttpd.py 80 /tmp/lighttpdcompress &
