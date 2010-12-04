@@ -161,6 +161,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                     graphics = new Kata.GraphicsSimulation(driver, window.kata.getChannel(), document.getElementById("container"));
                     session = new SessionUI(window.kata.getChannel());
                     situi = new SitUI(window.kata.getChannel(), toolbar);
+                    createui = new CreateUI(window.kata.getChannel(), toolbar);
                     helpui = new HelpUI(window.kata.getChannel(), toolbar);
                     chats = new ChatUI(window.kata.getChannel(), loginName, 300);
                     chats.create("Chat");

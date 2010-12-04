@@ -158,11 +158,26 @@ Kata.require([
         LEFT : 37,
         RIGHT : 39
     };
-
+    Example.BlessedScript.prototype.handleCreateObject = function (objectName) {
+            this.createObject("../../objectscript.js", "Example.ObjectScript", {
+                                  space: this.mPresence.mSpace,
+                                  scale: 1,
+                                  visual: {mesh:objectName},
+                                  pos: this.mPresence.predictedPosition(new Date()),
+                                  creator: this.mPresence.id(),
+                                  auth: "whiskey-foxtrot-tango"
+                                  //,port: port
+                                  //,receipt: ""+idx
+            });
+         
+    };
     Example.BlessedScript.prototype._handleGUIMessage = function (channel, msg) {
         if (msg.msg == 'chat')
             this.handleChatGUIMessage(msg);
-
+        if (msg.msg == 'create') {
+            Kata.log("Creating object with visual "+msg.event);
+            this.handleCreateObject(msg.event.visual);
+        }
         if (msg.msg == 'sit')
             this.handleSitGUIMessage(msg);
 
