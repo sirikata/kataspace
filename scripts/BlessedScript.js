@@ -18,6 +18,13 @@ Kata.require([
         SUPER.constructor.call(this, channel, args, Kata.bind(this.updateRenderState, this));
 
         this._scale = args.scale;
+
+        var xoff = ((Math.random() - 0.5) * 2.0) * 5.0;
+        var zoff = ((Math.random() - 0.5) * 2.0) * 5.0;
+        var loc = Kata.LocationIdentity();
+        loc.pos = [xoff, this._scale * 1.0, zoff];
+        loc.scale = [args.scale, args.scale, args.scale];
+        args.loc = loc;
         this.connect(args, null, Kata.bind(this.connected, this));
 
         this.keyIsDown = {};
@@ -116,14 +123,7 @@ Kata.require([
         this.enableGraphicsViewport(presence, 0);
         presence.setQueryHandler(Kata.bind(this.proxEvent, this));
         presence.setQuery(0);
-        // Select random offset from origin so people don't land on each other
-        var xoff = ((Math.random() - 0.5) * 2.0) * 5.0;
-        var zoff = ((Math.random() - 0.5) * 2.0) * 5.0;
-        // Radius of avatars is about 2.5, with height about 4.33 ->
-        // normalized to radius 1 and height about 1.7. Shift by about
-        // .85 (1.7/2) instead of full scale. Would be nice to have a
-        // reliable, non-magic-numbers approach for this.
-        presence.setPosition([xoff, this._scale * 1.0, zoff]);
+
         this.setCameraPosOrient(this._calcCamPos(), [0,0,0,1], 0.0);
         // FIXME both this and the camera controls in GraphicsScript
         // are running on timers because the ones in GraphicsScript
