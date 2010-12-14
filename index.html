@@ -58,35 +58,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         </script>
         <script type="text/javascript" src="externals/katajs/katajs.compiled.js">
         </script>
-        <script type="text/javascript">
-
-            Kata.include("katajs/oh/MainThread.js");
-            // "Plugins" - load files which add specific implementations. This is left up to the user since some may be expensive to load.
-            Kata.include("katajs/oh/SpaceConnection.js");
-            Kata.include("katajs/space/loop/Space.js");
-            Kata.include("katajs/oh/GraphicsSimulation.js");
-            Kata.include("katajs/core/Location.js");
-            Kata.include("katajs/core/Quaternion.js");
-            Kata.include("katajs/gfx/TextGraphics.js");
-            Kata.include("katajs/gfx/glgegfx.js");
-            Kata.include("katajs/oh/Script.js");
-            Kata.include("katajs/oh/ObjectHost.js");
-            Kata.include("katajs/oh/impl/BootstrapScript.js");
-            Kata.include("katajs/oh/GraphicsScript.js");
-        </script>
-
-        <script type="text/javascript" src="scripts/ui/login.js">
-        </script>
-        <script type="text/javascript" src="scripts/ui/session.js">
-        </script>
-        <script type="text/javascript" src="scripts/ui/chat.js">
-        </script>
-        <script type="text/javascript" src="scripts/ui/toolbar.js">
-        </script>
-        <script type="text/javascript" src="scripts/ui/sit.js">
-        </script>
-        <script type="text/javascript" src="scripts/ui/help.js">
-        </script>
 
         <!-- Deployment-specific configuraton. Ideally, everything
         that needs to be modified to make this run on different servers
@@ -104,23 +75,36 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
             var kata, graphics;
             var driver = "GLGE";
-            var connectRequested = false;
-            var docReady = false;
             var loginName = null;
             var avatarURL = null;
             var avatarScale = null;
 
             function handleLogin(name, avatar) {
-                connectRequested = true;
                 loginName = name;
                 avatarURL = avatar.url;
                 avatarScale = avatar.scale;
-                loadGFX();
+
+                Kata.require([
+                    // Post login
+                    'katajs/oh/MainThread.js',
+                    'katajs/space/loop/Space.js',
+                    'katajs/oh/GraphicsSimulation.js',
+                    'katajs/gfx/glgegfx.js',
+                    'katajs/oh/Script.js',
+                    'katajs/oh/plugins/loop/LoopbackSpaceConnection.js',
+                    'katajs/oh/plugins/sirikata/SirikataSpaceConnection.js',
+                    'katajs/oh/ObjectHost.js',
+                    kata_base_offset + 'scripts/ui/chat.js',
+                    kata_base_offset + 'scripts/ui/session.js',
+                    kata_base_offset + 'scripts/ui/toolbar.js',
+                    kata_base_offset + 'scripts/ui/sit.js',
+                    kata_base_offset + 'scripts/ui/help.js'
+                ], function() {
+                    loadGFX();
+                });
             }
 
-            function onDocReady(){
-                docReady = true;
-
+            function onDocReady() {
                 // Disable scrolling since it interferes with normal navigation
                 var scrollPosition = [
                     self.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft,
@@ -166,24 +150,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                 }
 
                 Kata.require([
+                    // Pre login
                     kata_base_offset + 'scripts/ui/login.js',
-                    kata_base_offset + 'scripts/ui/session.js',
-                    kata_base_offset + 'scripts/ui/chat.js',
-                    kata_base_offset + 'scripts/ui/toolbar.js',
-                    kata_base_offset + 'scripts/ui/sit.js',
-                    kata_base_offset + 'scripts/ui/help.js'
                 ], function() {
                     loginui = new LoginUI( $("#login"), Avatars, handleLogin);
-                    loadGFX();
 
                     $('#title').append(Title);
                 });
             }
 
             function loadGFX(){
-                if (!docReady || !connectRequested)
-                    return;
-
                 $('#container').show();
 
                 toolbar = new ToolbarUI($('#container'));
@@ -206,19 +182,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                     chats.create("Chat");
                 }
 
-                Kata.require([
-                    'katajs/oh/MainThread.js',
-                    'katajs/space/loop/Space.js',
-                    'katajs/oh/GraphicsSimulation.js',
-                    'katajs/gfx/TextGraphics.js',
-                    'katajs/gfx/glgegfx.js',
-                    'katajs/oh/Script.js',
-                    'katajs/oh/plugins/loop/LoopbackSpaceConnection.js',
-                    'katajs/oh/plugins/sirikata/SirikataSpaceConnection.js',
-                    kata_base_offset + 'scripts/ui/chat.js'
-                ], function() {
-                    Kata.GraphicsSimulation.initializeDriver(driver, "static/glge_level.xml", graphicsReady);
-                });
+                Kata.GraphicsSimulation.initializeDriver(driver, "static/glge_level.xml", graphicsReady);
             }
 
             window.onload = onDocReady;
