@@ -103,7 +103,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             var kata_base_offset = "../../";
 
             var kata, graphics;
-            var driver = "GLGE"; // "o3d" or "GLGE"
+            var driver = "GLGE";
             var connectRequested = false;
             var docReady = false;
             var loginName = null;
@@ -188,7 +188,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
                 toolbar = new ToolbarUI($('#container'));
 
-                function glgeReady () {
+                function graphicsReady () {
                     window.kata = new Kata.MainThread(
                         kata_base_offset + "scripts/BlessedScript.js",
                         "Example.BlessedScript",
@@ -217,31 +217,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                     'katajs/oh/plugins/sirikata/SirikataSpaceConnection.js',
                     kata_base_offset + 'scripts/ui/chat.js'
                 ], function() {
-                    if (driver == "GLGE") {
-                        g_GLGE_doc = new GLGE.Document();
-                        g_GLGE_doc.onLoad = glgeReady;
-                        g_GLGE_doc.load("static/glge_level.xml");
-                    } else {
-                        glgeReady();
-                    }
+                    Kata.GraphicsSimulation.initializeDriver(driver, "static/glge_level.xml", graphicsReady);
                 });
             }
 
-            if (driver == "o3d") {
-                // o3d uses document.write internally. Must be loaded specially.
-                document.write(
-                    "<script type='text/javascript' src='" +
-                    Kata.scriptRoot + "externals/o3djs/base.js"+"'></scr"+"ipt>" +
-                    "<script type='text/javascript' src='" +
-                    Kata.scriptRoot + "externals/o3d-webgl/base.js"+"'></scr"+"ipt>"+
-                    "<script type='text/javascript' src='" +
-                    Kata.scriptRoot + "katajs/gfx/o3dgfx.js"+"'></scr"+"ipt>" +
-                    "<script type='text/javascript'>\n"+
-                    "Kata.require(['katajs/gfx/o3dgfx.js'], onDocReady);\n"+
-                    "</scr"+"ipt>");
-            } else {
-                window.onload = onDocReady;
-            }
+            window.onload = onDocReady;
         </script>
     </head>
     <body>
