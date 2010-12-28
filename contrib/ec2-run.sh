@@ -5,6 +5,52 @@
 # montoring and starts the lighttpd server.
 
 DIR=`pwd`
+GOD=/var/lib/gems/1.8/bin/god
+GOD_FLAGS=
+
+# Parse args to allow for debug mode
+until [ -z "$1" ]  # until all parameters used up
+do
+  case "$1" in
+      --debug)
+          GOD_FLAGS=-D
+          ;;
+  esac
+  shift
+done
+
+# Bail out with a message for the user
+function bail {
+    echo $1
+    exit -1
+}
+
+# Check for required files
+if [ ! -e $GOD ]; then
+    echo "Couldn't find god at $GOD"
+    exit -1
+fi
+
+if [ ! -e kataspace.git ]; then
+    echo "Couldn't find kataspace code."
+    exit -1
+fi
+
+if [ ! -e sirikata.git ]; then
+    echo "Couldn't find sirikata code."
+    exit -1
+fi
+
+# Run lighttpd as the web server
+cd kataspace.git || bail "Couldn't find KataSpace code."
+# lighttpd on Ubuntu starts itself automatically, so stop it first
+sudo /etc/init.d/lighttpd stop
+# Setup caching directory
+sudo mkdir -p /tmp/lighttpdcompress || bail "Couldn't create lighttpd caching directory"
+sudo chown root:root /tmp/lighttpdcompress || bail "Couldn't chown lighttpd caching directory"
+# And then run our version
+sudo ./externals/katajs/contrib/lighttpd.py 80 /tmp/lighttpdcompress &
+
 
 # Generate our configuration
 echo "SIRIKATA_ROOT = '${DIR}/sirikata.git'" > config.god.rb
@@ -20,14 +66,4 @@ sed \
     -e "s|w.stop_timeout|#w.stop_timeout|" \
     <sirikata.git/tools/space/space.god.rb >space.god.rb
 # Run the space server god script
-sudo /var/lib/gems/1.8/bin/god -c space.god.rb
-
-# Run lighttpd as the web server
-cd kataspace.git
-# lighttpd on Ubuntu starts itself automatically, so stop it first
-sudo /etc/init.d/lighttpd stop
-# Setup caching directory
-mkdir -p /tmp/lighttpdcompress
-chown root:root /tmp/lighttpdcompress
-# And then run our version
-sudo ./externals/katajs/contrib/lighttpd.py 80 /tmp/lighttpdcompress &
+sudo $GOD -c space.god.rb $GOD_FLAGS
