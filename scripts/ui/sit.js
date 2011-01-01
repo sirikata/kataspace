@@ -72,8 +72,10 @@ Kata.require([
         // Send the message
         this.mChannel.sendMessage(
             new Kata.ScriptProtocol.ToScript.GUIMessage(
-                'sit',
-                {}
+                {
+                    msg : 'sit',
+                    event : {}
+                }
             )
         );
     };

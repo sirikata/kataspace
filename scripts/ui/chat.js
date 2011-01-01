@@ -96,8 +96,10 @@ Kata.require([
         // Send the message
         this.mChannel.sendMessage(
             new Kata.ScriptProtocol.ToScript.GUIMessage(
-                'chat',
-                { msg : msg }
+                {
+                    msg : 'chat',
+                    event : msg
+                }
             )
         );
     };
