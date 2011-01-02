@@ -34,3 +34,8 @@ body {
 .ui-chatbox-input-box {
     resize: none;
 }
+
+.footer-button {
+    font-size: 60%;
+    margin: 5px;
+}

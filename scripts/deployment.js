@@ -28,4 +28,17 @@ Avatars = [
     }
 ];
 
+// Should return an element (normal or jquery) which should be used as a footer.
+FooterContent = function() {
+    var footer_div = $('<div></div>');
+    footer_div.appendTo(document.body);
+
+    $('<div><a href="http://github.com/sirikata/kataspace/issues" target="_blank">Report An Issue</a></div>')
+        .button()
+        .addClass('footer-button')
+        .appendTo(footer_div);
+
+    return footer_div;
+};
+
 })();
