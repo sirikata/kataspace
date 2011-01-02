@@ -19,6 +19,31 @@
     border: 0px;
 }
 
+.ui-chatbox-buddy-list {
+    padding: 3px 0px 3px 3px;
+    width: 100px;
+    height: 300px;
+    overflow-y: auto;
+    background: #FFFFFF;
+    font-size: 75%;
+    float: left;
+}
+
+.ui-chatbox-buddy-list-title {
+    font-weight: bolder;
+}
+
+.ui-chatbox-buddy-list-list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.ui-chatbox-buddy {
+    margin: 3px;
+    border: 0;
+}
+
 .ui-chatbox-log {
     padding: 3px 3px 3px 3px;
     height: 300px;

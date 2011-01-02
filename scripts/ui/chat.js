@@ -133,7 +133,7 @@ Kata.require([
 
         if (revt.action == 'enter') {
             var chatdiv = $("#"+this.mChats[0]); // FIXME only works for single mode
-            chatdiv.chatbox("option", "boxManager").addMsg(revt.name, "(Entered)");
+            chatdiv.chatbox("option", "boxManager").addBuddy(revt.name);
         }
         else if (revt.action == 'say') {
             var chatdiv = $("#"+this.mChats[0]); // FIXME only works for single mode
@@ -142,7 +142,7 @@ Kata.require([
         }
         else if (revt.action == 'exit') {
             var chatdiv = $("#"+this.mChats[0]); // FIXME only works for single mode
-            chatdiv.chatbox("option", "boxManager").addMsg(revt.name, "(Left)");
+            chatdiv.chatbox("option", "boxManager").removeBuddy(revt.name);
         }
     };
 

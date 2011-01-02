@@ -23,7 +23,7 @@
 	    user: null, // can be anything associated with this chatbox
 	    hidden: false,
 	    offset: 0, // relative to right edge of the browser window
-	    width: 230, // width of the chatbox
+	    width: 360, // width of the chatbox
 	    messageSent: function(id, user, msg){
 		// override this
 		this.boxManager.addMsg(user.first_name, msg);
@@ -53,6 +53,24 @@
                         document.title = '(' + num_outstanding + ') - ' + orig_title;
 		    }
 		},
+                addBuddy: function(name) {
+                    if (!this.buddies) this.buddies = {};
+
+                    var buddy = $('<li>' + name + '</li>')
+                        .appendTo(this.elem.uiChatboxBuddyListList)
+                        .addClass('ui-widget-content ui-chatbox-buddy');
+                    this.buddies[name] = buddy;
+                },
+                removeBuddy: function(name) {
+                    var buddy = this.buddies[name];
+                    if (!buddy) return;
+                    buddy.hide(
+                        'highlight', {}, 1000,
+                        function() {
+                            buddy.remove();
+                        }
+                    );
+                },
 		highlightBox: function() {
 		    this.elem.uiChatbox.addClass("ui-state-error");
 		    this.elem.uiChatboxTitlebar.addClass("ui-state-error");
@@ -172,6 +190,17 @@
 			  'ui-chatbox-content '
 			 )
 		.appendTo(uiChatbox),
+	    uiChatboxBuddyList = (self.uiChatboxBuddyList = $('<div></div>'))
+		.addClass('ui-widget-content '+
+			  'ui-chatbox-buddy-list'
+			 )
+		.appendTo(uiChatboxContent),
+            uiChatboxBuddyListTitle = $('<p>Participants</p>')
+                .addClass('ui-chatbox-buddy-list-title')
+                .appendTo(self.uiChatboxBuddyList),
+            uiChatboxBuddyListList = (self.uiChatboxBuddyListList = $('<ol></ol>'))
+                .addClass('ui-chatbox-buddy-list-list')
+                .appendTo(self.uiChatboxBuddyList),
 	    uiChatboxLog = (self.uiChatboxLog = self.element)
 		//.show()
 		.addClass('ui-widget-content '+
@@ -257,8 +286,13 @@
 	},
 
 	_setWidth: function(width) {
-	    this.uiChatboxTitlebar.width(width + "px");
-	    this.uiChatboxLog.width(width + "px");
+            // We use 100px for the buddy list and the rest for the log. 3px spacing.
+            var buddy_width = 100;
+            var log_width = width - buddy_width - 3;
+
+	    this.uiChatboxTitlebar.width((width+3) + "px");
+	    this.uiChatboxBuddyList.width(buddy_width + "px");
+	    this.uiChatboxLog.width(log_width + "px");
 	    // this is a hack, but i can live with it so far
 	    this.uiChatboxInputBox.css("width", (width - 24) + "px");
 	},
