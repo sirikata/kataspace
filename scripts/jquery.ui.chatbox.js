@@ -14,6 +14,8 @@
 
 // TODO: implement destroy()
 (function($){
+    var orig_title = document.title;
+    var num_outstanding = 0;
     $.widget("ui.chatbox", {
 	options: {
 	    id: null, //id for the DOM element
@@ -42,9 +44,13 @@
 		    box.append(e);
 		    self._scrollToBottom();
 
-		    if(!self.elem.uiChatboxTitlebar.hasClass("ui-state-focus") && !self.highlightLock) {
-			self.highlightLock = true;
-			self.highlightBox();
+		    if (!self.elem.uiChatboxTitlebar.hasClass("ui-state-focus")) {
+                        if (!self.highlightLock) {
+			    self.highlightLock = true;
+			    self.highlightBox();
+                        }
+                        num_outstanding++;
+                        document.title = '(' + num_outstanding + ') - ' + orig_title;
 		    }
 		},
 		highlightBox: function() {
@@ -91,6 +97,9 @@
 		    self.uiChatbox.removeClass("ui-state-error");
 		    self.uiChatboxTitlebar.removeClass("ui-state-error");
 		    self.uiChatboxTitlebar.addClass('ui-state-focus');
+
+                    num_outstanding = 0;
+                    document.title = orig_title;
 		})
 		.focusout(function(){
 		    self.highlightLock = false;
