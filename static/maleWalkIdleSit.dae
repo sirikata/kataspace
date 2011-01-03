@@ -6470,7 +6470,6 @@
     </animation></library_animations>
   <scene>
     <node id="scene_root" name="scene_root" sid="scene_root">
-      <rotate>1.0 0.0 0.0 -90.0</rotate>
       <rotate>0.0 0.0 1.0 180.0</rotate>
       <instance_visual_scene url="#MaxScene"/>
     </node>
