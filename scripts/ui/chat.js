@@ -98,7 +98,7 @@ Kata.require([
             new Kata.ScriptProtocol.ToScript.GUIMessage(
                 {
                     msg : 'chat',
-                    event : msg
+                    event: { msg : msg }
                 }
             )
         );

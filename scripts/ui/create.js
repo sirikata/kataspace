@@ -101,12 +101,15 @@ Kata.require([
                             eval("view=" + this.responseText);
                             value = base + view.o3dscene + ".dae";
                             Kata.warn("inserting into scene: " + value);
-                            thus.mChannel.sendMessage(new Kata.ScriptProtocol.ToScript.GUIMessage('create', {
-                                visual: value
-                            } /* put args here for what to create */));
+                            thus.mChannel.sendMessage(new Kata.ScriptProtocol.ToScript.GUIMessage({
+                                msg:'create',
+                                event: {
+                                    visual: value
+                                }
+                            })); /* put args here for what to create */
                         }
                     }
-                }
+                };
                 req.open("GET", value, true);
                 req.send("");
             }
@@ -116,9 +119,12 @@ Kata.require([
                 var dirname = window.location.href.substr(0, window.location.href.lastIndexOf('/') + 1);
                 value = dirname + "static/maleWalkIdleSit.dae";
             }
-            this.mChannel.sendMessage(new Kata.ScriptProtocol.ToScript.GUIMessage('create', {
-                visual: value
-            } /* put args here for what to create */));
+            this.mChannel.sendMessage(new Kata.ScriptProtocol.ToScript.GUIMessage({
+                msg:'create',
+                event: {
+                    visual: value
+                }
+            })); /* put args here for what to create */
         }
     };
 });
