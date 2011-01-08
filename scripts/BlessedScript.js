@@ -1,4 +1,3 @@
-
 // Global namespace.
 var Example;
 
@@ -23,6 +22,9 @@ Kata.require([
         this.keyIsDown = {};
 
         this.sitting = false;
+
+        this.mSelected = {};
+        this.mDrag = null;
 
         this.mChatBehavior =
             new Kata.Behavior.Chat(
@@ -119,6 +121,9 @@ Kata.require([
             return;
         }
 
+        // NOTE: Not the same as this.mPresences.
+        // The one Presence to rule them all!
+        // In a perfect world, we shouldn't ever use this.
         this.mPresence = presence;
 
         this.enableGraphicsViewport(presence, 0);
@@ -173,6 +178,34 @@ Kata.require([
             });
          
     };
+
+    Example.BlessedScript.prototype.clearSelection = function(space) {
+        for (var id in this.mSelected) {
+            var sendmsg;
+            sendmsg = new Kata.ScriptProtocol.FromScript.GFXHighlight(space, id, false);
+            this._sendHostedObjectMessage(sendmsg);
+        }
+        this.mSelected = {};
+    };
+    Example.BlessedScript.prototype.addSelection = function(space, id) {
+        this.mSelected[id] = true;
+        var sendmsg;
+        sendmsg = new Kata.ScriptProtocol.FromScript.GFXHighlight(space, id, true);
+        this._sendHostedObjectMessage(sendmsg);
+    };
+    Example.BlessedScript.prototype.removeSelection = function(space, id) {
+        delete this.mSelected[id];
+        var sendmsg;
+        sendmsg = new Kata.ScriptProtocol.FromScript.GFXHighlight(space, id, false);
+        this._sendHostedObjectMessage(sendmsg);
+    };
+    Example.BlessedScript.prototype.foreachSelected = function(space, func) {
+        for (var obj in this.mSelected) {
+            var presid = new Kata.PresenceID(space, obj);
+            func.call(this, presid);
+        }
+    };
+
     Example.BlessedScript.prototype._handleGUIMessage = function (channel, msg) {
         if (msg.msg == 'chat') {
             this.handleChatGUIMessage(msg);
@@ -185,37 +218,59 @@ Kata.require([
             this.handleSitGUIMessage(msg);
         }
         if (msg.msg == "mousedown") {
-            if (msg.button == 0) {
-                this.leftDown = true;
-            } else if (msg.button == 1) {
-                this.middleDown = true;
-            } else if (msg.button == 2) {
-                this.rightDown = true;
-            }
         }
         if (msg.msg == "mouseup") {
-            if (msg.button == 0) {
-                this.leftDown = false;
-            } else if (msg.button == 1) {
-                this.middleDown = false;
-            } else if (msg.button == 2) {
-                this.rightDown = false;
-            }
         }
         if (msg.msg == "pick") {
-            Kata.log("Pick message", msg);
-        }
-        if (msg.msg == "mousemove") {
-            /// Firefox 4 bug: ev.which is always 0, so get it from mousedown/mouseup events
-            /*            
-            if (this.rightDown) {
-                this.avPointX = parseFloat(msg.x)*-.25 - this.dragStartX;
-                this.avPointY = parseFloat(msg.y)*-.25 - this.dragStartY;
-                var q = this._euler2Quat(this.avPointX, this.avPointY, 0);
-                this.mPresence.setOrientation(q);
-                this.setCameraPosOrient(null, q);
+            if (!(msg.shiftKey || msg.ctrlKey)) {
+                if (!(msg.id && msg.id in this.mSelected)) {
+                    this.clearSelection(msg.spaceid);
+                }
             }
-            */
+            if (msg.id) {
+                if (msg.id in this.mSelected) {
+                    if (msg.ctrlKey) {
+                        this.removeSelection(msg.spaceid, msg.id);
+                    }
+                } else {
+                    this.addSelection(msg.spaceid, msg.id);
+                }
+            }
+            var dx = (msg.pos[0] - msg.camerapos[0]);
+            var dy = (msg.pos[1] - msg.camerapos[1]);
+            var dz = (msg.pos[2] - msg.camerapos[2]);
+            var length = Math.sqrt(dx*dx + dy*dy + dz*dz);
+            var planedist = dx*msg.cameradir[0] + dy*msg.cameradir[1] + dz*msg.cameradir[2];
+            this.mDrag = {camerapos: msg.camerapos, dir: msg.dir, planedist: planedist, start: msg.pos, dist:length};
+        }
+        if (msg.msg == "drag" && this.mDrag) {
+            var length = this.mDrag.planedist / (msg.dir[0]*msg.cameradir[0] +
+                                              msg.dir[1]*msg.cameradir[1] +
+                                              msg.dir[2]*msg.cameradir[2]);
+            var cam = msg.camerapos;
+            var end = [msg.dir[0] * length + cam[0], msg.dir[1] * length + cam[1], msg.dir[2] * length + cam[2]];
+            var start = this.mDrag.start;
+            var deltaPos = [end[0] - start[0], end[1] - start[1], end[2] - start[2]];
+            this.foreachSelected(this.mPresence.mSpace, function(presid) {
+                var remote_pres = this.getRemotePresence(presid);
+                if (remote_pres) {
+                    var time = Kata.now(remote_pres.mSpace);
+                    var oldPos = remote_pres.position(time);
+                    var newPos = [oldPos[0] + deltaPos[0], oldPos[1] + deltaPos[1], oldPos[2] + deltaPos[2]];
+                    var newLoc = Kata.LocationExtrapolate(remote_pres.predictedLocation(), time);
+                    newLoc.pos = newPos;
+                    var msg = new Kata.ScriptProtocol.FromScript.GFXMoveNode(
+                        remote_pres.space(),
+                        remote_pres.id(),
+                        remote_pres,
+                        { loc : newLoc }
+                    );
+                    this._sendHostedObjectMessage(msg);
+                }
+            });
+        }
+        if (msg.msg == "drop") {
+            this.mDrag = null;
         }
         if (msg.msg == "keyup") {
             this.keyIsDown[msg.keyCode] = false;
