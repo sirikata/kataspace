@@ -162,7 +162,8 @@ Kata.require([
         UP : 38,
         DOWN : 40,
         LEFT : 37,
-        RIGHT : 39
+        RIGHT : 39,
+        ESCAPE : 27
     };
     Example.BlessedScript.prototype.handleCreateObject = function (objectName, pos, orient) {
             this.createObject("../../objectscript.js", "Example.ObjectScript", {
@@ -222,14 +223,14 @@ Kata.require([
         if (msg.msg == "mouseup") {
         }
         if (msg.msg == "pick") {
-            if (!(msg.shiftKey || msg.ctrlKey)) {
+            if (!(msg.shiftKey || msg.metaKey)) {
                 if (!(msg.id && msg.id in this.mSelected)) {
                     this.clearSelection(msg.spaceid);
                 }
             }
             if (msg.id) {
                 if (msg.id in this.mSelected) {
-                    if (msg.ctrlKey) {
+                    if (msg.metaKey) {
                         this.removeSelection(msg.spaceid, msg.id);
                     }
                 } else {
@@ -240,17 +241,37 @@ Kata.require([
             var dy = (msg.pos[1] - msg.camerapos[1]);
             var dz = (msg.pos[2] - msg.camerapos[2]);
             var length = Math.sqrt(dx*dx + dy*dy + dz*dz);
-            var planedist = dx*msg.cameradir[0] + dy*msg.cameradir[1] + dz*msg.cameradir[2];
-            this.mDrag = {camerapos: msg.camerapos, dir: msg.dir, planedist: planedist, start: msg.pos, dist:length};
+            var camdir = msg.cameradir;
+            if (msg.ctrlKey) {
+                camdir = [0,-1,0];
+            }
+            var planedist = dx*camdir[0] + dy*camdir[1] + dz*camdir[2];
+            //if (planedist > 0) {
+                this.mDrag = {camerapos: msg.camerapos, ctrlKey: msg.ctrlKey, dir: msg.dir, planedist: planedist, start: msg.pos, dist:length};
+            //}
         }
-        if (msg.msg == "drag" && this.mDrag) {
-            var length = this.mDrag.planedist / (msg.dir[0]*msg.cameradir[0] +
-                                              msg.dir[1]*msg.cameradir[1] +
-                                              msg.dir[2]*msg.cameradir[2]);
+        if ((msg.msg == "drag" || msg.msg == "drop") && this.mDrag) {
+            var camdir = msg.cameradir;
+            if (this.mDrag.ctrlKey) {
+                camdir = [0,-1,0];
+            }
+            var length = this.mDrag.planedist / (msg.dir[0]*camdir[0] +
+                                              msg.dir[1]*camdir[1] +
+                                              msg.dir[2]*camdir[2]);
             var cam = msg.camerapos;
             var end = [msg.dir[0] * length + cam[0], msg.dir[1] * length + cam[1], msg.dir[2] * length + cam[2]];
             var start = this.mDrag.start;
             var deltaPos = [end[0] - start[0], end[1] - start[1], end[2] - start[2]];
+            var deltaPosLen = Math.sqrt(deltaPos[0]*deltaPos[0]+
+                deltaPos[1]*deltaPos[1]+deltaPos[2]*deltaPos[2]);
+            var test = (camdir[0])*msg.dir[0] + (camdir[1])*msg.dir[1] + (camdir[2])*msg.dir[2];
+            console.log(""+camdir+"; "+msg.dir+"; "+deltaPos+"; "+deltaPosLen+"; "+test);
+            if (this.mDrag.ctrlKey && (deltaPosLen > 20 || !(test <= 0))) {
+                if (test > 0) deltaPosLen = -deltaPosLen;
+                for (var i = 0; i < 3; i++) {
+                    deltaPos[i] = deltaPos[i]*20/deltaPosLen;
+                }
+            }
             this.foreachSelected(this.mPresence.mSpace, function(presid) {
                 var remote_pres = this.getRemotePresence(presid);
                 if (remote_pres) {
@@ -266,11 +287,14 @@ Kata.require([
                         { loc : newLoc }
                     );
                     this._sendHostedObjectMessage(msg);
+                    if (msg.msg == "drop") {
+                        // Make change permanent!
+                    }
                 }
             });
-        }
-        if (msg.msg == "drop") {
-            this.mDrag = null;
+            if (msg.msg == "drop") {
+                this.mDrag = null;
+            }
         }
         if (msg.msg == "keyup") {
             this.keyIsDown[msg.keyCode] = false;
@@ -292,6 +316,25 @@ Kata.require([
             var avZZ = avMat[2][2] * avSpeed;
             this.keyIsDown[msg.keyCode] = true;
 
+            if (this.keyIsDown[this.Keys.ESCAPE] && this.mDrag) {
+                console.log("RESET!");
+              this.foreachSelected(this.mPresence.mSpace, function(presid) {
+                var remote_pres = this.getRemotePresence(presid);
+                if (remote_pres) {
+                    var time = Kata.now(remote_pres.mSpace);
+                    var newLoc = Kata.LocationExtrapolate(remote_pres.predictedLocation(), time);
+                    var msg = new Kata.ScriptProtocol.FromScript.GFXMoveNode(
+                        remote_pres.space(),
+                        remote_pres.id(),
+                        remote_pres,
+                        { loc : newLoc }
+                    );
+                    console.log(newLoc, msg);
+                    this._sendHostedObjectMessage(msg);
+                }
+              });
+              this.mDrag = null;
+            }
             if (this.keyIsDown[this.Keys.UP]) {
                 this.mPresence.setVelocity([-avZX, -avZY, -avZZ]);
                 this.disableSitting();
