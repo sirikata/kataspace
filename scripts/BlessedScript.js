@@ -3,6 +3,7 @@ var Example;
 
 Kata.require([
     'katajs/oh/GraphicsScript.js',
+    '../../objectscript.js',
 // FIXME we want to be able to specify a centralized offset so we
 // don't have to have this ../../ stuff here.
     '../../scripts/behavior/chat/Chat.js',
@@ -111,7 +112,13 @@ Kata.require([
             Kata.warn("Camera Wiped object.");      // FIXME: unsubscribe!
         }
     };
-
+    Example.BlessedScript.prototype.setRemoteObjectLocation = function (presence, remoteId, location) {
+        var payload=JSON.stringify(location);
+        console.log("SENDING PACKET WITH DATA "+payload+" to "+JSON.stringify(remoteId.object()));
+        var sendPort = presence.bindODPPort(Example.ObjectScript.kMovePort+1);
+        sendPort.send(new Kata.ODP.Endpoint(remoteId, Example.ObjectScript.kMovePort),payload);
+        sendPort.close();
+    };
     Example.BlessedScript.prototype.connected = function(presence) {
         if (!presence) {
             // If we failed to connect, notify the user
@@ -168,11 +175,14 @@ Kata.require([
     Example.BlessedScript.prototype.handleCreateObject = function (objectName, pos, orient) {
             this.createObject("../../objectscript.js", "Example.ObjectScript", {
                                   space: this.mPresence.mSpace,
-                                  scale: 1,
-                                  visual: {mesh:objectName},
-                                  pos: pos ? pos : this.mPresence.predictedPosition(new Date()),
-                                  orient : orient,
+                                  name: "Created object "+objectName,
+                                  loc: {
+                                      scale: [1,1,1],
+                                      pos: pos ? pos : this.mPresence.predictedPosition(Kata.now(this.mPresence.mSpace)),
+                                      orient : orient
+                                  },
                                   creator: this.mPresence.id(),
+                                  visual: {mesh:objectName},
                                   auth: "whiskey-foxtrot-tango"
                                   //,port: port
                                   //,receipt: ""+idx
@@ -265,7 +275,6 @@ Kata.require([
             var deltaPosLen = Math.sqrt(deltaPos[0]*deltaPos[0]+
                 deltaPos[1]*deltaPos[1]+deltaPos[2]*deltaPos[2]);
             var test = (camdir[0])*msg.dir[0] + (camdir[1])*msg.dir[1] + (camdir[2])*msg.dir[2];
-            console.log(""+camdir+"; "+msg.dir+"; "+deltaPos+"; "+deltaPosLen+"; "+test);
             if (this.mDrag.ctrlKey && (deltaPosLen > 20 || !(test <= 0))) {
                 if (test > 0) deltaPosLen = -deltaPosLen;
                 for (var i = 0; i < 3; i++) {
@@ -280,14 +289,17 @@ Kata.require([
                     var newPos = [oldPos[0] + deltaPos[0], oldPos[1] + deltaPos[1], oldPos[2] + deltaPos[2]];
                     var newLoc = Kata.LocationExtrapolate(remote_pres.predictedLocation(), time);
                     newLoc.pos = newPos;
-                    var msg = new Kata.ScriptProtocol.FromScript.GFXMoveNode(
+                    var gfxmsg = new Kata.ScriptProtocol.FromScript.GFXMoveNode(
                         remote_pres.space(),
                         remote_pres.id(),
                         remote_pres,
                         { loc : newLoc }
                     );
-                    this._sendHostedObjectMessage(msg);
+                    this._sendHostedObjectMessage(gfxmsg);
                     if (msg.msg == "drop") {
+                        this.setRemoteObjectLocation(this.mPresence,
+                                                     remote_pres,
+                                                     newLoc);
                         // Make change permanent!
                     }
                 }
@@ -317,7 +329,6 @@ Kata.require([
             this.keyIsDown[msg.keyCode] = true;
 
             if (this.keyIsDown[this.Keys.ESCAPE] && this.mDrag) {
-                console.log("RESET!");
               this.foreachSelected(this.mPresence.mSpace, function(presid) {
                 var remote_pres = this.getRemotePresence(presid);
                 if (remote_pres) {

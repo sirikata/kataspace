@@ -13,7 +13,7 @@ Kata.require([
         
         this.mNearby = {};
         var thus=this;
-        Kata.log("Connecting to "+args.space+" with "+args.visual+" from "+args.creator+ " at "+args.pos);
+        Kata.log("Connecting to "+args.space+" with "+args.visual+" from "+args.creator+ " at "+args.loc.pos);
         this.connect(args,
                      args.auth?args.auth:null,
                      function(presence) {
@@ -24,17 +24,31 @@ Kata.require([
                              delete args.space;
                              delete args.creator;
                              delete args.auth;
-                             presence.setPosition(args.pos);
+                             presence.setLocation(args.loc);
                              if (args.port!==undefined)
                                  thus.notifyCreator(presence,creator,args.port,args.receipt);
+                             var movePort=presence.bindODPPort(Example.ObjectScript.kMovePort);
+                             console.log("Registering listener at "+Example.ObjectScript.kMovePort, movePort);
+                             movePort.receive(function(src, endpoint, payload){
+                                                  var jsonstr = "";
+                                                  for (var i = 0; i < payload.length; i++) {
+                                                      jsonstr += String.fromCharCode(payload[i]);
+                                                  }
+                                                  console.log("RECV PACKET WITH DATA "+jsonstr+" to "+JSON.stringify(src));
+                                                  payload = JSON.parse(jsonstr);
+                                                  if (payload) {
+                                                      thus.mPresence.setLocation(payload);
+                                                  }
+                                              });
                              Kata.log("Connected subobject\n");
                          }
-                         // Start periodic movements
+                         // Start periodic movemenst
                          //thus.move();
                      });
     };
     
     Kata.extend(Example.ObjectScript, SUPER);
+    Example.ObjectScript.kMovePort=61827;
     Example.ObjectScript.prototype.notifyCreator = function(presence,creator,port,receipt) {
         var returnReceiptPort=presence.bindODPPort(port);
         var timeout=10;
