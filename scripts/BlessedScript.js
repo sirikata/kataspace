@@ -217,6 +217,27 @@ Kata.require([
         }
     };
 
+    Example.BlessedScript.prototype.resetDrag = function() {
+        if (this.mDrag) {
+            this.foreachSelected(this.mPresence.mSpace, function(presid) {
+                var remote_pres = this.getRemotePresence(presid);
+                if (remote_pres) {
+                    var time = Kata.now(remote_pres.mSpace);
+                    var newLoc = Kata.LocationExtrapolate(remote_pres.predictedLocation(), time);
+                    var msg = new Kata.ScriptProtocol.FromScript.GFXMoveNode(
+                        remote_pres.space(),
+                        remote_pres.id(),
+                        remote_pres,
+                        { loc : newLoc }
+                    );
+                    console.log(newLoc, msg);
+                    this._sendHostedObjectMessage(msg);
+                }
+            });
+            this.mDrag = null;
+        }
+    };
+
     Example.BlessedScript.prototype._handleGUIMessage = function (channel, msg) {
         if (msg.msg == 'chat') {
             this.handleChatGUIMessage(msg);
@@ -232,7 +253,40 @@ Kata.require([
         }
         if (msg.msg == "mouseup") {
         }
+        if (msg.msg == "abort") {
+            this.resetDrag();
+        }
+        if (msg.msg == "setscale") {
+            this.mDrag = {scaling: true};
+            var deltaScale = msg.event.value;
+            Kata.log("Setting scale to "+deltaScale);
+            this.foreachSelected(this.mPresence.mSpace, function(presid) {
+                var remote_pres = this.getRemotePresence(presid);
+                if (remote_pres) {
+                    var time = Kata.now(remote_pres.mSpace);
+                    var oldScale = remote_pres.scale(time);
+                    var newScale = [oldScale[0] * deltaScale, oldScale[1] * deltaScale, oldScale[2] * deltaScale];
+                    var newLoc = Kata.LocationExtrapolate(remote_pres.predictedLocation(), time);
+                    newLoc.scale = newScale;
+                    var gfxmsg = new Kata.ScriptProtocol.FromScript.GFXMoveNode(
+                        remote_pres.space(),
+                        remote_pres.id(),
+                        remote_pres,
+                        { loc : newLoc }
+                    );
+                    this._sendHostedObjectMessage(gfxmsg);
+                    if (msg.event.commit) {
+                        // Make change permanent!
+                        remote_pres.mLocation.scale = newScale; // HACK! Scale is not being sent by Loc
+                        this.setRemoteObjectLocation(this.mPresence,
+                                                     remote_pres,
+                                                     newLoc);
+                    }
+                }
+            });
+        }
         if (msg.msg == "pick") {
+            this.resetDrag();
             if (!(msg.shiftKey || msg.metaKey)) {
                 if (!(msg.id && msg.id in this.mSelected)) {
                     this.clearSelection(msg.spaceid);
@@ -247,6 +301,9 @@ Kata.require([
                     this.addSelection(msg.spaceid, msg.id);
                 }
             }
+            var gfxmsg = new Kata.ScriptProtocol.FromScript.GUIMessage("transform", {action: "hide"});
+            this._sendHostedObjectMessage(gfxmsg);
+
             var dx = (msg.pos[0] - msg.camerapos[0]);
             var dy = (msg.pos[1] - msg.camerapos[1]);
             var dz = (msg.pos[2] - msg.camerapos[2]);
@@ -304,8 +361,14 @@ Kata.require([
                     }
                 }
             });
-            if (msg.msg == "drop") {
-                this.mDrag = null;
+        }
+        if (msg.msg == "drop" || msg.msg == "click") {
+            this.mDrag = null;
+            for (var id in this.mSelected) {
+                // if nonempty...
+                var gfxmsg = new Kata.ScriptProtocol.FromScript.GUIMessage("transform", {action: "show", x: msg.clientX, y: msg.clientY});
+                this._sendHostedObjectMessage(gfxmsg);
+                break;
             }
         }
         if (msg.msg == "keyup") {
@@ -328,23 +391,8 @@ Kata.require([
             var avZZ = avMat[2][2] * avSpeed;
             this.keyIsDown[msg.keyCode] = true;
 
-            if (this.keyIsDown[this.Keys.ESCAPE] && this.mDrag) {
-              this.foreachSelected(this.mPresence.mSpace, function(presid) {
-                var remote_pres = this.getRemotePresence(presid);
-                if (remote_pres) {
-                    var time = Kata.now(remote_pres.mSpace);
-                    var newLoc = Kata.LocationExtrapolate(remote_pres.predictedLocation(), time);
-                    var msg = new Kata.ScriptProtocol.FromScript.GFXMoveNode(
-                        remote_pres.space(),
-                        remote_pres.id(),
-                        remote_pres,
-                        { loc : newLoc }
-                    );
-                    console.log(newLoc, msg);
-                    this._sendHostedObjectMessage(msg);
-                }
-              });
-              this.mDrag = null;
+            if (this.keyIsDown[this.Keys.ESCAPE]) {
+                this.resetDrag();
             }
             if (this.keyIsDown[this.Keys.UP]) {
                 this.mPresence.setVelocity([-avZX, -avZY, -avZZ]);

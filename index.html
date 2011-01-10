@@ -94,6 +94,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                     'katajs/oh/plugins/loop/LoopbackSpaceConnection.js',
                     'katajs/oh/plugins/sirikata/SirikataSpaceConnection.js',
                     'katajs/oh/ObjectHost.js',
+                    kata_base_offset + 'scripts/ui/html5slider.js',
+                    kata_base_offset + 'scripts/ui/transform.js',
                     kata_base_offset + 'scripts/ui/session.js',
                     kata_base_offset + 'scripts/ui/chat.js',
                     kata_base_offset + 'scripts/ui/toolbar.js',
@@ -165,6 +167,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                     createui = new CreateUI(window.kata.getChannel(), toolbar);
                     helpui = new HelpUI(window.kata.getChannel(), toolbar);
                     chats = new ChatUI(window.kata.getChannel(), loginName, 300);
+                    transformUI = new TransformUI(window.kata.getChannel());
                     chats.create("Chat");
                 }
 
