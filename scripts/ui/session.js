@@ -46,11 +46,19 @@ Kata.require([
     SessionUI.prototype.handleGUIMessage = function(evt) {
         var revt = evt.event;
 
-        if (evt.msg !== 'disconnected') return;
+        if (evt.msg !== 'connection' && evt.msg !== 'disconnected') return;
 
-        var msg = "You are no longer connected to the server. Please try to login again.";
-        if (revt.reason !== undefined && revt.reason.length > 0)
-            msg = msg + "<br><br>Reason: " + revt.reason;
+        var msg, title;
+        if (evt.msg == 'connection') {
+            title = "Failed to connect";
+            msg = "The server couldn't authenticate you.";
+        }
+        else if (evt.msg == 'disconnected') {
+            title = "Connection Lost";
+            msg = "You are no longer connected to the server. Please try to login again.";
+            if (revt.reason !== undefined && revt.reason.length > 0)
+                msg = msg + "<br><br>Reason: " + revt.reason;
+        }
 
         var dialog_div = $('<div>' + msg + '</div>').appendTo($('body'));
         dialog_div.dialog(
@@ -59,7 +67,7 @@ Kata.require([
 	        modal: false,
                 closeOnEscape: false,
                 draggable: false,
-                title: "Connection Lost",
+                title: title,
 	        buttons: {
 		    "OK": function() {
                         location.reload(true);

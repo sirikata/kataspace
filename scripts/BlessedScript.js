@@ -118,6 +118,14 @@ Kata.require([
     };
 
     Example.BlessedScript.prototype.connected = function(presence) {
+        if (!presence) {
+            // If we failed to connect, notify the user
+            var evt = { status : 'failed' };
+            var msg = new Kata.ScriptProtocol.FromScript.GUIMessage("connection", evt);
+            this._sendHostedObjectMessage(msg);
+            return;
+        }
+
         this.mPresence = presence;
 
         this.enableGraphicsViewport(presence, 0);
