@@ -70,7 +70,7 @@ Kata.require([
         this.mParent = parent;
         this.mParent.addBehavior(this);
 
-        this.mPorts = {};
+        this.mConnections = {};
 
         this.mEnterCallback = enter_cb;
         this.mExitCallback = exit_cb;
@@ -86,15 +86,14 @@ Kata.require([
      */
     Kata.Behavior.Chat.prototype.chat = function(msg) {
         // Simply iterate over everyone we know about and try to get the message to them.
-        for(var remote_key in this.mTrackedObjects) {
+        for(var remote_key in this.mConnections) {
             var chat_msg = new Chat.Protocol.Chat();
             chat_msg.text = msg;
             var container_msg = new Chat.Protocol.Container();
             container_msg.chat = chat_msg;
 
-            var objdata = this.mTrackedObjects[remote_key];
-            var odp_port = this._getPort(objdata.presence);
-            odp_port.send(objdata.dest, this._serializeMessage(container_msg));
+            var conn = this.mConnections[remote_key];
+            conn.write(this._serializeMessage(container_msg));
         }
     };
 
@@ -110,27 +109,13 @@ Kata.require([
         return serialized.getArray();
     };
 
-    Kata.Behavior.Chat.prototype._getPort = function(pres) {
-        var id = pres;
-        if (pres.presenceID)
-            id = pres.presenceID();
-        var odp_port = this.mPorts[id];
-        if (!odp_port && pres.bindODPPort) {
-            odp_port = pres.bindODPPort(this.ProtocolPort);
-            odp_port.receive(Kata.bind(this._handleMessage, this, pres));
-            this.mPorts[id] = odp_port;
-        }
-        return odp_port;
-    };
-
     Kata.Behavior.Chat.prototype._handleEnter = function(presence, remoteID, name) {
         if (this.mTrackedObjects[remoteID]) {
             Kata.warn("Overwriting existing chat info due to duplicate intro.");
         }
         this.mTrackedObjects[remoteID] = {
             name : name,
-            presence : presence,
-            dest : new Kata.ODP.Endpoint(remoteID, this.ProtocolPort)
+            presence : presence
         };
         this.mEnterCallback(remoteID, name);
     };
@@ -153,29 +138,31 @@ Kata.require([
     Kata.Behavior.Chat.prototype.newPresence = function(pres) {
         // When we get a presence, we just set up a listener for
         // messages. The rest is triggered by prox events.
-        var odp_port = this._getPort(pres);
+        Kata.SST.listenStream(
+            Kata.bind(this._acceptConnection, this, pres),
+            pres.sstEndpoint(this.ProtocolPort)
+        );
+        Kata.warn("Listening for SST connections.");
     };
 
     Kata.Behavior.Chat.prototype.presenceInvalidated = function(pres) {
-        var odp_port = this._getPort(pres);
-        if (odp_port) {
-            odp_port.close();
-            delete this.mPorts[pres.presenceID()];
+        var id = pres;
+        if (pres.presenceID)
+            id = pres.presenceID();
+        if (id in this.mConnections) {
+            this.mConnections[id].close();
+            delete this.mConnections[id];
         }
     };
 
     Kata.Behavior.Chat.prototype.remotePresence = function(presence, remote, added) {
         if (added) {
-            // This protocol is active: when we detect another presence,
-            // we try to send it an intro message.
-
-            var intro_msg = new Chat.Protocol.Intro();
-            intro_msg.name = this.mName;
-            var container_msg = new Chat.Protocol.Container();
-            container_msg.intro = intro_msg;
-
-            var odp_port = this._getPort(presence);
-            odp_port.send(remote.endpoint(this.ProtocolPort), this._serializeMessage(container_msg));
+            var tried_sst = Kata.SST.connectStream(
+                presence.sstEndpoint(this.ProtocolPort),
+                remote.sstEndpoint(this.ProtocolPort),
+                Kata.bind(this._handleConnectedStream, this, presence, remote.presenceID())
+            );
+            Kata.warn("Trying to initiate chat connection to " + remote.id() + ": " + tried_sst);
         }
         else {
             // When we lose objects, we just make sure we clean up
@@ -184,22 +171,60 @@ Kata.require([
         }
     };
 
-    Kata.Behavior.Chat.prototype._handleMessage = function(presence, src, dest, payload) {
+    Kata.Behavior.Chat.prototype._acceptConnection = function(pres, error, stream) {
+        if (error == Kata.SST.FAILURE) {
+            Kata.warn("Failed to accept SST chat connection.");
+            return;
+        }
+
+        Kata.warn("Successful SST chat connection.");
+        var remoteid = new Kata.PresenceID(pres.space(), stream.remoteEndPoint().objectId());
+        this._handleConnectedStream(pres, remoteid, error, stream);
+    };
+
+    Kata.Behavior.Chat.prototype._handleConnectedStream = function(pres, remoteid, error, stream) {
+        if (error == Kata.SST.FAILURE) {
+            Kata.warn("Failed to get SST chat connection for " + remoteid + ".");
+            return;
+        }
+
+        Kata.warn("Successful SST chat connection to " + remoteid + ".");
+
+        if (remoteid in this.mConnections)
+            Kata.warn("Overwriting previous connection.");
+        this.mConnections[remoteid] = stream;
+
+        stream.registerReadCallback(Kata.bind(this._handleMessage, this, pres, remoteid));
+
+        // Send intro message
+        var intro_msg = new Chat.Protocol.Intro();
+        intro_msg.name = this.mName;
+        var container_msg = new Chat.Protocol.Container();
+        container_msg.intro = intro_msg;
+        stream.write(this._serializeMessage(container_msg));
+    };
+
+    // Get the remote PresenceID for a stream
+    Kata.Behavior.Chat.prototype._getStreamPresenceID = function(pres, stream) {
+        var presid = new Kata.PresenceID(pres.space(), stream.remoteEndPoint().objectId());
+    };
+
+    Kata.Behavior.Chat.prototype._handleMessage = function(presence, remoteid, payload) {
         // We should be able to just parse a Chat Container
         var container_msg = new Chat.Protocol.Container();
         container_msg.ParseFromStream(new PROTO.ByteArrayStream(payload));
 
         // And just try handling any and all of the three components
         if (container_msg.HasField("intro")) {
-            this._handleEnter(presence, src.presenceID(), container_msg.intro.name);
+            this._handleEnter(presence, remoteid, container_msg.intro.name);
         }
 
         if (container_msg.HasField("chat")) {
-            this._handleChatMessage(src.presenceID(), container_msg.chat.text);
+            this._handleChatMessage(remoteid, container_msg.chat.text);
         }
 
         if (container_msg.HasField("exit")) {
-            this._handleExit(src.presenceID(), container_msg.exit.text);
+            this._handleExit(remoteid, container_msg.exit.text);
         }
     };
 
