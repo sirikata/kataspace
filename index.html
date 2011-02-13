@@ -94,10 +94,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                     'katajs/oh/plugins/loop/LoopbackSpaceConnection.js',
                     'katajs/oh/plugins/sirikata/SirikataSpaceConnection.js',
                     'katajs/oh/ObjectHost.js',
-                    kata_base_offset + 'scripts/ui/chat.js',
                     kata_base_offset + 'scripts/ui/session.js',
+                    kata_base_offset + 'scripts/ui/chat.js',
                     kata_base_offset + 'scripts/ui/toolbar.js',
                     kata_base_offset + 'scripts/ui/sit.js',
+                    kata_base_offset + 'scripts/ui/create.js',
                     kata_base_offset + 'scripts/ui/help.js'
                 ], function() {
                     loadGFX();
@@ -122,7 +123,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                 }
 
                 if (!have_deps) {
-                    $.jnotify("Currently we recommend the latest <a href=\"http://www.google.com/landing/chrome/beta/\">Chrome Beta</a> for all platforms.<br>In recent Firefox Betas you may need to explicitly enable these features via the about:config page.", 'error', true);
+                    $.jnotify("Currently we recommend the latest <a href=\"http://www.google.com/chrome\">Google Chrome</a> for all platforms.<br>In recent Firefox Betas you may need to explicitly enable these features via the about:config page.", 'error', true);
                     return;
                 }
 
@@ -155,7 +156,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                         {
                         space: SpaceURL,
                         name: loginName,
-                        scale : avatarScale,
+                        loc: {scale:[avatarScale,avatarScale,avatarScale]},
                         visual: {mesh: avatarURL}
                         });
                     graphics = new Kata.GraphicsSimulation(driver, window.kata.getChannel(), document.getElementById("container"));

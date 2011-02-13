@@ -17,14 +17,7 @@ Kata.require([
     Example.BlessedScript = function(channel, args){
         SUPER.constructor.call(this, channel, args, Kata.bind(this.updateRenderState, this));
 
-        this._scale = args.scale;
-
-        var xoff = ((Math.random() - 0.5) * 2.0) * 5.0;
-        var zoff = ((Math.random() - 0.5) * 2.0) * 5.0;
-        var loc = Kata.LocationIdentity();
-        loc.pos = [xoff, this._scale * 1.0, zoff];
-        loc.scale = [args.scale, args.scale, args.scale];
-        args.loc = loc;
+        this._scale = args.loc.scale;
         this.connect(args, null, Kata.bind(this.connected, this));
 
         this.keyIsDown = {};
@@ -132,6 +125,14 @@ Kata.require([
         presence.setQueryHandler(Kata.bind(this.proxEvent, this));
         presence.setQuery(0);
 
+        // Select random offset from origin so people don't land on each other
+        var xoff = ((Math.random() - 0.5) * 2.0) * 5.0;
+        var zoff = ((Math.random() - 0.5) * 2.0) * 5.0;
+        // Radius of avatars is about 2.5, with height about 4.33 ->
+        // normalized to radius 1 and height about 1.7. Shift by about
+        // .85 (1.7/2) instead of full scale. Would be nice to have a
+        // reliable, non-magic-numbers approach for this.
+        presence.setPosition([xoff, this._scale[1] * 1.0, zoff]);
         this.setCameraPosOrient(this._calcCamPos(), [0,0,0,1], 0.0);
         // FIXME both this and the camera controls in GraphicsScript
         // are running on timers because the ones in GraphicsScript
@@ -158,12 +159,13 @@ Kata.require([
         LEFT : 37,
         RIGHT : 39
     };
-    Example.BlessedScript.prototype.handleCreateObject = function (objectName) {
+    Example.BlessedScript.prototype.handleCreateObject = function (objectName, pos, orient) {
             this.createObject("../../objectscript.js", "Example.ObjectScript", {
                                   space: this.mPresence.mSpace,
                                   scale: 1,
                                   visual: {mesh:objectName},
-                                  pos: this.mPresence.predictedPosition(new Date()),
+                                  pos: pos ? pos : this.mPresence.predictedPosition(new Date()),
+                                  orient : orient,
                                   creator: this.mPresence.id(),
                                   auth: "whiskey-foxtrot-tango"
                                   //,port: port
@@ -172,38 +174,43 @@ Kata.require([
          
     };
     Example.BlessedScript.prototype._handleGUIMessage = function (channel, msg) {
-        if (msg.msg == 'chat')
+        if (msg.msg == 'chat') {
             this.handleChatGUIMessage(msg);
-        if (msg.msg == 'create') {
-            Kata.log("Creating object with visual "+msg.event);
-            this.handleCreateObject(msg.event.visual);
         }
-        if (msg.msg == 'sit')
+        if (msg.msg == 'create') {
+            Kata.log("Creating object with visual "+msg.event.visual+" orient "+msg.event.orient);
+            this.handleCreateObject(msg.event.visual, msg.event.pos, msg.event.orient);
+        }
+        if (msg.msg == 'sit') {
             this.handleSitGUIMessage(msg);
-
+        }
         if (msg.msg == "mousedown") {
-            if (msg.event.which == 0) 
+            if (msg.button == 0) {
                 this.leftDown = true;
-            if (msg.event.which == 1) 
+            } else if (msg.button == 1) {
                 this.middleDown = true;
-            if (msg.event.which == 2) {
+            } else if (msg.button == 2) {
                 this.rightDown = true;
             }
         }
         if (msg.msg == "mouseup") {
-            if (msg.event.which == 0) 
+            if (msg.button == 0) {
                 this.leftDown = false;
-            if (msg.event.which == 1) 
+            } else if (msg.button == 1) {
                 this.middleDown = false;
-            if (msg.event.which == 2) 
+            } else if (msg.button == 2) {
                 this.rightDown = false;
+            }
+        }
+        if (msg.msg == "pick") {
+            Kata.log("Pick message", msg);
         }
         if (msg.msg == "mousemove") {
             /// Firefox 4 bug: ev.which is always 0, so get it from mousedown/mouseup events
             /*            
             if (this.rightDown) {
-                this.avPointX = parseFloat(msg.event.x)*-.25 - this.dragStartX;
-                this.avPointY = parseFloat(msg.event.y)*-.25 - this.dragStartY;
+                this.avPointX = parseFloat(msg.x)*-.25 - this.dragStartX;
+                this.avPointY = parseFloat(msg.y)*-.25 - this.dragStartY;
                 var q = this._euler2Quat(this.avPointX, this.avPointY, 0);
                 this.mPresence.setOrientation(q);
                 this.setCameraPosOrient(null, q);
@@ -211,7 +218,7 @@ Kata.require([
             */
         }
         if (msg.msg == "keyup") {
-            this.keyIsDown[msg.event.keyCode] = false;
+            this.keyIsDown[msg.keyCode] = false;
 
             if ( !this.keyIsDown[this.Keys.UP] && !this.keyIsDown[this.Keys.DOWN])
                 this.mPresence.setVelocity([0, 0, 0]);
@@ -228,14 +235,14 @@ Kata.require([
             var avZX = avMat[2][0] * avSpeed;
             var avZY = avMat[2][1] * avSpeed;
             var avZZ = avMat[2][2] * avSpeed;
-            this.keyIsDown[msg.event.keyCode] = true;
+            this.keyIsDown[msg.keyCode] = true;
 
             if (this.keyIsDown[this.Keys.UP]) {
                 this.mPresence.setVelocity([-avZX, -avZY, -avZZ]);
                 this.disableSitting();
             }
             if (this.keyIsDown[this.Keys.DOWN]) {
-                //this.mPresence.setVelocity([avZX, avZY, avZZ]);
+                this.mPresence.setVelocity([avZX, avZY, avZZ]);
             }
             var full_rot_seconds = 10.0;
             if (this.keyIsDown[this.Keys.LEFT]) {

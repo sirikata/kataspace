@@ -61,17 +61,64 @@ Kata.require([
 
     CreateUI.prototype.toggleCreate = function() {
         // Send the message
+        var thus = this;
+        var base;
         var value=document.getElementById('objectCreation'+this.uniqueId).value;
-        var dirname = window.location.href.substr(0,
-                                                  window.location.href.lastIndexOf('/')+1);
-
-        if (!value)
-            value=dirname+"static/maleWalkIdleSit.dae";
-        this.mChannel.sendMessage(
-            new Kata.ScriptProtocol.ToScript.GUIMessage(
-                'create',
-                {visual:value}//put args here for what to create
-            )
-        );
+        var i = value.indexOf("/processed/index.html");
+        if (i >= 0) {
+            base = value.substr(0, i) + "/processed/";
+        }
+        else {
+            i = value.indexOf("?v=");       /// old skool
+            if (i >= 0) {
+                var ext;
+                var userhash = value.substr(i+3);
+                var j = userhash.indexOf(":");
+                var hash = userhash.substr(j+1)
+                if (j==1) {
+                    ext = "/" + hash;
+                }
+                else {
+                    ext = "/" + userhash.substr(0,j) + "/" + hash;
+                }
+                var temp = value.substr(0, i);
+                j = temp.lastIndexOf("/");
+                base = temp.substr(0, j) + ext + "/processed/";
+            }
+        }
+        if (i >= 0) {
+            value = base + "view.json";
+            Kata.warn("DEBUG loading: " + value);
+            var req = new XMLHttpRequest();
+            if (req) {
+                req.onreadystatechange = function(){
+                    if (req.readyState == 4) {
+                        if (req.status != 200 && req.status != 0) {
+                            Kata.warn("Error loading Document: status " + req.status);
+                        }
+                        else {
+                            var view = {};
+                            eval("view=" + this.responseText);
+                            value = base + view.o3dscene + ".dae";
+                            Kata.warn("inserting into scene: " + value);
+                            thus.mChannel.sendMessage(new Kata.ScriptProtocol.ToScript.GUIMessage('create', {
+                                visual: value
+                            } /* put args here for what to create */));
+                        }
+                    }
+                }
+                req.open("GET", value, true);
+                req.send("");
+            }
+        }
+        else {
+            if (!value) {
+                var dirname = window.location.href.substr(0, window.location.href.lastIndexOf('/') + 1);
+                value = dirname + "static/maleWalkIdleSit.dae";
+            }
+            this.mChannel.sendMessage(new Kata.ScriptProtocol.ToScript.GUIMessage('create', {
+                visual: value
+            } /* put args here for what to create */));
+        }
     };
 });

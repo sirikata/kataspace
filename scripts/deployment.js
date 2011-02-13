@@ -10,8 +10,7 @@ SpaceURL = "sirikata://" + window.location.hostname + ":7777";
 Title = "KataSpace";
 
 (function(){
-var dirname = window.location.href.substr(0,
-                  window.location.href.lastIndexOf('/')+1);
+dirname = window.location.href.substr(0, window.location.href.lastIndexOf('/')+1);
 
 Avatars = [
     {
