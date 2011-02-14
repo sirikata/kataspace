@@ -112,6 +112,9 @@ Kata.require([
     Kata.Behavior.Chat.prototype._handleEnter = function(presence, remoteID, name) {
         if (this.mTrackedObjects[remoteID]) {
             Kata.warn("Overwriting existing chat info due to duplicate intro.");
+            var objdata = this.mTrackedObjects[remoteID];
+            delete this.mTrackedObjects[remoteID];
+            this.mExitCallback(remoteID, objdata.name);
         }
         this.mTrackedObjects[remoteID] = {
             name : name,
@@ -158,7 +161,7 @@ Kata.require([
     Kata.Behavior.Chat.prototype.remotePresence = function(presence, remote, added) {
         if (added) {
             var tried_sst = Kata.SST.connectStream(
-                presence.sstEndpoint(this.ProtocolPort),
+                presence.sstEndpoint(Math.round(Math.random() * 1000 + 1000)),
                 remote.sstEndpoint(this.ProtocolPort),
                 Kata.bind(this._handleConnectedStream, this, presence, remote.presenceID())
             );
