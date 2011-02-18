@@ -131,11 +131,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
                 Kata.require([
                     // Pre login
-                    kata_base_offset + 'scripts/ui/antiscroll.js',
                     kata_base_offset + 'scripts/ui/login.js',
                     kata_base_offset + 'scripts/ui/footer.js'
                 ], function() {
-                    antiScroll();
                     loginui = new LoginUI( $("#login"), Avatars, handleLogin);
 
                     $('#title').append(Title);
