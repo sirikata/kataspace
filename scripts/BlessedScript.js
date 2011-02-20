@@ -241,6 +241,7 @@ Kata.require([
     };
 
     Example.BlessedScript.prototype._handleGUIMessage = function (channel, msg) {
+        Kata.GraphicsScript.prototype._handleGUIMessage.call(this,channel,msg);
         if (msg.msg == 'chat') {
             this.handleChatGUIMessage(msg);
         }
