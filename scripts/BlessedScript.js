@@ -75,7 +75,7 @@ Kata.require([
 
     Example.BlessedScript.prototype.handleChatGUIMessage = function(msg) {
         var revt = msg.event;
-        this.mChatBehavior.chat(revt.msg);
+        this.mChatBehavior.chat(revt);
     };
 
     Example.BlessedScript.prototype.updateSittingAnimation = function() {
@@ -119,12 +119,14 @@ Kata.require([
         sendPort.send(new Kata.ODP.Endpoint(remoteId, Example.ObjectScript.kMovePort),payload);
         sendPort.close();
     };
-    Example.BlessedScript.prototype.connected = function(presence) {
+
+    Example.BlessedScript.prototype.connected = function(presence, space, reason) {
         if (!presence) {
             // If we failed to connect, notify the user
-            var evt = { status : 'failed' };
+            var evt = { status : 'failed', reason : reason };
             var msg = new Kata.ScriptProtocol.FromScript.GUIMessage("connection", evt);
             this._sendHostedObjectMessage(msg);
+            Kata.warn("connection failure");
             return;
         }
 
