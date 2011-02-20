@@ -260,7 +260,8 @@ Kata.require([
             this.resetDrag();
         }
         if (msg.msg == "setscale") {
-            this.mDrag = {scaling: true};
+            this.mDrag = this.mDrag || {};
+            this.mDrag.scaling = true;
             var deltaScale = msg.event.value;
             Kata.log("Setting scale to "+deltaScale);
             this.foreachSelected(this.mPresence.mSpace, function(presid) {
@@ -280,7 +281,37 @@ Kata.require([
                     this._sendHostedObjectMessage(gfxmsg);
                     if (msg.event.commit) {
                         // Make change permanent!
-                        remote_pres.mLocation.scale = newScale; // HACK! Scale is not being sent by Loc
+                        remote_pres.mLocation.scale = newScale;
+                        this.setRemoteObjectLocation(this.mPresence,
+                                                     remote_pres,
+                                                     newLoc);
+                    }
+                }
+            });
+        }
+        if (msg.msg == "setrotation") {
+            this.mDrag = this.mDrag || {};
+            this.mDrag.rotating = true;
+            var y_radians = msg.event.y_radians;
+            Kata.log("Setting rotation to "+y_radians);
+            this.foreachSelected(this.mPresence.mSpace, function(presid) {
+                var remote_pres = this.getRemotePresence(presid);
+                if (remote_pres) {
+                    var time = Kata.now(remote_pres.mSpace);
+                    var oldQuat = remote_pres.orientation(time);
+                    var newQuat = Kata.extrapolateQuaternion(oldQuat, y_radians, [0,1,0], 1.0);
+                    var newLoc = Kata.LocationExtrapolate(remote_pres.predictedLocation(), time);
+                    newLoc.orient = newQuat;
+                    var gfxmsg = new Kata.ScriptProtocol.FromScript.GFXMoveNode(
+                        remote_pres.space(),
+                        remote_pres.id(),
+                        remote_pres,
+                        { loc : newLoc }
+                    );
+                    this._sendHostedObjectMessage(gfxmsg);
+                    if (msg.event.commit) {
+                        // Make change permanent!
+                        remote_pres.mLocation.orient = newQuat;
                         this.setRemoteObjectLocation(this.mPresence,
                                                      remote_pres,
                                                      newLoc);

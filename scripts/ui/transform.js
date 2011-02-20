@@ -54,12 +54,33 @@ Kata.require([
             this.mForm = null;
         }
     };
+    TransformUI.prototype._addSliderUI = function(divID, parentDiv, label, name, func) {
+        var labelEl = document.createElement('label');
+        labelEl.setAttribute('for', name+divID);
+        labelEl.appendChild(document.createTextNode(label + ":"));
+        parentDiv.appendChild(labelEl);
+        parentDiv.appendChild(document.createElement("br"));
+        var slider = document.createElement('input');
+        slider.setAttribute('name',name);
+        slider.setAttribute('id',name+divID);
+        slider.setAttribute('type','range');
+        slider.setAttribute('step','any');
+        slider.value = '0';
+        slider.style.width="200px";
+        slider.addEventListener("change", func, false);
+        //slider.addEventListener("blur", Kata.bind(this._abort, this), false);
+        slider.lastvalue = 0;
+        parentDiv.appendChild(slider);
+        parentDiv.appendChild(document.createElement("br"));
+        return slider;
+    };
 
     TransformUI.prototype._create = function(x, y) {
         // Create a new div to hold it
         this._destroy();
         var divID = this.mNextDivID++;
-        var divIDstr = "scalediv" + divID;
+        var divIDstr = "transformdiv" + divID;
+        var slider;
 
         var newDiv = document.createElement('form');
         newDiv.setAttribute('id', divIDstr);
@@ -74,42 +95,39 @@ Kata.require([
         document.body.appendChild(newDiv);
         this.mForm = newDiv;
 
-        var label = document.createElement('label');
-        label.setAttribute('for', 'scale'+divID);
-        label.appendChild(document.createTextNode("Scale:"));
-        newDiv.appendChild(label);
-        newDiv.appendChild(document.createElement("br"));
-        var slider = document.createElement('input');
-        slider.setAttribute('name','scale');
-        slider.setAttribute('id','scale'+divID);
-        slider.setAttribute('type','range');
+        slider = this._addSliderUI(divID, newDiv, 'Scale', 'scale', Kata.bind(this._scaleChanged, this));
         slider.setAttribute('min','-0.9');
         slider.setAttribute('max','0.9');
-        slider.setAttribute('step','any');
-        slider.value = '0';
-        slider.style.width="200px";
-        slider.addEventListener("change", Kata.bind(this._scaleChanged, this), false);
-        //slider.addEventListener("blur", Kata.bind(this._abort, this), false);
-        slider.lastvalue = 0;
-        newDiv.appendChild(slider);
-        newDiv.appendChild(document.createElement("br"));
+
+        slider = this._addSliderUI(divID, newDiv, 'Rotation', 'rotateX', Kata.bind(this._rotateXChanged, this));
+        slider.setAttribute('min',-Math.PI);
+        slider.setAttribute('max',Math.PI);
+
         var confirm = document.createElement("input");
         confirm.setAttribute('type','button');
         confirm.value = 'OK';
-        confirm.addEventListener("click", Kata.bind(this._scaleCommit, this), false);
+        confirm.addEventListener("click", Kata.bind(this._commit, this), false);
         newDiv.appendChild(confirm);
-        slider.focus();
     };
 
     TransformUI.prototype._scaleChanged = function(ev) {
         //var relative = arg - ev.target.lastvalue;
         //ev.target.lastvalue = arg;
         this.setScale(this.mForm.scale.value - 0, false);
-        this.mForm.didChange = true;
+        this.mForm.scaleDidChange = true;
     };
-    TransformUI.prototype._scaleCommit = function(ev) {
-        if (this.mForm.didChange) {
+    TransformUI.prototype._rotateXChanged = function(ev) {
+        //var relative = arg - ev.target.lastvalue;
+        //ev.target.lastvalue = arg;
+        this.setRotateX(this.mForm.rotateX.value - 0, false);
+        this.mForm.rotateXDidChange = true;
+    };
+    TransformUI.prototype._commit = function(ev) {
+        if (this.mForm.scaleDidChange) {
             this.setScale(this.mForm.scale.value - 0, true);
+        }
+        if (this.mForm.rotateXDidChange) {
+            this.setRotateX(this.mForm.rotateX.value - 0, true);
         }
         this._destroy();
     };
@@ -133,6 +151,18 @@ Kata.require([
                 msg: 'setscale',
                 event: {
                     value: newscale,
+                    commit: commit
+                }
+            })
+        );
+    };
+    TransformUI.prototype.setRotateX = function(arg, commit) {
+        console.log("Setting rotation!"+arg);
+        this.mChannel.sendMessage(
+            new Kata.ScriptProtocol.ToScript.GUIMessage({
+                msg: 'setrotation',
+                event: {
+                    y_radians: arg,
                     commit: commit
                 }
             })
