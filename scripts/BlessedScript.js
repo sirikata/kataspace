@@ -542,7 +542,7 @@ Kata.require([
 
     Example.BlessedScript.prototype._getVerticalOffset = function(remote) {
         // FIXME there should be a better way of deciding this
-        return (remote._animatedState && (remote._animatedState.idle == 'sit')) ? 0 : 1;
+        return (remote._animatedState && (remote._animatedState.idle == 'sit')) ? .75 : 1.5;
     };
     Example.BlessedScript.prototype._getHorizontalOffset = function() {
         return 3;
