@@ -151,6 +151,7 @@ Kata.require([
         // FIXME both this and the camera controls in GraphicsScript
         // are running on timers because the ones in GraphicsScript
         // don't accept velocity
+        this.queryMeshAspectRatio(presence,presence);
         this.mCamUpdateTimer = setInterval(Kata.bind(this.updateCamera, this), 60);
         Kata.warn("Got connected callback.");
     };
@@ -359,6 +360,13 @@ Kata.require([
         }
         if (msg.msg == "abort") {
             this.resetDrag();
+        }
+        if (msg.msg=="MeshAspectRatio") {
+            if (msg.id==this.mPresence.id()) {
+                this._scale=[0,msg.aspect[1]*this._scale[3],0,this._scale[3]];
+                Kata.log("XXXXXXXXXXXAdjusting scale to "+this._scale);
+                this.mPresence.setScale(this._scale);
+            }
         }
         if (msg.msg == "setslider") {
             this.mDrag = this.mDrag || {};
