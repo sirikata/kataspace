@@ -114,7 +114,7 @@ Kata.require([
     };
     Example.BlessedScript.prototype.setRemoteObjectLocation = function (presence, remoteId, location) {
         var payload=JSON.stringify(location);
-        console.log("SENDING PACKET WITH DATA "+payload+" to "+JSON.stringify(remoteId.object()));
+        //console.log("SENDING PACKET WITH DATA "+payload+" to "+JSON.stringify(remoteId.object()));
         var sendPort = presence.bindODPPort(Example.ObjectScript.kMovePort+1);
         sendPort.send(new Kata.ODP.Endpoint(remoteId, Example.ObjectScript.kMovePort),payload);
         sendPort.close();
@@ -238,6 +238,15 @@ Kata.require([
                         remote_pres.mLocation.orient = newLoc.orient;
                         remote_pres.mLocation.orientTime = time;
                     }
+                    if (this.mDrag.origstart) {
+                        var from = this.mDrag.start;
+                        var to = this.mDrag.origstart;
+                        var deltaPos = [to[0] - from[0], to[1] - from[1], to[2] - from[2]];
+                        newLoc.pos = [newLoc.pos[0] + deltaPos[0], newLoc.pos[1] + deltaPos[1], newLoc.pos[2] + deltaPos[2]];
+                        newLoc.posTime = time;
+                        remote_pres.mLocation.pos = newLoc.pos;
+                        remote_pres.mLocation.posTime = time;
+                    }
                     var msg = new Kata.ScriptProtocol.FromScript.GFXMoveNode(
                         remote_pres.space(),
                         remote_pres.id(),
@@ -251,8 +260,76 @@ Kata.require([
                                                  newLoc);
                 }
             });
+            this.mDrag.destroyed = true;
             this.mDrag = null;
         }
+    };
+    Example.BlessedScript.prototype._moveSelected = function(dragObject, commit) {
+        var msg = dragObject.lastDragMsg;
+        var camdir = msg.cameradir;
+        if (dragObject.ctrlKey) {
+            camdir = [0,-1,0];
+        }
+        var length = dragObject.planedist / (msg.dir[0]*camdir[0] +
+                                             msg.dir[1]*camdir[1] +
+                                             msg.dir[2]*camdir[2]);
+        var cam = msg.camerapos;
+        var end = [msg.dir[0] * length + cam[0], msg.dir[1] * length + cam[1], msg.dir[2] * length + cam[2]];
+        var start = dragObject.start;
+
+        var newDeltaPos = [end[0] - start[0], end[1] - start[1], end[2] - start[2]];
+        var origDeltaPos = dragObject.origstart ? [start[0] - dragObject.origstart[0],
+                start[1] - dragObject.origstart[1], start[2] - dragObject.origstart[2]] : [0,0,0];
+        var deltaPos = [newDeltaPos[0] + origDeltaPos[0], newDeltaPos[1] + origDeltaPos[1], newDeltaPos[2] + origDeltaPos[2]];
+
+        var deltaPosLen = Math.sqrt(deltaPos[0]*deltaPos[0]+
+            deltaPos[1]*deltaPos[1]+deltaPos[2]*deltaPos[2]);
+        var test = (camdir[0])*msg.dir[0] + (camdir[1])*msg.dir[1] + (camdir[2])*msg.dir[2];
+        if (dragObject.ctrlKey && (deltaPosLen > 20 || !(test <= 0))) {
+            if (test > 0) deltaPosLen = -deltaPosLen;
+            for (var i = 0; i < 3; i++) {
+                deltaPos[i] = deltaPos[i]*20/deltaPosLen;
+            }
+        }
+        deltaPos = [deltaPos[0] - origDeltaPos[0], deltaPos[1] - origDeltaPos[1], deltaPos[2] - origDeltaPos[2]];
+        if (!(deltaPos[0] == deltaPos[0]) || !(deltaPos[1] == deltaPos[1]) || !(deltaPos[2] == deltaPos[2])) {
+            deltaPos = [0,0,0];
+        }
+
+        if (commit) {
+            if (!dragObject.origstart) {
+                dragObject.origstart = start;
+            }
+            dragObject.start = [start[0]+deltaPos[0], start[1]+deltaPos[1], start[2]+deltaPos[2]];
+        }
+        this.foreachSelected(this.mPresence.mSpace, function(presid) {
+            var remote_pres = this.getRemotePresence(presid);
+            if (remote_pres) {
+                var time = Kata.now(remote_pres.mSpace);
+                var oldPos = remote_pres.position(time);
+                var newPos = [oldPos[0] + deltaPos[0], oldPos[1] + deltaPos[1], oldPos[2] + deltaPos[2]];
+                var newLoc = Kata.LocationExtrapolate(remote_pres.predictedLocation(), time);
+                newLoc.pos = newPos;
+                newLoc.posTime = time + 5000;
+                var gfxmsg = new Kata.ScriptProtocol.FromScript.GFXMoveNode(
+                    remote_pres.space(),
+                    remote_pres.id(),
+                    remote_pres,
+                    { loc : newLoc }
+                );
+                this._sendHostedObjectMessage(gfxmsg);
+                if (commit) {
+                    remote_pres.mLocation.pos = newLoc.pos;
+                    remote_pres.mLocation.posTime = time;
+                    this.setRemoteObjectLocation(this.mPresence,
+                                                 remote_pres,
+                                                 newLoc);
+                    // Make change permanent!
+                    newLoc.posTime = time;
+                    remote_pres._updateLoc({pos: newLoc.pos, time: time + 5000});
+                }
+            }
+        });
     };
 
     Example.BlessedScript.prototype._handleGUIMessage = function (channel, msg) {
@@ -355,54 +432,29 @@ Kata.require([
                 camdir = [0,-1,0];
             }
             var planedist = dx*camdir[0] + dy*camdir[1] + dz*camdir[2];
-            //if (planedist > 0) {
-                this.mDrag = {camerapos: msg.camerapos, ctrlKey: msg.ctrlKey, dir: msg.dir, planedist: planedist, start: msg.pos, dist:length};
-            //}
+            this.mDrag = {camerapos: msg.camerapos, ctrlKey: msg.ctrlKey, dir: msg.dir,
+                          planedist: planedist, start: msg.pos, dist:length};
+            this.mDrag.allowMoveCommit = true;
         }
         if ((msg.msg == "drag" || msg.msg == "drop") && this.mDrag) {
-            var camdir = msg.cameradir;
-            if (this.mDrag.ctrlKey) {
-                camdir = [0,-1,0];
-            }
-            var length = this.mDrag.planedist / (msg.dir[0]*camdir[0] +
-                                              msg.dir[1]*camdir[1] +
-                                              msg.dir[2]*camdir[2]);
-            var cam = msg.camerapos;
-            var end = [msg.dir[0] * length + cam[0], msg.dir[1] * length + cam[1], msg.dir[2] * length + cam[2]];
-            var start = this.mDrag.start;
-            var deltaPos = [end[0] - start[0], end[1] - start[1], end[2] - start[2]];
-            var deltaPosLen = Math.sqrt(deltaPos[0]*deltaPos[0]+
-                deltaPos[1]*deltaPos[1]+deltaPos[2]*deltaPos[2]);
-            var test = (camdir[0])*msg.dir[0] + (camdir[1])*msg.dir[1] + (camdir[2])*msg.dir[2];
-            if (this.mDrag.ctrlKey && (deltaPosLen > 20 || !(test <= 0))) {
-                if (test > 0) deltaPosLen = -deltaPosLen;
-                for (var i = 0; i < 3; i++) {
-                    deltaPos[i] = deltaPos[i]*20/deltaPosLen;
-                }
-            }
-            this.foreachSelected(this.mPresence.mSpace, function(presid) {
-                var remote_pres = this.getRemotePresence(presid);
-                if (remote_pres) {
-                    var time = Kata.now(remote_pres.mSpace);
-                    var oldPos = remote_pres.position(time);
-                    var newPos = [oldPos[0] + deltaPos[0], oldPos[1] + deltaPos[1], oldPos[2] + deltaPos[2]];
-                    var newLoc = Kata.LocationExtrapolate(remote_pres.predictedLocation(), time);
-                    newLoc.pos = newPos;
-                    var gfxmsg = new Kata.ScriptProtocol.FromScript.GFXMoveNode(
-                        remote_pres.space(),
-                        remote_pres.id(),
-                        remote_pres,
-                        { loc : newLoc }
-                    );
-                    this._sendHostedObjectMessage(gfxmsg);
-                    if (msg.msg == "drop") {
-                        this.setRemoteObjectLocation(this.mPresence,
-                                                     remote_pres,
-                                                     newLoc);
-                        // Make change permanent!
+            var thus = this;
+            var dragObject = this.mDrag;
+            dragObject.lastDragMsg = msg;
+            if (dragObject.allowMoveCommit) {
+                var intid = setInterval(function(){
+                    if (!dragObject.destroyed && dragObject.moved) {
+                        dragObject.moved = false;
+                        thus._moveSelected(dragObject, true);
+                    } else {
+                        clearInterval(intid);
+                        dragObject.allowMoveCommit = true;
                     }
-                }
-            });
+                }, 200);
+            }
+            dragObject.moved = !dragObject.allowMoveCommit;
+            thus._moveSelected(dragObject, dragObject.allowMoveCommit);
+            dragObject.allowMoveCommit = false;
+            //commit = msg.msg == "drop";
         }
         if (msg.msg == "drop" || msg.msg == "click") {
             this.mDrag = null;

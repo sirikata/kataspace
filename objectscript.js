@@ -34,7 +34,7 @@ Kata.require([
                                                   for (var i = 0; i < payload.length; i++) {
                                                       jsonstr += String.fromCharCode(payload[i]);
                                                   }
-                                                  console.log("RECV PACKET WITH DATA "+jsonstr+" to "+JSON.stringify(src));
+                                                  //console.log("RECV PACKET WITH DATA "+jsonstr+" to "+JSON.stringify(src));
                                                   payload = JSON.parse(jsonstr);
                                                   if (payload) {
                                                       thus.mPresence.setLocation(payload);
