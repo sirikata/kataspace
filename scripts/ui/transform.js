@@ -95,14 +95,13 @@ Kata.require([
         newDiv.style.borderRadius = "20px";
         document.body.appendChild(newDiv);
         this.mForm = newDiv;
-        this.mForm.commitOrient = true;
-        this.mForm.commitScale = true;
+        this.mForm.allowCommit = true;
 
-        slider = this._addSliderUI(divID, newDiv, 'Scale', 'scale', Kata.bind(this._scaleChanged, this));
+        slider = this._addSliderUI(divID, newDiv, 'Scale', 'scale', Kata.bind(this._changed, this));
         slider.setAttribute('min','-0.9');
         slider.setAttribute('max','0.9');
 
-        slider = this._addSliderUI(divID, newDiv, 'Rotation', 'rotateX', Kata.bind(this._rotateXChanged, this));
+        slider = this._addSliderUI(divID, newDiv, 'Rotation', 'rotateX', Kata.bind(this._changed, this));
         slider.setAttribute('min',-Math.PI);
         slider.setAttribute('max',Math.PI);
 
@@ -113,54 +112,23 @@ Kata.require([
         newDiv.appendChild(confirm);
     };
 
-    TransformUI.prototype._scaleChanged = function(ev) {
+    TransformUI.prototype._changed = function(ev) {
         //var relative = arg - ev.target.lastvalue;
         //ev.target.lastvalue = arg;
         var thus = this;
         var form = thus.mForm;
-        if (form.commitScale) {
+        if (form.allowCommit) {
             var intid = setInterval(function(){
-                if (!form.destroyed && form.scaleDidChange) {
-                    thus.setScale(form.scale.value - 0, true);
+                if (!form.destroyed && (form.didChange != form.scale.value + "/" + form.rotateX.value)) {
+                    thus._commit(form, true);
                 } else {
                     clearInterval(intid);
-                    form.commitScale = true;
+                    form.allowCommit = true;
                 }
-                form.scaleDidChange = false;
             }, 200);
         }
-        this.setScale(form.scale.value - 0, form.commitScale);
-        form.commitScale = false;
-        form.scaleDidChange = true;
-    };
-    TransformUI.prototype._rotateXChanged = function(ev) {
-        //var relative = arg - ev.target.lastvalue;
-        //ev.target.lastvalue = arg;
-        var thus = this;
-        var form = thus.mForm;
-        if (form.commitOrient) {
-            var intid = setInterval(function(){
-                if (!form.destroyed && form.orientDidChange) {
-                    thus.setRotateX(form.rotateX.value - 0, true);
-                } else {
-                    clearInterval(intid);
-                    form.commitOrient = true;
-                }
-                form.orientDidChange = false;
-            }, 200);
-        }
-        this.setRotateX(form.rotateX.value - 0, form.commitOrient);
-        form.commitOrient = false;
-        form.orientDidChange = true;
-    };
-    TransformUI.prototype._commit = function(ev) {
-        if (this.mForm.scaleDidChange) {
-            this.setScale(this.mForm.scale.value - 0, true);
-        }
-        if (this.mForm.orientDidChange) {
-            this.setRotateX(this.mForm.rotateX.value - 0, true);
-        }
-        this._destroy();
+        this._commit(form, form.allowCommit);
+        form.allowCommit = false;
     };
 
     TransformUI.prototype._abort = function(ev) {
@@ -173,26 +141,20 @@ Kata.require([
         );
         this._destroy();
     };
-    TransformUI.prototype.setScale = function(arg, commit) {
-        var newscale = Math.exp(Math.log((1+arg)/(1-arg)));
+    TransformUI.prototype._commit = function(form, commit) {
+        var scalearg = form.scale.value - 0;
+        if (commit) {
+            form.didChange = form.scale.value + "/" + form.rotateX.value;
+        }
+        var newscale = Math.exp(Math.log((1+scalearg)/(1-scalearg)));
+        var newrotate = form.rotateX.value - 0;
         //var value = Math.exp(relative);
         this.mChannel.sendMessage(
             new Kata.ScriptProtocol.ToScript.GUIMessage({
-                msg: 'setscale',
+                msg: 'setslider',
                 event: {
                     value: newscale,
-                    commit: commit
-                }
-            })
-        );
-    };
-    TransformUI.prototype.setRotateX = function(arg, commit) {
-        console.log("Setting rotation!"+arg);
-        this.mChannel.sendMessage(
-            new Kata.ScriptProtocol.ToScript.GUIMessage({
-                msg: 'setrotation',
-                event: {
-                    y_radians: arg,
+                    y_radians: newrotate,
                     commit: commit
                 }
             })

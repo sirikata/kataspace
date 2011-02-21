@@ -274,71 +274,36 @@ Kata.require([
         if (msg.msg == "abort") {
             this.resetDrag();
         }
-        if (msg.msg == "setscale") {
+        if (msg.msg == "setslider") {
             this.mDrag = this.mDrag || {};
             var deltaScale = msg.event.value;
-            Kata.log("Setting scale to "+deltaScale);
-            if (!this.mDrag.scaling) {
-                this.mDrag.scaling = true;
-                this.mDrag.initialScale = {};
-                this.foreachSelected(this.mPresence.mSpace, function(presid) {
-                    var remote_pres = this.getRemotePresence(presid);
-                    if (remote_pres) {
-                        var time = Kata.now(remote_pres.mSpace);
-                        this.mDrag.initialScale[presid] = remote_pres.scale(time);
-                    }
-                });
-            }
-            this.foreachSelected(this.mPresence.mSpace, function(presid) {
-                var remote_pres = this.getRemotePresence(presid);
-                if (presid in this.mDrag.initialScale && remote_pres) {
-                    var time = Kata.now(remote_pres.mSpace);
-                    var oldScale = this.mDrag.initialScale[presid];
-                    var newScale = [oldScale[0] * deltaScale, oldScale[1] * deltaScale, oldScale[2] * deltaScale];
-                    var newLoc = Kata.LocationExtrapolate(remote_pres.predictedLocation(), time);
-                    newLoc.scale = newScale;
-                    newLoc.scaleTime = time;
-                    var gfxmsg = new Kata.ScriptProtocol.FromScript.GFXMoveNode(
-                        remote_pres.space(),
-                        remote_pres.id(),
-                        remote_pres,
-                        { loc : newLoc }
-                    );
-                    this._sendHostedObjectMessage(gfxmsg);
-                    if (msg.event.commit) {
-                        // Make change permanent!
-                        remote_pres.mLocation.scale = newScale;
-                        remote_pres.mLocation.scaleTime = time;
-                        this.setRemoteObjectLocation(this.mPresence,
-                                                     remote_pres,
-                                                     newLoc);
-                    }
-                    remote_pres._updateLoc({scale: newScale, time: time + 5000});
-                }
-            });
-        }
-        if (msg.msg == "setrotation") {
-            this.mDrag = this.mDrag || {};
             var y_radians = msg.event.y_radians;
             Kata.log("Setting rotation to "+y_radians);
-            if (!this.mDrag.rotating) {
-                this.mDrag.rotating = true;
+            Kata.log("Setting scale to "+deltaScale);
+            if (!this.mDrag.setslider) {
+                this.mDrag.setslider = true;
+                this.mDrag.initialScale = {};
                 this.mDrag.initialOrient = {};
                 this.foreachSelected(this.mPresence.mSpace, function(presid) {
                     var remote_pres = this.getRemotePresence(presid);
                     if (remote_pres) {
                         var time = Kata.now(remote_pres.mSpace);
                         this.mDrag.initialOrient[presid] = remote_pres.orientation(time);
+                        this.mDrag.initialScale[presid] = remote_pres.scale(time);
                     }
                 });
             }
             this.foreachSelected(this.mPresence.mSpace, function(presid) {
                 var remote_pres = this.getRemotePresence(presid);
-                if (presid in this.mDrag.initialOrient && remote_pres) {
+                if (presid in this.mDrag.initialOrient && presid in this.mDrag.initialScale && remote_pres) {
                     var time = Kata.now(remote_pres.mSpace);
+                    var oldScale = this.mDrag.initialScale[presid];
                     var oldQuat = this.mDrag.initialOrient[presid];
+                    var newScale = [oldScale[0] * deltaScale, oldScale[1] * deltaScale, oldScale[2] * deltaScale];
                     var newQuat = Kata.extrapolateQuaternion(oldQuat, y_radians, [0,1,0], 1.0);
                     var newLoc = Kata.LocationExtrapolate(remote_pres.predictedLocation(), time);
+                    newLoc.scale = newScale;
+                    newLoc.scaleTime = time;
                     newLoc.orient = newQuat;
                     newLoc.orientTime = time;
                     var gfxmsg = new Kata.ScriptProtocol.FromScript.GFXMoveNode(
@@ -350,13 +315,15 @@ Kata.require([
                     this._sendHostedObjectMessage(gfxmsg);
                     if (msg.event.commit) {
                         // Make change permanent!
+                        remote_pres.mLocation.scale = newScale;
+                        remote_pres.mLocation.scaleTime = time;
                         remote_pres.mLocation.orient = newQuat;
                         remote_pres.mLocation.orientTime = time;
                         this.setRemoteObjectLocation(this.mPresence,
                                                      remote_pres,
                                                      newLoc);
                     }
-                    remote_pres._updateLoc({orient: newQuat, time: time + 5000});
+                    remote_pres._updateLoc({orient: newQuat, scale: newScale, time: time + 5000});
                 }
             });
         }
