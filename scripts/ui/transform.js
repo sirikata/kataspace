@@ -42,8 +42,6 @@ Kata.require([
 
         this.mNextDivID = 0;
         this.mForm = null;
-        this.commitOrient = true;
-        this.commitScale = true;
     };
     Kata.extend(TransformUI, SUPER);
 
@@ -53,6 +51,7 @@ Kata.require([
                 $(this.mForm).remove();
             } catch (e) {
             }
+            this.mForm.destroyed = true;
             this.mForm = null;
         }
     };
@@ -96,6 +95,8 @@ Kata.require([
         newDiv.style.borderRadius = "20px";
         document.body.appendChild(newDiv);
         this.mForm = newDiv;
+        this.mForm.commitOrient = true;
+        this.mForm.commitScale = true;
 
         slider = this._addSliderUI(divID, newDiv, 'Scale', 'scale', Kata.bind(this._scaleChanged, this));
         slider.setAttribute('min','-0.9');
@@ -116,25 +117,47 @@ Kata.require([
         //var relative = arg - ev.target.lastvalue;
         //ev.target.lastvalue = arg;
         var thus = this;
-        setTimeout(function(){thus.commitScale = true;}, 200);
-        this.setScale(this.mForm.scale.value - 0, thus.commitScale);
-        thus.commitScale = false;
-        this.mForm.scaleDidChange = true;
+        var form = thus.mForm;
+        if (form.commitScale) {
+            var intid = setInterval(function(){
+                if (!form.destroyed && form.scaleDidChange) {
+                    thus.setScale(form.scale.value - 0, true);
+                } else {
+                    clearInterval(intid);
+                    form.commitScale = true;
+                }
+                form.scaleDidChange = false;
+            }, 200);
+        }
+        this.setScale(form.scale.value - 0, form.commitScale);
+        form.commitScale = false;
+        form.scaleDidChange = true;
     };
     TransformUI.prototype._rotateXChanged = function(ev) {
         //var relative = arg - ev.target.lastvalue;
         //ev.target.lastvalue = arg;
         var thus = this;
-        setTimeout(function(){thus.commitOrient = true;}, 200);
-        this.setRotateX(this.mForm.rotateX.value - 0, thus.commitOrient);
-        thus.commitOrient = false;
-        this.mForm.rotateXDidChange = true;
+        var form = thus.mForm;
+        if (form.commitOrient) {
+            var intid = setInterval(function(){
+                if (!form.destroyed && form.orientDidChange) {
+                    thus.setRotateX(form.rotateX.value - 0, true);
+                } else {
+                    clearInterval(intid);
+                    form.commitOrient = true;
+                }
+                form.orientDidChange = false;
+            }, 200);
+        }
+        this.setRotateX(form.rotateX.value - 0, form.commitOrient);
+        form.commitOrient = false;
+        form.orientDidChange = true;
     };
     TransformUI.prototype._commit = function(ev) {
         if (this.mForm.scaleDidChange) {
             this.setScale(this.mForm.scale.value - 0, true);
         }
-        if (this.mForm.rotateXDidChange) {
+        if (this.mForm.orientDidChange) {
             this.setRotateX(this.mForm.rotateX.value - 0, true);
         }
         this._destroy();
