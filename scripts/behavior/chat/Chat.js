@@ -88,7 +88,7 @@ Kata.require([
         // Simply iterate over everyone we know about and try to get the message to them.
         for(var remote_key in this.mConnections) {
             var chat_msg = new Chat.Protocol.Chat();
-            chat_msg.text = msg;
+            chat_msg.text = msg.msg;
             var container_msg = new Chat.Protocol.Container();
             container_msg.chat = chat_msg;
 
