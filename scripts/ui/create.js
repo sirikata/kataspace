@@ -40,13 +40,13 @@ Kata.require([
     CreateUI = function(channel, parent) {
         SUPER.constructor.call(this, channel);
 
-        var button_div = $('<div>Create</div>').appendTo($('body'));
+        var button_div = $('<button>Create</button>').appendTo($('body'));
         this.button = button_div;
         button_div.button().click(
-            Kata.bind(this.toggleCreate, this)
+            Kata.bind(this.create, this)
         );
+        parent.addElement($('<input type="text" placeholder="http://example.com/collada.dae" id="objectCreation'+UNIQUE_ID+'" size="40" />'));
         parent.addButton(button_div);
-        parent.addButton($('<textarea id="objectCreation'+UNIQUE_ID+'" cols="40" rows="2"/>'));
         this.uniqueId=UNIQUE_ID;
         UNIQUE_ID+=1;
         this.parent = parent;
@@ -59,7 +59,7 @@ Kata.require([
     };
 
 
-    CreateUI.prototype.toggleCreate = function() {
+    CreateUI.prototype.create = function() {
         // Send the message
         var thus = this;
         var base;
