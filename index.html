@@ -156,7 +156,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                         {
                         space: SpaceURL,
                         name: loginName,
-                        loc: {scale:[avatarScale,avatarScale,avatarScale]},
+                        loc: {scale:[0,avatarScale*.88/*we should have
+                    the ability to get the "aspect ratio" of an avatar
+                    x:y:z */,0,avatarScale]},
                         visual: {mesh: avatarURL}
                         });
                     graphics = new Kata.GraphicsSimulation(driver, window.kata.getChannel(), document.getElementById("container"));

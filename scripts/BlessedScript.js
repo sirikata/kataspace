@@ -146,7 +146,7 @@ Kata.require([
         // normalized to radius 1 and height about 1.7. Shift by about
         // .85 (1.7/2) instead of full scale. Would be nice to have a
         // reliable, non-magic-numbers approach for this.
-        presence.setPosition([xoff, this._scale[1] * 1.0, zoff]);
+        presence.setPosition([xoff, 0, zoff]);
         this.setCameraPosOrient(this._calcCamPos(), [0,0,0,1], 0.0);
         // FIXME both this and the camera controls in GraphicsScript
         // are running on timers because the ones in GraphicsScript
@@ -179,7 +179,7 @@ Kata.require([
                                   space: this.mPresence.mSpace,
                                   name: "Created object "+objectName,
                                   loc: {
-                                      scale: [1,1,1],
+                                      scale: this._scale,
                                       pos: pos ? pos : this.mPresence.predictedPosition(Kata.now(this.mPresence.mSpace)),
                                       orient : orient
                                   },
@@ -383,7 +383,7 @@ Kata.require([
                     var time = Kata.now(remote_pres.mSpace);
                     var oldScale = this.mDrag.initialScale[presid];
                     var oldQuat = this.mDrag.initialOrient[presid];
-                    var newScale = [oldScale[0] * deltaScale, oldScale[1] * deltaScale, oldScale[2] * deltaScale];
+                    var newScale = [oldScale[0] * deltaScale, oldScale[1] * deltaScale, oldScale[2] * deltaScale, oldScale[3] * deltaScale];
                     var newQuat = Kata.extrapolateQuaternion(oldQuat, y_radians, [0,1,0], 1.0);
                     var newLoc = Kata.LocationExtrapolate(remote_pres.predictedLocation(), time);
                     var gfxLoc = {};
