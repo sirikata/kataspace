@@ -251,7 +251,7 @@ Kata.require([
                         remote_pres.mLocation.pos = newLoc.pos;
                         remote_pres.mLocation.posTime = time;
                     }
-                    gfxLoc.time = time + 5000;
+                    gfxLoc.time = time + Example.BlessedScript.GFX_TIMESTAMP_OFFSET;
                     var msg = new Kata.ScriptProtocol.FromScript.GFXMoveNode(
                         remote_pres.space(),
                         remote_pres.id(),
@@ -318,7 +318,7 @@ Kata.require([
                 newLoc.pos = newPos;
                 newLoc.posTime = time;
                 gfxLoc.pos = newPos;
-                gfxLoc.time = time + 5000;
+                gfxLoc.time = time + Example.BlessedScript.GFX_TIMESTAMP_OFFSET;
                 var gfxmsg = new Kata.ScriptProtocol.FromScript.GFXMoveNode(
                     remote_pres.space(),
                     remote_pres.id(),
@@ -338,6 +338,8 @@ Kata.require([
             }
         });
     };
+
+    Example.BlessedScript.GFX_TIMESTAMP_OFFSET = 5000;
 
     Example.BlessedScript.prototype._handleGUIMessage = function (channel, msg) {
         Kata.GraphicsScript.prototype._handleGUIMessage.call(this,channel,msg);
@@ -391,7 +393,7 @@ Kata.require([
                     newLoc.orient = newQuat;
                     newLoc.orientTime = time;
                     gfxLoc.orient = newQuat;
-                    gfxLoc.time = time + 5000;
+                    gfxLoc.time = time + Example.BlessedScript.GFX_TIMESTAMP_OFFSET;
                     var gfxmsg = new Kata.ScriptProtocol.FromScript.GFXMoveNode(
                         remote_pres.space(),
                         remote_pres.id(),
