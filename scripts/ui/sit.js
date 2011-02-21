@@ -42,7 +42,7 @@ Kata.require([
 
         this.sitting = false; // Whether we are sitting or not
 
-        var button_div = $('<div>Sit</div>').appendTo($('body'));
+        var button_div = $('<button>Sit</button>').appendTo($('body'));
         this.button = button_div;
         button_div.button().click(
             Kata.bind(this.toggleSit, this)
@@ -62,7 +62,7 @@ Kata.require([
 
     SitUI.prototype._updateButton = function() {
         var label = (this.sitting ? 'Stand Up' : 'Sit');
-        this.button.button( "option", "label", label );
+        this.button[0].innerHTML = label;
         this.parent.reflow();
     };
 
