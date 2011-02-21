@@ -40,7 +40,7 @@ Kata.require([
     HelpUI = function(channel, parent) {
         SUPER.constructor.call(this, channel);
 
-        var button_div = $('<div>Help</div>').appendTo($('body'));
+        var button_div = $('<button>Help</button>').appendTo($('body'));
         this.mButtonDiv = button_div;
         button_div.
             button().
