@@ -202,6 +202,9 @@ Kata.require([
         this.mSelected = {};
     };
     Example.BlessedScript.prototype.addSelection = function(space, id) {
+        if (id == this.mPresence.id()) {
+            return;
+        }
         this.mSelected[id] = true;
         var sendmsg;
         sendmsg = new Kata.ScriptProtocol.FromScript.GFXHighlight(space, id, true);
