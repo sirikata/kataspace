@@ -42,6 +42,8 @@ Kata.require([
 
         this.mNextDivID = 0;
         this.mForm = null;
+        this.commitOrient = true;
+        this.commitScale = true;
     };
     Kata.extend(TransformUI, SUPER);
 
@@ -105,21 +107,27 @@ Kata.require([
 
         var confirm = document.createElement("input");
         confirm.setAttribute('type','button');
-        confirm.value = 'OK';
-        confirm.addEventListener("click", Kata.bind(this._commit, this), false);
+        confirm.value = 'Reset';
+        confirm.addEventListener("click", Kata.bind(this._abort, this), false);
         newDiv.appendChild(confirm);
     };
 
     TransformUI.prototype._scaleChanged = function(ev) {
         //var relative = arg - ev.target.lastvalue;
         //ev.target.lastvalue = arg;
-        this.setScale(this.mForm.scale.value - 0, false);
+        var thus = this;
+        setTimeout(function(){thus.commitScale = true;}, 200);
+        this.setScale(this.mForm.scale.value - 0, thus.commitScale);
+        thus.commitScale = false;
         this.mForm.scaleDidChange = true;
     };
     TransformUI.prototype._rotateXChanged = function(ev) {
         //var relative = arg - ev.target.lastvalue;
         //ev.target.lastvalue = arg;
-        this.setRotateX(this.mForm.rotateX.value - 0, false);
+        var thus = this;
+        setTimeout(function(){thus.commitOrient = true;}, 200);
+        this.setRotateX(this.mForm.rotateX.value - 0, thus.commitOrient);
+        thus.commitOrient = false;
         this.mForm.rotateXDidChange = true;
     };
     TransformUI.prototype._commit = function(ev) {
@@ -137,11 +145,10 @@ Kata.require([
             new Kata.ScriptProtocol.ToScript.GUIMessage({
                 msg: 'abort',
                 event: {
-                    value: newscale,
-                    commit: commit
                 }
             })
         );
+        this._destroy();
     };
     TransformUI.prototype.setScale = function(arg, commit) {
         var newscale = Math.exp(Math.log((1+arg)/(1-arg)));
