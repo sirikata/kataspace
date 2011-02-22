@@ -5,7 +5,8 @@
 
 // Replace to override the default of using the sirikata protocol on
 // the same host on Sirikata's default port of 7777
-SpaceURL = "sirikata://" + window.location.hostname + ":7777";
+//SpaceURL = "sirikata://" + window.location.hostname + ":7777";
+SpaceURL = "sirikata://beta2.ourbricks.com:7777"
 
 Title = "KataSpace";
 
