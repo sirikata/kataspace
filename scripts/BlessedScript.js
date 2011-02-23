@@ -17,14 +17,8 @@ Kata.require([
     Example.BlessedScript = function(channel, args){
         SUPER.constructor.call(this, channel, args, Kata.bind(this.updateRenderState, this));
 
-        this._scale = args.scale;
+        this._scale = args.loc.scale;
 
-        var xoff = ((Math.random() - 0.5) * 2.0) * 5.0;
-        var zoff = ((Math.random() - 0.5) * 2.0) * 5.0;
-        var loc = Kata.LocationIdentity();
-        loc.pos = [xoff, this._scale * 1.0, zoff];
-        loc.scale = [args.scale, args.scale, args.scale];
-        args.loc = loc;
         this.connect(args, null, Kata.bind(this.connected, this));
 
         this.keyIsDown = {};
@@ -132,12 +126,22 @@ Kata.require([
         this.enableGraphicsViewport(presence, 0);
         presence.setQueryHandler(Kata.bind(this.proxEvent, this));
         presence.setQuery(0);
+        // Select random offset from origin so people don't land on each other
+        var xoff = ((Math.random() - 0.5) * 2.0) * 5.0;
+        var zoff = ((Math.random() - 0.5) * 2.0) * 5.0;
+        // Radius of avatars is about 2.5, with height about 4.33 ->
+        // normalized to radius 1 and height about 1.7. Shift by about
+        // .85 (1.7/2) instead of full scale. Would be nice to have a
+        // reliable, non-magic-numbers approach for this.
+        presence.setPosition([xoff, 0, zoff]);
 
         this.setCameraPosOrient(this._calcCamPos(), [0,0,0,1], 0.0);
         // FIXME both this and the camera controls in GraphicsScript
         // are running on timers because the ones in GraphicsScript
         // don't accept velocity
+        this.queryMeshAspectRatio(presence,presence);
         this.mCamUpdateTimer = setInterval(Kata.bind(this.updateCamera, this), 60);
+
         Kata.warn("Got connected callback.");
     };
 
@@ -161,6 +165,14 @@ Kata.require([
     };
 
     Example.BlessedScript.prototype._handleGUIMessage = function (channel, msg) {
+        Kata.GraphicsScript.prototype._handleGUIMessage.call(this,channel,msg);
+        if (msg.msg=="MeshAspectRatio") {
+            if (msg.id==this.mPresence.id()) {
+                this._scale=[0,msg.aspect[1]*this._scale[3],0,this._scale[3]];
+                Kata.log("XXXXXXXXXXXAdjusting scale to "+this._scale);
+                this.mPresence.setScale(this._scale);
+            }
+        }
         if (msg.msg == 'chat')
             this.handleChatGUIMessage(msg);
 
@@ -197,7 +209,7 @@ Kata.require([
             */
         }
         if (msg.msg == "keyup") {
-            this.keyIsDown[msg.event.keyCode] = false;
+            this.keyIsDown[msg.keyCode] = false;
 
             if ( !this.keyIsDown[this.Keys.UP] && !this.keyIsDown[this.Keys.DOWN])
                 this.mPresence.setVelocity([0, 0, 0]);
@@ -214,14 +226,14 @@ Kata.require([
             var avZX = avMat[2][0] * avSpeed;
             var avZY = avMat[2][1] * avSpeed;
             var avZZ = avMat[2][2] * avSpeed;
-            this.keyIsDown[msg.event.keyCode] = true;
+            this.keyIsDown[msg.keyCode] = true;
 
             if (this.keyIsDown[this.Keys.UP]) {
                 this.mPresence.setVelocity([-avZX, -avZY, -avZZ]);
                 this.disableSitting();
             }
             if (this.keyIsDown[this.Keys.DOWN]) {
-                //this.mPresence.setVelocity([avZX, avZY, avZZ]);
+                this.mPresence.setVelocity([avZX, avZY, avZZ]);
             }
             var full_rot_seconds = 10.0;
             if (this.keyIsDown[this.Keys.LEFT]) {
@@ -251,7 +263,7 @@ Kata.require([
 
     Example.BlessedScript.prototype._getVerticalOffset = function(remote) {
         // FIXME there should be a better way of deciding this
-        return (remote._animatedState && (remote._animatedState.idle == 'sit')) ? 0 : 1;
+        return (remote._animatedState && (remote._animatedState.idle == 'sit')) ? .75 : 1.5;
     };
     Example.BlessedScript.prototype._getHorizontalOffset = function() {
         return 3;
