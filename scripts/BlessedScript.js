@@ -170,7 +170,6 @@ Kata.require([
         if (msg.msg=="MeshAspectRatio") {
             if (msg.id==this.mPresence.id()) {
                 this._scale=[0,msg.aspect[1]*this._scale[3],0,this._scale[3]];
-                Kata.log("XXXXXXXXXXXAdjusting scale to "+this._scale);
                 this.mPresence.setScale(this._scale);
             }
         }
