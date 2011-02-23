@@ -34,7 +34,7 @@
 // setup real messages
 // FIXME we shouldn't have to specify ../../
 Kata.require([
-    ['externals/protojs/protobuf.js','externals/protojs/pbj.js','../../scripts/behavior/chat/Chat.pbj.js']
+    ['externals/protojs/protobuf.js','externals/protojs/pbj.js','katajs/oh/sst/SSTImpl.js','../../scripts/behavior/chat/Chat.pbj.js']
 ], function() {
 
     if (typeof(Kata.Behavior) == "undefined")
@@ -160,12 +160,13 @@ Kata.require([
 
     Kata.Behavior.Chat.prototype.remotePresence = function(presence, remote, added) {
         if (added) {
+            var port=Math.round(Math.random() * 1000 + 1000);
             var tried_sst = Kata.SST.connectStream(
-                presence.sstEndpoint(Math.round(Math.random() * 1000 + 1000)),
+                presence.sstEndpoint(port),
                 remote.sstEndpoint(this.ProtocolPort),
                 Kata.bind(this._handleConnectedStream, this, presence, remote.presenceID())
             );
-            Kata.warn("Trying to initiate chat connection to " + remote.id() + ": " + tried_sst);
+            Kata.warn("Trying to initiate chat connection to " + remote.id() + ": " + tried_sst+ " on port "+port);
         }
         else {
             // When we lose objects, we just make sure we clean up
