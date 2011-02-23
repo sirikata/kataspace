@@ -4,6 +4,7 @@ var Example;
 
 Kata.require([
     'katajs/oh/GraphicsScript.js',
+    'katajs/core/Quaternion.js',
 // FIXME we want to be able to specify a centralized offset so we
 // don't have to have this ../../ stuff here.
     '../../scripts/behavior/chat/Chat.js',
