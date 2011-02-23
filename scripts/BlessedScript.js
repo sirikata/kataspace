@@ -18,6 +18,7 @@ Kata.require([
         SUPER.constructor.call(this, channel, args, Kata.bind(this.updateRenderState, this));
 
         this._scale = args.loc.scale;
+
         this.connect(args, null, Kata.bind(this.connected, this));
 
         this.keyIsDown = {};
@@ -138,6 +139,14 @@ Kata.require([
         this.enableGraphicsViewport(presence, 0);
         presence.setQueryHandler(Kata.bind(this.proxEvent, this));
         presence.setQuery(0);
+        // Select random offset from origin so people don't land on each other
+        var xoff = ((Math.random() - 0.5) * 2.0) * 5.0;
+        var zoff = ((Math.random() - 0.5) * 2.0) * 5.0;
+        // Radius of avatars is about 2.5, with height about 4.33 ->
+        // normalized to radius 1 and height about 1.7. Shift by about
+        // .85 (1.7/2) instead of full scale. Would be nice to have a
+        // reliable, non-magic-numbers approach for this.
+        presence.setPosition([xoff, 0, zoff]);
 
         // Select random offset from origin so people don't land on each other
         var xoff = ((Math.random() - 0.5) * 2.0) * 5.0;
@@ -153,6 +162,7 @@ Kata.require([
         // don't accept velocity
         this.queryMeshAspectRatio(presence,presence);
         this.mCamUpdateTimer = setInterval(Kata.bind(this.updateCamera, this), 60);
+
         Kata.warn("Got connected callback.");
     };
 
@@ -347,9 +357,15 @@ Kata.require([
 
     Example.BlessedScript.prototype._handleGUIMessage = function (channel, msg) {
         Kata.GraphicsScript.prototype._handleGUIMessage.call(this,channel,msg);
-        if (msg.msg == 'chat') {
-            this.handleChatGUIMessage(msg);
+        if (msg.msg=="MeshAspectRatio") {
+            if (msg.id==this.mPresence.id()) {
+                this._scale=[0,msg.aspect[1]*this._scale[3],0,this._scale[3]];
+                Kata.log("XXXXXXXXXXXAdjusting scale to "+this._scale);
+                this.mPresence.setScale(this._scale);
+            }
         }
+        if (msg.msg == 'chat')
+            this.handleChatGUIMessage(msg);
         if (msg.msg == 'create') {
             Kata.log("Creating object with visual "+msg.event.visual+" orient "+msg.event.orient);
             this.handleCreateObject(msg.event.visual, msg.event.pos, msg.event.orient);
@@ -363,13 +379,6 @@ Kata.require([
         }
         if (msg.msg == "abort") {
             this.resetDrag();
-        }
-        if (msg.msg=="MeshAspectRatio") {
-            if (msg.id==this.mPresence.id()) {
-                this._scale=[0,msg.aspect[1]*this._scale[3],0,this._scale[3]];
-                Kata.log("XXXXXXXXXXXAdjusting scale to "+this._scale);
-                this.mPresence.setScale(this._scale);
-            }
         }
         if (msg.msg == "setslider") {
             this.mDrag = this.mDrag || {};
