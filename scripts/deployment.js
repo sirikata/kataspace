@@ -25,6 +25,18 @@ Avatars = [
         url : dirname + "static/femaleWalkIdleSit.dae",
         scale : 1.0,
         preview : dirname + "static/femaleheadshot.png"
+    },
+    {
+        name : "MaleBrown",
+        url : dirname + "static/maleWalkIdleSitBrown.dae",
+        scale : 1.0,
+        preview : dirname + "static/malebrownheadshot.png"
+    },
+    {
+        name : "FemaleBlonde",
+        url : dirname + "static/femaleWalkIdleSitBlonde.dae",
+        scale : 1.0,
+        preview : dirname + "static/femaleblondeheadshot.png"
     }
 ];
 
