@@ -85,6 +85,12 @@ Kata.require([
                 j = temp.lastIndexOf("/");
                 base = temp.substr(0, j) + ext + "/processed/";
             }
+            else {                          
+                i = value.indexOf("http://ourbricks.com/viewer/");      /// new skool?
+                if (i == 0) {
+                    base = "http://vu.ourbricks.com/" + value.substr(28) + "/processed/"
+                }
+            }
         }
         if (i >= 0) {
             value = base + "view.json";
