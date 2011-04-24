@@ -86,9 +86,9 @@ Kata.require([
                 base = temp.substr(0, j) + ext + "/processed/";
             }
             else {                          
-                i = value.indexOf("http://ourbricks.com/viewer/");      /// new skool?
-                if (i == 0) {
-                    base = "http://vu.ourbricks.com/" + value.substr(28) + "/processed/"
+                i = value.indexOf("ourbricks.com/viewer/");      /// new skool?
+                if (i > -1) {
+                    base = "http://vu.ourbricks.com/" + value.substr(i+"ourbricks.com/viewer/".length) + "/processed/"
                 }
             }
         }
