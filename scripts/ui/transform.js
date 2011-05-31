@@ -110,6 +110,12 @@ Kata.require([
         confirm.value = 'Reset';
         confirm.addEventListener("click", Kata.bind(this._abort, this), false);
         newDiv.appendChild(confirm);
+
+        var snap = document.createElement("input");
+        snap.setAttribute('type','button');
+        snap.value = 'Snap';
+        snap.addEventListener("click", Kata.bind(this._snap, this), false);
+        newDiv.appendChild(snap);
     };
 
     TransformUI.prototype._changed = function(ev) {
@@ -135,6 +141,17 @@ Kata.require([
         this.mChannel.sendMessage(
             new Kata.ScriptProtocol.ToScript.GUIMessage({
                 msg: 'abort',
+                event: {
+                }
+            })
+        );
+        this._destroy();
+    };
+
+    TransformUI.prototype._snap = function(ev) {
+        this.mChannel.sendMessage(
+            new Kata.ScriptProtocol.ToScript.GUIMessage({
+                msg: 'snap',
                 event: {
                 }
             })

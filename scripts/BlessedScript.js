@@ -240,7 +240,15 @@ Kata.require([
             func.call(this, presid);
         }
     };
-
+    Example.BlessedScript.prototype.snapToGrid = function() {
+        this.foreachSelected(this.mPresence.mSpace, function(presid) {
+                                 var remote_pres = this.getRemotePresence(presid);
+                                 if (remote_pres) {
+                                     Kata.warn("snapped on "+JSON.stringify(remote_pres.visual()));
+                                 }
+                                 
+                             });
+    };
     Example.BlessedScript.prototype.resetDrag = function() {
         if (this.mDrag) {
             this.foreachSelected(this.mPresence.mSpace, function(presid) {
@@ -390,6 +398,10 @@ Kata.require([
         if (msg.msg == "abort") {
             this.resetDrag();
         }
+        if (msg.msg == "snap") {
+            this.snapToGrid();
+        }
+
         if (msg.msg == "setslider") {
             this.mDrag = this.mDrag || {};
             var deltaScale = msg.event.value;
@@ -564,7 +576,7 @@ Kata.require([
 
     Example.BlessedScript.prototype._getVerticalOffset = function(remote) {
         if (this.panorama)
-            return 20;
+            return 10;
         // FIXME there should be a better way of deciding this
         return (remote._animatedState && (remote._animatedState.idle == 'sit')) ? .75 : 1.5;
     };
