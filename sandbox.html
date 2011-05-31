@@ -100,6 +100,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                     kata_base_offset + 'scripts/ui/chat.js',
                     kata_base_offset + 'scripts/ui/toolbar.js',
                     kata_base_offset + 'scripts/ui/sit.js',
+                    kata_base_offset + 'scripts/ui/panorama.js',
                     kata_base_offset + 'scripts/ui/create.js',
                     kata_base_offset + 'scripts/ui/help.js'
                 ], function() {
@@ -162,6 +163,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                     graphics = new Kata.GraphicsSimulation(driver, window.kata.getChannel(), document.getElementById("container"));
                     session = new SessionUI(window.kata.getChannel());
                     situi = new SitUI(window.kata.getChannel(), toolbar);
+                    panoramaui = new PanoramaUI(window.kata.getChannel(), toolbar);
                     createui = new CreateUI(window.kata.getChannel(), toolbar);
                     helpui = new HelpUI(window.kata.getChannel(), toolbar);
                     chats = new ChatUI(window.kata.getChannel(), loginName, 300);
