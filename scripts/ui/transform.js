@@ -102,8 +102,8 @@ Kata.require([
         slider.setAttribute('max','0.9');
 
         slider = this._addSliderUI(divID, newDiv, 'Rotation', 'rotateX', Kata.bind(this._changed, this));
-        slider.setAttribute('min',-Math.PI);
-        slider.setAttribute('max',Math.PI);
+        slider.setAttribute('min',-Math.PI/2);
+        slider.setAttribute('max',Math.PI/2.0);
 
         var confirm = document.createElement("input");
         confirm.setAttribute('type','button');
