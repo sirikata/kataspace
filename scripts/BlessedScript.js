@@ -23,7 +23,7 @@ Kata.require([
         this.connect(args, null, Kata.bind(this.connected, this));
 
         this.keyIsDown = {};
-
+        this.panorama=false;
         this.sitting = false;
 
         this.mSelected = {};
@@ -101,6 +101,13 @@ Kata.require([
     Example.BlessedScript.prototype.handleSitGUIMessage = function(msg) {
         this.sitting = !this.sitting;
         this.updateSittingAnimation();
+    };
+
+
+    Example.BlessedScript.prototype.handlePanoramaGUIMessage = function(msg) {
+        console.log("Panorama");
+        this.panorama = !this.panorama;
+        this.updateCamera();
     };
 
 
@@ -373,6 +380,9 @@ Kata.require([
         if (msg.msg == 'sit') {
             this.handleSitGUIMessage(msg);
         }
+        if (msg.msg == 'panorama') {
+            this.handlePanoramaGUIMessage(msg);
+        }
         if (msg.msg == "mousedown") {
         }
         if (msg.msg == "mouseup") {
@@ -553,10 +563,14 @@ Kata.require([
     };
 
     Example.BlessedScript.prototype._getVerticalOffset = function(remote) {
+        if (this.panorama)
+            return 20;
         // FIXME there should be a better way of deciding this
         return (remote._animatedState && (remote._animatedState.idle == 'sit')) ? .75 : 1.5;
     };
     Example.BlessedScript.prototype._getHorizontalOffset = function() {
+        if (this.panorama)
+            return 40;
         return 3;
     };
 
