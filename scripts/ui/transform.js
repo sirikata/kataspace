@@ -136,6 +136,12 @@ Kata.require([
         foo.value = 'Static';
         foo.addEventListener("click", Kata.bind(this._makestatic, this), false);
         row2.appendChild(foo);
+
+        var snaph = document.createElement("input");
+        snaph.setAttribute('type','button');
+        snaph.value = 'Snap Height';
+        snaph.addEventListener("click", Kata.bind(this._snap_height, this), false);
+        row1.appendChild(snaph);
     };
 
     TransformUI.prototype._changed = function(ev) {
@@ -176,7 +182,16 @@ Kata.require([
                 }
             })
         );
-        this._destroy();
+    };
+    TransformUI.prototype._snap_height = function(ev) {
+        this.mChannel.sendMessage(
+            new Kata.ScriptProtocol.ToScript.GUIMessage({
+                msg: 'snap_height',
+                event: {
+                }
+            })
+        );
+        this._destroy();//I was thinking snapheight could be a final adjustment?
     };
     TransformUI.prototype._commit = function(form, commit) {
         var scalearg = form.scale.value - 0;

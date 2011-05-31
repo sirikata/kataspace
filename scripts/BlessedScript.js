@@ -105,7 +105,6 @@ Kata.require([
 
 
     Example.BlessedScript.prototype.handlePanoramaGUIMessage = function(msg) {
-        console.log("Panorama");
         this.panorama = !this.panorama;
         this.updateCamera();
     };
@@ -199,31 +198,35 @@ Kata.require([
 
     };
     Example.BlessedScript.prototype.handleCreateObject = function (objectName, pos, orient, scale) {
+    var wallVertical=3;
+    var pedestalVertical=.5;
+    var lowerRoofVertical=6;
+    var upperRoofVertical=8.5;
         var sizeAdjustment=1.0;
         var vertAdjustment=0.0;
         if (objectName.indexOf("/wall/")!=-1) {
             sizeAdjustment=2.5;
-            vertAdjustment=2;
+            vertAdjustment=wallVertical;
         }
         if (objectName.indexOf("square")!=-1) {
             sizeAdjustment=20.0;
-            vertAdjustment=-.5;
+            vertAdjustment=pedestalVertical;
         }
         if (objectName.indexOf("roof")!=-1) {
             if (objectName.indexOf("lower")!=-1) {
                 sizeAdjustment=14.0;
-                vertAdjustment=5;
+                vertAdjustment=lowerRoofVertical;
             }else {
                 sizeAdjustment=13.0;
-                vertAdjustment=7.5;                
+                vertAdjustment=upperRoofVertical;                
             }
         }
         var xpos = this.mPresence.predictedPosition(Kata.now(this.mPresence.mSpace));
-        xpos[1]+=vertAdjustment;
         function Vec4Scale(a,b) {
             return [a[0]*b,a[1]*b,a[2]*b,a[3]*b];
         };
 
+        xpos[1]=vertAdjustment;//should this be += ?
         this.createObject("../../objectscript.js", "Example.ObjectScript", {
                               space: this.mPresence.mSpace,
                               name: "Created object "+objectName,
@@ -292,18 +295,102 @@ Kata.require([
             func.call(this, presid);
         }
     };
+    Example.BlessedScript.prototype.commitPositionUpdate = function(remote_pres,newPos,time){
+        var newLoc = Kata.LocationExtrapolate(remote_pres.predictedLocation(), time);
+        newLoc.pos = newPos;
+        var gfxLoc = {};
+        //optimistically update gfx
+        gfxLoc.pos = newPos;
+        gfxLoc.time = time + Example.BlessedScript.GFX_TIMESTAMP_OFFSET;
+        var gfxmsg = new Kata.ScriptProtocol.FromScript.GFXMoveNode(
+            remote_pres.space(),
+            remote_pres.id(),
+            remote_pres,
+            { loc : gfxLoc }
+        );
+        this._sendHostedObjectMessage(gfxmsg);
+        
+        //get remote presence ready
+        
+        remote_pres.mLocation.pos = newLoc.pos;
+        remote_pres.mLocation.posTime = time;
+        this.setRemoteObjectLocation(this.mPresence,
+                                     remote_pres,
+                                     newLoc);
+        // Make change permanent!
+        remote_pres._updateLoc({pos: newLoc.pos, time: time});
+        
+        //Kata.warn("snapped on "+JSON.stringify(remote_pres.visual()));
+        
+    };
+    Example.BlessedScript.prototype.snapToVertical = function() {
+        this.foreachSelected(this.mPresence.mSpace, function(presid) {
+                                 var remote_pres = this.getRemotePresence(presid);
+                                 if (remote_pres) {
+                                     var time = Kata.now(remote_pres.mSpace);
+                                     var oldPos = remote_pres.position(time);
+                                     var height= oldPos[1];
+                                     var objectName=remote_pres.visual();
+                                     if (objectName.indexOf("/wall/")!=-1) {
+                                         height=wallVertical;
+                                     }
+                                     if (objectName.indexOf("square")!=-1) {
+                                         height=pedestalVertical;
+                                     }
+                                     if (objectName.indexOf("roof")!=-1) {
+                                         if (objectName.indexOf("lower")!=-1) {
+                                             height=lowerRoofVertical;
+                                         }else {
+                                             height=upperRoofVertical;                
+                                         }
+                                     }
+                                     
+                                     var newPos=[oldPos[0],height,oldPos[2]];
+                                     this.commitPositionUpdate(remote_pres,newPos,time);
+                                 }
+                             }
+                            );
+    };
     Example.BlessedScript.prototype.snapToGrid = function() {
+        var buildingSizeX=20;
+        var buildingSizeY=1./1024;
+        var buildingSizeZ=20;
         function buildingCenter(oldPos){
-            var buildingSizeX=20;
-            var buildingSizeY=1./1024;
-            var buildingSizeZ=20;
             var newPos=[Math.round(oldPos[0]/buildingSizeX)*buildingSizeX,
                         Math.round(oldPos[1]/buildingSizeY)*buildingSizeY,
                         Math.round(oldPos[2]/buildingSizeZ)*buildingSizeZ];
             return newPos;
         }
         function wallSnap(oldPos,newPos,orient) {
-            return newPos;
+            var rot=Kata.QuaternionToRotation(orient);
+            var deltaAxis=rot[2];
+            var perpAxis=rot[0];
+            var wallDistance=10;
+            if (deltaAxis[0]>.9) {  
+                //deltaAxis=[1,0,0];                
+            }else if (deltaAxis[0]<-.9) {
+                //deltaAxis=[-1,0,0];               
+            }else if (deltaAxis[2]<-.9) {
+                wallDistance=6;
+                //deltaAxis=[0,0,-1];                               
+            }else if (deltaAxis[2]>.9) {
+                wallDistance=6;
+                //deltaAxis=[0,0,1];                               
+            }
+            var deltaPos=Kata.Vec3Sub(oldPos,newPos);
+            function dot(a,b){
+                return a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
+            }
+            if (dot(deltaAxis,deltaPos)<0) {
+                wallDistance=-wallDistance;//push towards closest wall
+            }
+            var delX=Kata.Vec3Scale(perpAxis,dot(perpAxis,deltaPos));
+            
+            var delZ=Kata.Vec3Scale(deltaAxis,wallDistance);
+            console.log("newPos",newPos,"oldPos",oldPos);
+            console.log("deltaAxis",deltaAxis, "perpAxis",perpAxis,"deltaPos ",deltaPos,"dx",delX,"dz",delZ);
+           
+            return Kata.Vec3Add(Kata.Vec3Add(newPos,delX),delZ);
         }
         this.foreachSelected(this.mPresence.mSpace, function(presid) {
                                  var remote_pres = this.getRemotePresence(presid);
@@ -318,31 +405,7 @@ Kata.require([
                                      if (remote_pres.visual().indexOf("square")!=-1) {
                                          newPos[0]-=1;
                                      }
-                                     var newLoc = Kata.LocationExtrapolate(remote_pres.predictedLocation(), time);
-                                     newLoc.pos = newPos;
-                                     var gfxLoc = {};
-                                     //optimistically update gfx
-                                     gfxLoc.pos = newPos;
-                                     gfxLoc.time = time + Example.BlessedScript.GFX_TIMESTAMP_OFFSET;
-                                     var gfxmsg = new Kata.ScriptProtocol.FromScript.GFXMoveNode(
-                                         remote_pres.space(),
-                                         remote_pres.id(),
-                                         remote_pres,
-                                         { loc : gfxLoc }
-                                     );
-                                     this._sendHostedObjectMessage(gfxmsg);
-
-                                     //get remote presence ready
-                                     
-                                     remote_pres.mLocation.pos = newLoc.pos;
-                                     remote_pres.mLocation.posTime = time;
-                                     this.setRemoteObjectLocation(this.mPresence,
-                                                                  remote_pres,
-                                                                  newLoc);
-                                     // Make change permanent!
-                                     remote_pres._updateLoc({pos: newLoc.pos, time: time});
-                                     
-                                     //Kata.warn("snapped on "+JSON.stringify(remote_pres.visual()));
+                                     this.commitPositionUpdate(remote_pres,newPos,time);
                                      
                                  }
                                  
@@ -531,6 +594,9 @@ Kata.require([
                 "scenedump",
                 {serialized: this.doExport() });
             this._sendHostedObjectMessage(gfxmsg);
+        }
+        if (msg.msg == "snap_height") {
+            this.snapToVertical();
         }
 
         if (msg.msg == "setslider") {
