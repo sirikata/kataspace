@@ -202,16 +202,21 @@ Kata.require([
         var sizeAdjustment=1.0;
         var vertAdjustment=0.0;
         if (objectName.indexOf("/wall/")!=-1) {
-            sizeAdjustment=2.0;
-            vertAdjustment=1.0;
+            sizeAdjustment=2.5;
+            vertAdjustment=2;
         }
         if (objectName.indexOf("square")!=-1) {
             sizeAdjustment=20.0;
             vertAdjustment=-.5;
         }
         if (objectName.indexOf("roof")!=-1) {
-            sizeAdjustment=14.0;
-            vertAdjustment=5;
+            if (objectName.indexOf("lower")!=-1) {
+                sizeAdjustment=14.0;
+                vertAdjustment=5;
+            }else {
+                sizeAdjustment=13.0;
+                vertAdjustment=7.5;                
+            }
         }
         var xpos = this.mPresence.predictedPosition(Kata.now(this.mPresence.mSpace));
         xpos[1]+=vertAdjustment;
@@ -288,10 +293,57 @@ Kata.require([
         }
     };
     Example.BlessedScript.prototype.snapToGrid = function() {
+        function buildingCenter(oldPos){
+            var buildingSizeX=20;
+            var buildingSizeY=1./1024;
+            var buildingSizeZ=20;
+            var newPos=[Math.round(oldPos[0]/buildingSizeX)*buildingSizeX,
+                        Math.round(oldPos[1]/buildingSizeY)*buildingSizeY,
+                        Math.round(oldPos[2]/buildingSizeZ)*buildingSizeZ];
+            return newPos;
+        }
+        function wallSnap(oldPos,newPos,orient) {
+            return newPos;
+        }
         this.foreachSelected(this.mPresence.mSpace, function(presid) {
                                  var remote_pres = this.getRemotePresence(presid);
                                  if (remote_pres) {
-                                     Kata.warn("snapped on "+JSON.stringify(remote_pres.visual()));
+                                     var time = Kata.now(remote_pres.mSpace);
+                                     var oldPos = remote_pres.position(time);
+                                     var orient = remote_pres.orientation(time);
+                                     var newPos = buildingCenter(oldPos);
+                                     if (remote_pres.visual().indexOf("/wall/")!=-1) {
+                                         newPos = wallSnap(oldPos,newPos,orient);
+                                     }
+                                     if (remote_pres.visual().indexOf("square")!=-1) {
+                                         newPos[0]-=1;
+                                     }
+                                     var newLoc = Kata.LocationExtrapolate(remote_pres.predictedLocation(), time);
+                                     newLoc.pos = newPos;
+                                     var gfxLoc = {};
+                                     //optimistically update gfx
+                                     gfxLoc.pos = newPos;
+                                     gfxLoc.time = time + Example.BlessedScript.GFX_TIMESTAMP_OFFSET;
+                                     var gfxmsg = new Kata.ScriptProtocol.FromScript.GFXMoveNode(
+                                         remote_pres.space(),
+                                         remote_pres.id(),
+                                         remote_pres,
+                                         { loc : gfxLoc }
+                                     );
+                                     this._sendHostedObjectMessage(gfxmsg);
+
+                                     //get remote presence ready
+                                     
+                                     remote_pres.mLocation.pos = newLoc.pos;
+                                     remote_pres.mLocation.posTime = time;
+                                     this.setRemoteObjectLocation(this.mPresence,
+                                                                  remote_pres,
+                                                                  newLoc);
+                                     // Make change permanent!
+                                     remote_pres._updateLoc({pos: newLoc.pos, time: time});
+                                     
+                                     //Kata.warn("snapped on "+JSON.stringify(remote_pres.visual()));
+                                     
                                  }
                                  
                              });

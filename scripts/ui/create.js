@@ -82,14 +82,15 @@ Kata.require([
         }else {
             options="";            
         }
-        console.log("SWITCHING "+value)
         switch (value) {
         case "a":
             return immediateLoad(dirname+ "static/wall/wall.dae",options);
+        case "ad":
+            return immediateLoad(dirname+ "static/wall/door.dae",options);
         case "b":
             return immediateLoad(dirname+ "static/fcroof/forbidden_roof.dae",options);
         case "c":
-            return immediateLoad(dirname+ "static/fcpedestal/forbidden_pedestal.dae",options);
+            return immediateLoad(dirname+ "static/fcroof/forbidden_roof_lower.dae",options);
         case "d":
             return immediateLoad(dirname+ "static/fcsquare/forbidden_pedestal_square.dae",options);
         }
