@@ -64,6 +64,35 @@ Kata.require([
         var thus = this;
         var base;
         var value=document.getElementById('objectCreation'+this.uniqueId).value;
+
+        var dirname = window.location.href.substr(0, window.location.href.lastIndexOf('/') + 1);
+        function immediateLoad(value,options) {
+            thus.mChannel.sendMessage(new Kata.ScriptProtocol.ToScript.GUIMessage({
+                msg:'create',
+                event: {
+                    visual: value+options
+                }
+            })); /* put args here for what to create */    
+
+        }
+        var options=value.indexOf("?");
+        if (options>=0){
+            options=value.substr(options);
+            value=value.substr(0,value.indexOf("?"));
+        }else {
+            options="";            
+        }
+        console.log("SWITCHING "+value)
+        switch (value) {
+        case "a":
+            return immediateLoad(dirname+ "static/wall/wall.dae",options);
+        case "b":
+            return immediateLoad(dirname+ "static/fcroof/forbidden_roof.dae",options);
+        case "c":
+            return immediateLoad(dirname+ "static/fcpedestal/forbidden_pedestal.dae",options);
+        case "d":
+            return immediateLoad(dirname+ "static/fcsquare/forbidden_pedestal_square.dae",options);
+        }
         var i = value.indexOf("/processed/index.html");
         if (i >= 0) {
             base = value.substr(0, i) + "/processed/";
@@ -116,8 +145,8 @@ Kata.require([
         }
         else {
             if (!value) {
-                var dirname = window.location.href.substr(0, window.location.href.lastIndexOf('/') + 1);
-                value = dirname + "static/maleWalkIdleSit.dae";
+                var dirname2 = window.location.href.substr(0, window.location.href.lastIndexOf('/') + 1);
+                value = dirname2 + "static/maleWalkIdleSit.dae";
             }
             this.mChannel.sendMessage(new Kata.ScriptProtocol.ToScript.GUIMessage({
                 msg:'create',
