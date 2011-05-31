@@ -13,7 +13,9 @@
         <visual_scene id="ID1">
             <node name="SketchUp">
                 <node id="ID43" name="instance_7">
-                    <matrix>1 0 0 1326.860132007926 0 1 0 4227.639754246332 0 0 1 200 0 0 0 1</matrix>
+
+                  <scale sid="scale">1.4 1 1</scale>
+<!--                    <matrix>1 0 0 1326.860132007926 0 1 0 4227.639754246332 0 0 1 200 0 0 0 1</matrix>-->
                     <instance_node url="#ID44" />
                 </node>
             </node>

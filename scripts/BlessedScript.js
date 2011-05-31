@@ -199,20 +199,40 @@ Kata.require([
 
     };
     Example.BlessedScript.prototype.handleCreateObject = function (objectName, pos, orient, scale) {
-            this.createObject("../../objectscript.js", "Example.ObjectScript", {
-                                  space: this.mPresence.mSpace,
-                                  name: "Created object "+objectName,
-                                  loc: {
-                                      scale: scale? scale: this._scale,
-                                      pos: pos ? pos : this.mPresence.predictedPosition(Kata.now(this.mPresence.mSpace)),
-                                      orient : orient
-                                  },
-                                  creator: this.mPresence.id(),
-                                  visual: {mesh:objectName},
-                                  auth: "whiskey-foxtrot-tango"
-                                  //,port: port
-                                  //,receipt: ""+idx
-            });
+        var sizeAdjustment=1.0;
+        var vertAdjustment=0.0;
+        if (objectName.indexOf("/wall/")!=-1) {
+            sizeAdjustment=2.0;
+            vertAdjustment=1.0;
+        }
+        if (objectName.indexOf("square")!=-1) {
+            sizeAdjustment=20.0;
+            vertAdjustment=-.5;
+        }
+        if (objectName.indexOf("roof")!=-1) {
+            sizeAdjustment=14.0;
+            vertAdjustment=5;
+        }
+        var xpos = this.mPresence.predictedPosition(Kata.now(this.mPresence.mSpace));
+        xpos[1]+=vertAdjustment;
+        function Vec4Scale(a,b) {
+            return [a[0]*b,a[1]*b,a[2]*b,a[3]*b];
+        };
+
+        this.createObject("../../objectscript.js", "Example.ObjectScript", {
+                              space: this.mPresence.mSpace,
+                              name: "Created object "+objectName,
+                              loc: {
+                                  scale: scale? Vec4Scale(scale,sizeAdjustment): Vec4Scale(this._scale,sizeAdjustment),
+                                  pos: pos ? pos : xpos,
+                                  orient : orient
+                              },
+                              creator: this.mPresence.id(),
+                              visual: {mesh:objectName},
+                              auth: "whiskey-foxtrot-tango"
+                              //,port: port
+                              //,receipt: ""+idx
+                          });
          
     };
 
