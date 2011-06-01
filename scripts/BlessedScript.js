@@ -288,13 +288,13 @@ Kata.require([
             sizeAdjustment=20;
             vertAdjustment=6.5;            
         }
-        if (objectName.indexOf("JustFence.dae")!=-1) {
-            sizeAdjustment=300;
-            vertAdjustment=5;                        
+        if (objectName.indexOf("/GateHouse/")!=-1) {
+            sizeAdjustment=30;
+            vertAdjustment=11;                        
         }
-        if (objectName.indexOf("LongFence.dae")!=-1) {
-            sizeAdjustment=300;
-            vertAdjustment=5;                                    
+        if (objectName.indexOf("/LongerFence/")!=-1) {
+            sizeAdjustment=500;
+            vertAdjustment=11;                                    
         }
        var wallIndex=objectName.indexOf("/wall/");
         if (wallIndex!=-1) {

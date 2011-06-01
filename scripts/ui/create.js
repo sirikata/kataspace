@@ -123,9 +123,9 @@ Kata.require([
         case "P": 
             return immediateLoad(dirname+ "static/palace/models/fc.dae",options);           
         case "w":
-            return immediateLoad(dirname+ "static/JustFence.dae",options);
+            return immediateLoad(dirname+ "static/LongerFence/fence.dae",options);
         case "W":
-            return immediateLoad(dirname+ "static/LongFence.dae",options);
+            return immediateLoad(dirname+ "static/GateHouse/house.dae",options);
         case "y":
             return immediateLoad(dirname+ "static/fcroof/forbidden_roof.dae",options);
         case "z":
