@@ -1,13 +1,12 @@
 
 Kata.require([
-    "katajs/oh/Script.js",
-    "katajs/oh/GraphicsScript.js"
+    "katajs/oh/Script.js"
 ], function() {
     if (typeof(Example) === "undefined") {
         Example = {};
     }
     
-    var SUPER = Kata.GraphicsScript.prototype;
+    var SUPER = Kata.Script.prototype;
     Example.ObjectScript = function(channel, args){
         SUPER.constructor.call(this, channel, args);
         
