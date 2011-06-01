@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.5.1">
+  <asset>
+    <contributor>
+      <author>danielrh</author>
+      <authoring_tool>obj2dae</authoring_tool>
+      <source_data>a.obj</source_data>
+    </contributor>
+    <created>2011-05-31T17:46:28</created>
+    <modified>2011-05-31T17:46:28</modified>
+    <unit name="meter" meter="1.0"/>
+    <up_axis>Y_UP</up_axis>
+  </asset>
+  <library_images>
+    <image id="houseKspng_1" name="houseKspng_1">
+      <init_from>house_Ks.png</init_from>
+    </image>
+    <image id="housepng_1" name="housepng_1">
+      <init_from>house.png</init_from>
+    </image>
+    <image id="floorpng_1" name="floorpng_1">
+      <init_from>floor.png</init_from>
+    </image>
+  </library_images>
+  <library_effects>
+    <effect id="nil_1" name="nil_1">
+      <profile_COMMON>
+        <technique sid="common">
+          <blinn>
+            <emission>
+              <color>0 0 0 1</color>
+            </emission>
+            <ambient>
+              <color>0 0 0 1</color>
+            </ambient>
+            <diffuse>
+              <color>1 1 1 1</color>
+            </diffuse>
+            <specular>
+              <color>1 1 1 1</color>
+            </specular>
+            <shininess>
+              <float>1.0</float>
+            </shininess>
+          </blinn>
+        </technique>
+      </profile_COMMON>
+    </effect>
+    <effect id="house_1" name="house_1">
+      <profile_COMMON>
+        <newparam sid="houseKspng_1-surface">
+          <surface type="2D">
+            <init_from>houseKspng_1</init_from>
+            <format>A8R8G8B8</format>
+          </surface>
+        </newparam>
+        <newparam sid="houseKspng_1-sampler">
+          <sampler2D>
+            <source>houseKspng_1-surface</source>
+            <minfilter>LINEAR_MIPMAP_LINEAR</minfilter>
+            <magfilter>LINEAR</magfilter>
+          </sampler2D>
+        </newparam>
+        <newparam sid="housepng_1-surface">
+          <surface type="2D">
+            <init_from>housepng_1</init_from>
+            <format>A8R8G8B8</format>
+          </surface>
+        </newparam>
+        <newparam sid="housepng_1-sampler">
+          <sampler2D>
+            <source>housepng_1-surface</source>
+            <minfilter>LINEAR_MIPMAP_LINEAR</minfilter>
+            <magfilter>LINEAR</magfilter>
+          </sampler2D>
+        </newparam>
+        <technique sid="common">
+          <blinn>
+            <emission>
+              <color>0 0 0 1</color>
+            </emission>
+            <ambient>
+              <color>0 0 0 1</color>
+            </ambient>
+            <diffuse>
+              <texture texture="housepng_1-sampler" texcoord="CHANNEL0"/>
+            </diffuse>
+            <specular>
+              <texture texture="houseKspng_1-sampler" texcoord="CHANNEL0"/>
+            </specular>
+            <shininess>
+              <float>1.0</float>
+            </shininess>
+          </blinn>
+        </technique>
+      </profile_COMMON>
+    </effect>
+    <effect id="floor_1" name="floor_1">
+      <profile_COMMON>
+        <newparam sid="floorpng_1-surface">
+          <surface type="2D">
+            <init_from>floorpng_1</init_from>
+            <format>A8R8G8B8</format>
+          </surface>
+        </newparam>
+        <newparam sid="floorpng_1-sampler">
+          <sampler2D>
+            <source>floorpng_1-surface</source>
+            <minfilter>LINEAR_MIPMAP_LINEAR</minfilter>
+            <magfilter>LINEAR</magfilter>
+          </sampler2D>
+        </newparam>
+        <technique sid="common">
+          <blinn>
+            <emission>
+              <color>0 0 0 1</color>
+            </emission>
+            <ambient>
+              <color>0 0 0 1</color>
+            </ambient>
+            <diffuse>
+              <texture texture="floorpng_1-sampler" texcoord="CHANNEL0"/>
+            </diffuse>
+            <specular>
+              <color>1 1 1 1</color>
+            </specular>
+            <shininess>
+              <float>1.0</float>
+            </shininess>
+          </blinn>
+        </technique>
+      </profile_COMMON>
+    </effect>
+  </library_effects>
+  <library_materials>
+    <material id="nil_1-material" name="nil_1">
+      <instance_effect url="#nil_1"/>
+    </material>
+    <material id="house_1-material" name="house_1">
+      <instance_effect url="#house_1"/>
+    </material>
+    <material id="floor_1-material" name="floor_1">
+      <instance_effect url="#floor_1"/>
+    </material>
+  </library_materials>
+  <library_geometries>
+  <geometry id="adae_1-geometry" name="adae_1">
+    <mesh>
+      <source id="1_1-positions">
+        <float_array id="1_1-positions-array" count="216">
+0.0 3.84 2.0625 0.0 4.7999997 2.0625 3.28 4.7999997 2.0625 3.28 3.84 2.0625 0.0 3.84 1.9375 0.0 4.7999997 1.9375 3.28 4.7999997 1.9375 3.28 3.84 1.9375 0.24519631 0.0 2.0487726 0.2078674 0.0 2.1388927 0.13889255 0.0 2.2078674 0.04877256 0.0 2.2451963 -0.04877258 0.0 2.2451963 -0.13889259 0.0 2.2078674 -0.20786741 0.0 2.1388927 -0.24519633 0.0 2.0487726 -0.24519631 0.0 1.9512274 -0.20786738 0.0 1.8611075 -0.1388925 0.0 1.7921326 -0.048772596 0.0 1.7548037 0.048772603 0.0 1.7548037 0.1388926 0.0 1.7921326 0.2078674 0.0 1.8611075 0.24519633 0.0 1.9512274 0.24519631 4.7999997 2.0487726 0.2078674 4.7999997 2.1388927 0.13889255 4.7999997 2.2078674 0.04877256 4.7999997 2.2451963 -0.04877258 4.7999997 2.2451963 -0.13889259 4.7999997 2.2078674 -0.20786741 4.7999997 2.1388927 -0.24519633 4.7999997 2.0487726 -0.24519631 4.7999997 1.9512274 -0.20786738 4.7999997 1.8611075 -0.1388925 4.7999997 1.7921326 -0.048772596 4.7999997 1.7548037 0.048772603 4.7999997 1.7548037 0.1388926 4.7999997 1.7921326 0.2078674 4.7999997 1.8611075 0.24519633 4.7999997 1.9512274 1.5 3.84 2.03125 1.5 3.84 1.96875 1.375 3.715 2.03125 1.375 3.715 1.96875 1.125 3.715 2.03125 1.125 3.715 1.96875 1.0 3.59 2.03125 1.0 3.59 1.96875 0.75 3.59 2.03125 0.75 3.59 1.96875 0.625 3.465 2.03125 0.625 3.465 1.96875 0.0 3.465 2.03125 0.0 3.465 1.96875 0.0 3.84 2.03125 0.0 3.84 1.96875 -1.5 3.84 2.03125 -1.5 3.84 1.96875 -1.375 3.715 2.03125 -1.375 3.715 1.96875 -1.125 3.715 2.03125 -1.125 3.715 1.96875 -1.0 3.59 2.03125 -1.0 3.59 1.96875 -0.75 3.59 2.03125 -0.75 3.59 1.96875 -0.625 3.465 2.03125 -0.625 3.465 1.96875 0.0 3.465 2.03125 0.0 3.465 1.96875 0.0 3.84 2.03125 0.0 3.84 1.96875         </float_array>
+        <technique_common>
+          <accessor source="#1_1-positions-array" count="72" stride="3">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+            <param name="Z" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="1_1-normals">
+        <float_array id="1_1-normals-array" count="198">
+0.98078525 0.0 0.19509032 0.8314696 0.0 0.55557024 0.5555702 0.0 0.83146966 0.19509023 0.0 0.9807853 -0.19509032 0.0 0.98078525 -0.55557036 0.0 0.83146954 -0.83146966 0.0 0.5555702 -0.9807853 0.0 0.19509031 -0.98078525 0.0 -0.19509049 -0.83146954 0.0 -0.5555703 -0.55557 0.0 -0.8314698 -0.19509038 0.0 -0.98078525 0.19509041 0.0 -0.98078525 0.5555704 0.0 -0.8314695 0.8314696 0.0 -0.5555703 0.9807853 0.0 -0.19509023 0.98078525 0.0 0.19509032 0.8314696 0.0 0.55557024 0.5555702 0.0 0.83146966 0.19509023 0.0 0.9807853 -0.19509032 0.0 0.98078525 -0.55557036 0.0 0.83146954 -0.83146966 0.0 0.5555702 -0.9807853 0.0 0.19509031 -0.98078525 0.0 -0.19509049 -0.83146954 0.0 -0.5555703 -0.55557 0.0 -0.8314698 -0.19509038 0.0 -0.98078525 0.19509041 0.0 -0.98078525 0.5555704 0.0 -0.8314695 0.8314696 0.0 -0.5555703 0.9807853 0.0 -0.19509023 0.0 1.0 0.0 0.0 -1.0 0.0 0.707 0.0 0.707 0.707 0.0 -0.707 0.707 0.0 0.707 0.707 0.0 -0.707 0.707 0.0 0.707 0.707 0.0 -0.707 0.707 0.0 0.707 0.707 0.0 -0.707 0.707 0.0 0.707 0.707 0.0 -0.707 0.707 0.0 0.707 0.707 0.0 -0.707 0.707 0.0 0.707 0.707 0.0 -0.707 0.707 0.0 0.707 0.707 0.0 -0.707 0.707 0.0 0.707 0.707 0.0 -0.707 0.707 0.0 0.707 0.707 0.0 -0.707 0.707 0.0 0.707 0.707 0.0 -0.707 0.707 0.0 0.707 0.707 0.0 -0.707 0.707 0.0 0.707 0.707 0.0 -0.707 0.707 0.0 0.707 0.707 0.0 -0.707 0.707 0.0 0.707 0.707 0.0 -0.707 0.707 0.0 0.707 0.707 0.0 -0.707         </float_array>
+        <technique_common>
+          <accessor source="#1_1-normals-array" count="66" stride="3">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+            <param name="Z" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="1_1-texcoords">
+        <float_array id="1_1-texcoords-array" count="176">
+0.2755 0.875 0.2755 1.0 0.6505 1.0 0.6505 0.875 0.5995 1.0 0.5995 0.875 0.0 0.875 0.015625 0.875 0.03125 0.875 0.046875 0.875 0.0625 0.875 0.078125 0.875 0.09375 0.875 0.109375 0.875 0.125 0.875 0.140625 0.875 0.15625 0.875 0.171875 0.875 0.1875 0.875 0.203125 0.875 0.21875 0.875 0.234375 0.875 0.25 0.875 0.0 0.0 0.015625 0.0 0.03125 0.0 0.046875 0.0 0.0625 0.0 0.078125 0.0 0.09375 0.0 0.109375 0.0 0.125 0.0 0.140625 0.0 0.15625 0.0 0.171875 0.0 0.1875 0.0 0.203125 0.0 0.21875 0.0 0.234375 0.0 0.25 0.0 0.123799080025 0.925306854874 0.114466850769 0.902776860436 0.0972231395637 0.885533149231 0.074693145126 0.876200919975 0.050306854874 0.876200919975 0.0277768604363 0.885533149231 0.0105331492311 0.902776860436 0.0012009199748 0.925306854874 0.0012009199748 0.949693145126 0.0105331492311 0.972223139564 0.0277768604363 0.989466850769 0.050306854874 0.998799080025 0.074693145126 0.998799080025 0.0972231395637 0.989466850769 0.114466850769 0.972223139564 0.123799080025 0.949693145126 0.175 1.0 0.2 1.0 0.17083333 0.9583333 0.20416667 0.9583333 0.1625 0.9583333 0.2125 0.9583333 0.15833333 0.9166667 0.21666667 0.9166667 0.15 0.9166667 0.225 0.9166667 0.14583333 0.875 0.22916667 0.875 0.125 0.875 0.25 0.875 0.125 1.0 0.25 1.0 0.175 1.0 0.2 1.0 0.17083333 0.9583333 0.20416667 0.9583333 0.1625 0.9583333 0.2125 0.9583333 0.15833333 0.9166667 0.21666667 0.9166667 0.15 0.9166667 0.225 0.9166667 0.14583333 0.875 0.22916667 0.875 0.125 0.875 0.25 0.875 0.125 1.0 0.25 1.0         </float_array>
+        <technique_common>
+          <accessor source="#1_1-texcoords-array" count="88" stride="2">
+            <param name="S" type="float"/>
+            <param name="T" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <vertices id="1_1-vertices">
+        <input semantic="POSITION" source="#1_1-positions"/>
+      </vertices>
+      <polylist material="house_1-material" count="60">
+         <input offset="0" semantic="VERTEX" source="#1_1-vertices"/>
+         <input offset="1" semantic="TEXCOORD" source="#1_1-texcoords"/>
+         <input offset="2" semantic="NORMAL" source="#1_1-normals"/>
+      <vcount>4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 16 16 3 3 4 3 3 4 3 3 4 3 3 4 3 3 4 3 3 4 3 3 4 3 3 4 3 3 4 3 3 4 3 3 4 3 3 4       </vcount>
+      <p>3 3 -2 2 2 -2 1 1 -2 0 0 -2 4 3 -1 5 2 -1 6 1 -1 7 0 -1 0 0 -5 1 1 -5 5 4 -5 4 5 -5 3 0 -6 7 5 -6 6 4 -6 2 1 -6 5 4 -4 1 1 -4 2 0 -4 6 5 -4 4 5 -3 7 4 -3 3 1 -3 0 0 -3 23 21 15 39 38 31 24 23 16 8 6 0 8 6 0 24 23 16 25 24 17 9 7 1 9 7 1 25 24 17 26 25 18 10 8 2 10 8 2 26 25 18 27 26 19 11 9 3 11 9 3 27 26 19 28 27 20 12 10 4 12 10 4 28 27 20 29 28 21 13 11 5 13 11 5 29 28 21 30 29 22 14 12 6 14 12 6 30 29 22 31 30 23 15 13 7 15 13 7 31 30 23 32 31 24 16 14 8 16 14 8 32 31 24 33 32 25 17 15 9 17 15 9 33 32 25 34 33 26 18 16 10 18 16 10 34 33 26 35 34 27 19 17 11 19 17 11 35 34 27 36 35 28 20 18 12 20 18 12 36 35 28 37 36 29 21 19 13 21 19 13 37 36 29 38 37 30 22 20 14 22 20 14 38 37 30 39 38 31 23 21 15 24 40 32 25 41 32 26 42 32 27 43 32 28 44 32 29 45 32 30 46 32 31 47 32 32 48 32 33 49 32 34 50 32 35 51 32 36 52 32 37 53 32 38 54 32 39 55 32 23 55 33 22 54 33 21 53 33 20 52 33 19 51 33 18 50 33 17 49 33 16 48 33 15 47 33 14 46 33 13 45 33 12 44 33 11 43 33 10 42 33 9 41 33 8 40 33 54 70 48 40 56 34 42 58 36 55 71 49 41 57 35 43 59 37 41 57 35 43 59 37 42 58 36 40 56 34 54 70 48 42 58 36 44 60 38 55 71 49 43 59 37 45 61 39 43 59 37 45 61 39 44 60 38 42 58 36 54 70 48 44 60 38 46 62 40 55 71 49 45 61 39 47 63 41 45 61 39 47 63 41 46 62 40 44 60 38 54 70 48 46 62 40 48 64 42 55 71 49 47 63 41 49 65 43 47 63 41 49 65 43 48 64 42 46 62 40 54 70 48 48 64 42 50 66 44 55 71 49 49 65 43 51 67 45 49 65 43 51 67 45 50 66 44 48 64 42 54 70 48 50 66 44 52 68 46 55 71 49 51 67 45 53 69 47 51 67 45 53 69 47 52 68 46 50 66 44 70 86 64 56 72 50 58 74 52 71 87 65 57 73 51 59 75 53 57 73 51 59 75 53 58 74 52 56 72 50 70 86 64 58 74 52 60 76 54 71 87 65 59 75 53 61 77 55 59 75 53 61 77 55 60 76 54 58 74 52 70 86 64 60 76 54 62 78 56 71 87 65 61 77 55 63 79 57 61 77 55 63 79 57 62 78 56 60 76 54 70 86 64 62 78 56 64 80 58 71 87 65 63 79 57 65 81 59 63 79 57 65 81 59 64 80 58 62 78 56 70 86 64 64 80 58 66 82 60 71 87 65 65 81 59 67 83 61 65 81 59 67 83 61 66 82 60 64 80 58 70 86 64 66 82 60 68 84 62 71 87 65 67 83 61 69 85 63 67 83 61 69 85 63 68 84 62 66 82 60       </p>
+      </polylist>
+    </mesh>
+    </geometry>
+  </library_geometries>
+  <library_visual_scenes>
+    <visual_scene id="main_scene_000" name="MainScene">
+      <node id="main_node_000" name="MainNode">
+        <instance_geometry url="#adae_1-geometry">
+          <bind_material>
+          <technique_common>
+            <instance_material symbol="house_1-material" target="#house_1-material">
+              <bind_vertex_input input_semantic="TEXCOORD" input_set="0" semantic="CHANNEL0"/>
+            </instance_material>
+          </technique_common>
+          </bind_material>
+        </instance_geometry>
+      </node>
+    </visual_scene>
+  </library_visual_scenes>
+  <scene>
+    <instance_visual_scene url="#main_scene_000"/>
+  </scene>
+</COLLADA>
