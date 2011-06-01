@@ -45,9 +45,52 @@ Kata.require([
                 },
                 Kata.bind(this.animatedSetState, this)
             );
+        this.platforms={};
+        setInterval(Kata.bind(Example.BlessedScript.prototype.heartbeat,this),300);
     };
     Kata.extend(Example.BlessedScript, SUPER);
+    
+    Example.BlessedScript.prototype.updatePlatformPhysics = function(remote_pres,pos,time) {
+        var platpos=remote_pres.position(time);
+        var delta=Kata.Vec3Sub(pos,platpos);
+        if (delta[0]<0) delta[0]=-delta[0];
+        if (delta[2]<0) delta[2]=-delta[2];//14,11
+        console.log("platform ",delta[0],delta[2]);
+        var heightRatio=0.0;
+        if (delta[0]<14&&delta[2]<11) {
+            heightRatio=1.0;
+        }else if (delta[0]<7.5&&delta[2]<13) {
+            heightRatio=1.0-(delta[2]-11)/(13-11);
+        }else if (delta[0]<16.5&&delta[2]<1) {
+            heightRatio=1.0-(delta[0]-14)/(16.5-14);
+        }
+        var desiredHeight=heightRatio*.9+this._scale[1];
+        return desiredHeight;
+    };
 
+    Example.BlessedScript.prototype.heartbeat = function() {
+        var desiredHeight=0.0;
+        var time = Kata.now(this.mPresence.mSpace);
+        var pos = this.mPresence.position(time);
+
+        for (plat in this.platforms) {
+            var remote=this.platforms[plat];
+            if (isPlatform(remote,false)) {
+                var tmp=this.updatePlatformPhysics(remote,pos,time);
+                if (tmp>desiredHeight)
+                    desiredHeight=tmp;
+            }else if (!isPlatform(remote,true)) {
+                delete this.platforms[plat];
+            }else {
+
+            }
+        }
+        var vdel=pos[1]-desiredHeight;
+        if (vdel<0)vdel=-vdel;
+        if (vdel>.1)
+            this.mPresence.setPosition([pos[0],desiredHeight,pos[2]]);
+
+    };
     Example.BlessedScript.prototype.createChatEvent = function(action, name, msg) {
         var evt = {
             action : action,
@@ -109,14 +152,30 @@ Kata.require([
         this.updateCamera();
     };
 
-
+    function isPlatform(remote_pres, allow_undefined) {
+        var vis=remote_pres.visual();
+        if (vis===undefined)
+            return true;
+        if (vis.indexOf("square")!=-1)
+            return true;
+        if (vis.indexOf("platform")!=-1)
+            return true;
+        return false;
+    }
     Example.BlessedScript.prototype.proxEvent = function(remote, added){
         if (added) {
             Kata.warn("Camera Discover object.");
             this.mPresence.subscribe(remote.id());
             this.mOther = remote;
+            if (isPlatform(remote,true)) {
+                console.log("platform detected "+remote.id());
+                this.platforms[remote.id()]=remote;
+            }
         }
         else {
+            if (remote.id() in this.platforms) {
+                delete this.platforms[remote.id()];
+            }
             Kata.warn("Camera Wiped object.");      // FIXME: unsubscribe!
         }
     };
@@ -216,23 +275,23 @@ Kata.require([
                        "wallwallwallwallwall.dae":8.665204062882934,
                        "wallwallwallwall.dae":7.104733596005054,
                        "wallwallwall.dae":5.589983675200037,
-                       "corner.dae":3.1029307279803735,
-                       "cornerwall.dae":4.3460542323407605,
-                        "cornerwallwall.dae":5.721740065019299,
-                        "cornerwallwallwall.dae":7.208857839689103,
-                        "cornerwallwallwallwall.dae":8.750780155737374,
-                        "cornerwallwallwallwallwall.dae":10.322978025514102,
-                        "cornerwallwalldoor.dae":7.73083056971546,
-                        "cornerwallwalldoorwall.dae":9.28499129126393,
-                        "cornerwallwalldoorwallwall.dae":10.864418796357468,
-                        "colwall.dae":3.6086857882040206,
-                        "colwallwall.dae":4.852979818419367,
-                        "colwallwalldoor.dae":6.791422024729849,
-                        "colwallwalldoorwall.dae":8.321503056418694,
-                        "colwallwalldoorwallwall.dae":9.886890973303268,
-                        "colwallwallwall.dae":6.281672796157539,
-                        "colwallwallwallwall.dae":7.7940113624491,
-                        "colwallwallwallwallwall.dae":9.349492666342151,
+                       "corner.dae":3.4109270545476065,//3.1029307279803735,
+                       "cornerwall.dae":4.338910514042135,//4.3460542323407605,
+                        "cornerwallwall.dae":5.6033081908143245,//5.721740065019299,
+                        "cornerwallwallwall.dae":7.024755015119525,//7.208857839689103,
+                        "cornerwallwallwallwall.dae":8.525051516773779,//8.750780155737374,
+                        "cornerwallwallwallwallwall.dae":10.069013520571158,
+                        "cornerwallwalldoor.dae":7.530504127032061,
+                        "cornerwallwalldoorwall.dae":9.048459605979616,
+                        "cornerwallwalldoorwallwall.dae":10.602827133469864,
+                        "colwall.dae":3.622959601001048,
+                        "colwallwall.dae":4.8212691555736304,
+                        "colwallwalldoor.dae":6.728048474148034,
+                        "colwallwalldoorwall.dae":8.245037,
+                        "colwallwalldoorwallwall.dae":9.80172618830406,
+                        "colwallwallwall.dae":6.224358301904356,
+                        "colwallwallwallwall.dae":7.721388234669052,
+                        "colwallwallwallwallwall.dae":9.266943199916877,
                         "col.dae":3.3959123230044836,
                         "barecol.dae":2.8407957521676406,
                         "decorator.dae":1.7099433049080963,

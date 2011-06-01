@@ -94,9 +94,9 @@ Kata.require([
         case "aa":
             return immediateLoad(dirname+ "static/wall/colwallwall.dae",options);
         case "aaa":
-            return immediateLoad(dirname+ "static/wall/colwallwallwall.dae",options);
+            return immediateLoad(dirname+ "static/wall/cornerwallwallwall.dae",options);
         case "aad":
-            return immediateLoad(dirname+ "static/wall/colwallwalldoor.dae",options);
+            return immediateLoad(dirname+ "static/wall/cornerwallwalldoor.dae",options);
         case "aaaa":
             return immediateLoad(dirname+ "static/wall/cornerwallwallwallwall.dae",options);
         case "aada":
