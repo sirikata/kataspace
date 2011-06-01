@@ -398,6 +398,17 @@ Kata.require([
         if (msg.msg == "abort") {
             this.resetDrag();
         }
+        if (msg.msg == "delete") {
+            this.foreachSelected(this.mPresence.mSpace, function(presid) {
+                var remote_pres = this.getRemotePresence(presid);
+                if (remote_pres) {
+                    var payload=JSON.stringify({"msg": "delete"});
+                    var sendPort = this.mPresence.bindODPPort(Example.ObjectScript.kMsgPort+1);
+                    sendPort.send(new Kata.ODP.Endpoint(remote_pres, Example.ObjectScript.kMsgPort),payload);
+                    sendPort.close();
+                }
+            });
+        }
         if (msg.msg == "snap") {
             this.snapToGrid();
         }
