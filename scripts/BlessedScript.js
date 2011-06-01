@@ -49,13 +49,21 @@ Kata.require([
         setInterval(Kata.bind(Example.BlessedScript.prototype.heartbeat,this),300);
     };
     Kata.extend(Example.BlessedScript, SUPER);
+    var platformBounds=20.0;
     
     Example.BlessedScript.prototype.updatePlatformPhysics = function(remote_pres,pos,time) {
         var platpos=remote_pres.position(time);
-        var delta=Kata.Vec3Sub(pos,platpos);
+        var plat_bounds=remote_pres.bounds();
+        if (plat_bounds.length&&plat_bounds.length==3) {
+            plat_bounds=plat_bounds[1];
+        }else if (plat_bounds.length&&plat_bounds.length==4) {
+            plat_bounds=plat_bounds[3];            
+        }
+        var delta=Kata.Vec3Scale(Kata.Vec3Sub(pos,platpos),platformBounds/plat_bounds);
         if (delta[0]<0) delta[0]=-delta[0];
         if (delta[2]<0) delta[2]=-delta[2];//14,11
-        console.log("platform ",delta[0],delta[2]);
+        
+        //console.log("platform ",delta[0],delta[2],"radius",);
         var heightRatio=0.0;
         if (delta[0]<14&&delta[2]<11) {
             heightRatio=1.0;
@@ -64,7 +72,7 @@ Kata.require([
         }else if (delta[0]<16.5&&delta[2]<1) {
             heightRatio=1.0-(delta[0]-14)/(16.5-14);
         }
-        var desiredHeight=heightRatio*.9+this._scale[1];
+        var desiredHeight=heightRatio*.9*plat_bounds/platformBounds+this._scale[1];
         return desiredHeight;
     };
 
@@ -168,7 +176,6 @@ Kata.require([
             this.mPresence.subscribe(remote.id());
             this.mOther = remote;
             if (isPlatform(remote,true)) {
-                console.log("platform detected "+remote.id());
                 this.platforms[remote.id()]=remote;
             }
         }
@@ -257,10 +264,10 @@ Kata.require([
 
     };
     Example.BlessedScript.prototype.handleCreateObject = function (objectName, pos, orient, scale) {
-    var wallVertical=3;
-    var pedestalVertical=.5;
-    var lowerRoofVertical=6;
-    var upperRoofVertical=8.5;
+        var wallVertical=3;
+        var pedestalVertical=.5;
+        var lowerRoofVertical=6;
+        var upperRoofVertical=8.5;
         var sizeAdjustment=1.0;
         var vertAdjustment=0.0;
         var wallIndex=objectName.indexOf("/wall/");
@@ -305,7 +312,7 @@ Kata.require([
             vertAdjustment=wallVertical;
         }
         if (objectName.indexOf("square")!=-1) {
-            sizeAdjustment=20.0;
+            sizeAdjustment=platformBounds;
             vertAdjustment=pedestalVertical;
         }
         if (objectName.indexOf("roof")!=-1) {
@@ -483,8 +490,6 @@ Kata.require([
             var delX=Kata.Vec3Scale(perpAxis,dot(perpAxis,deltaPos));
             
             var delZ=Kata.Vec3Scale(deltaAxis,wallDistance);
-            console.log("newPos",newPos,"oldPos",oldPos);
-            console.log("deltaAxis",deltaAxis, "perpAxis",perpAxis,"deltaPos ",deltaPos,"dx",delX,"dz",delZ);
            
             return Kata.Vec3Add(Kata.Vec3Add(newPos,delX),delZ);
         }
