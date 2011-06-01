@@ -107,6 +107,25 @@ Kata.require([
             return immediateLoad(dirname+ "static/wall/cornerwallwalldoorwallwall.dae",options);
         case "d":
             return immediateLoad(dirname+ "static/wall/coldoor.dae",options);
+        case "market":
+            return immediateLoad(dirname+ "static/market/models/market.dae",options);                       
+        case "m":
+            return immediateLoad(dirname+ "static/market/models/market.dae",options);                       
+        case "t":
+            return immediateLoad(dirname+ "static/tent/models/Tent.dae",options);
+        case "tent":
+            return immediateLoad(dirname+ "static/tent/models/Tent.dae",options);                       
+        case "tt":
+            return immediateLoad(dirname+ "static/tents.dae",options);                  case "tents":
+            return immediateLoad(dirname+ "static/tents.dae",options);                       
+        case "palace": 
+            return immediateLoad(dirname+ "static/palace/models/fc.dae",options);
+        case "P": 
+            return immediateLoad(dirname+ "static/palace/models/fc.dae",options);           
+        case "w":
+            return immediateLoad(dirname+ "static/JustFence.dae",options);
+        case "W":
+            return immediateLoad(dirname+ "static/LongFence.dae",options);
         case "y":
             return immediateLoad(dirname+ "static/fcroof/forbidden_roof.dae",options);
         case "z":

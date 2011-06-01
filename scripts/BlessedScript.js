@@ -72,7 +72,7 @@ Kata.require([
         }else if (delta[0]<16.5&&delta[2]<1) {
             heightRatio=1.0-(delta[0]-14)/(16.5-14);
         }
-        var desiredHeight=heightRatio*.9*plat_bounds/platformBounds+this._scale[1];
+        var desiredHeight=heightRatio*.9*plat_bounds/platformBounds;
         return desiredHeight;
     };
 
@@ -93,6 +93,7 @@ Kata.require([
 
             }
         }
+        desiredHeight+=this._scale[1];
         var vdel=pos[1]-desiredHeight;
         if (vdel<0)vdel=-vdel;
         if (vdel>.1)
@@ -270,7 +271,32 @@ Kata.require([
         var upperRoofVertical=8.5;
         var sizeAdjustment=1.0;
         var vertAdjustment=0.0;
-        var wallIndex=objectName.indexOf("/wall/");
+        if (objectName.indexOf("/market.dae")!=-1) {
+            sizeAdjustment=2.5;
+            vertAdjustment=1.0;
+        }
+        if (objectName.indexOf("/Tent.dae")!=-1) {
+            sizeAdjustment=7;
+            vertAdjustment=2;
+            
+        }
+        if (objectName.indexOf("/tents.dae")!=-1) {
+            sizeAdjustment=60;
+            vertAdjustment=1.25;            
+        } 
+        if (objectName.indexOf("/palace/")!=-1) {
+            sizeAdjustment=20;
+            vertAdjustment=6.5;            
+        }
+        if (objectName.indexOf("JustFence.dae")!=-1) {
+            sizeAdjustment=300;
+            vertAdjustment=5;                        
+        }
+        if (objectName.indexOf("LongFence.dae")!=-1) {
+            sizeAdjustment=300;
+            vertAdjustment=5;                                    
+        }
+       var wallIndex=objectName.indexOf("/wall/");
         if (wallIndex!=-1) {
             var wallName=objectName.substr(wallIndex+6);
             sizeAdjustment=2.5;
