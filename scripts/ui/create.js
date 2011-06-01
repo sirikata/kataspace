@@ -83,15 +83,35 @@ Kata.require([
             options="";            
         }
         switch (value) {
-        case "a":
+        case "A":
             return immediateLoad(dirname+ "static/wall/wall.dae",options);
-        case "ad":
-            return immediateLoad(dirname+ "static/wall/door.dae",options);
-        case "b":
-            return immediateLoad(dirname+ "static/fcroof/forbidden_roof.dae",options);
+        case "C":
+            return immediateLoad(dirname+ "static/wall/corner.dae",options);
         case "c":
-            return immediateLoad(dirname+ "static/fcroof/forbidden_roof_lower.dae",options);
+            return immediateLoad(dirname+ "static/wall/col.dae",options);
+        case "a":
+            return immediateLoad(dirname+ "static/wall/colwall.dae",options);
+        case "aa":
+            return immediateLoad(dirname+ "static/wall/colwallwall.dae",options);
+        case "aaa":
+            return immediateLoad(dirname+ "static/wall/colwallwallwall.dae",options);
+        case "aad":
+            return immediateLoad(dirname+ "static/wall/colwallwalldoor.dae",options);
+        case "aaaa":
+            return immediateLoad(dirname+ "static/wall/cornerwallwallwallwall.dae",options);
+        case "aada":
+            return immediateLoad(dirname+ "static/wall/cornerwallwalldoorwall.dae",options);
+        case "aaaaa":
+            return immediateLoad(dirname+ "static/wall/cornerwallwallwallwallwall.dae",options);
+        case "aadaa":
+            return immediateLoad(dirname+ "static/wall/cornerwallwalldoorwallwall.dae",options);
         case "d":
+            return immediateLoad(dirname+ "static/wall/coldoor.dae",options);
+        case "y":
+            return immediateLoad(dirname+ "static/fcroof/forbidden_roof.dae",options);
+        case "z":
+            return immediateLoad(dirname+ "static/fcroof/forbidden_roof_lower.dae",options);
+        case "p":
             return immediateLoad(dirname+ "static/fcsquare/forbidden_pedestal_square.dae",options);
         }
         var i = value.indexOf("/processed/index.html");

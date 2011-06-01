@@ -204,8 +204,45 @@ Kata.require([
     var upperRoofVertical=8.5;
         var sizeAdjustment=1.0;
         var vertAdjustment=0.0;
-        if (objectName.indexOf("/wall/")!=-1) {
+        var wallIndex=objectName.indexOf("/wall/");
+        if (wallIndex!=-1) {
+            var wallName=objectName.substr(wallIndex+6);
             sizeAdjustment=2.5;
+            var scales={"wall.dae":2.987787396486388,
+                       "wallwall.dae":4.17106647127601,
+                       "wallwalldoor.dae":6.099936674573181,
+                       "wallwalldoorwall.dae":7.633829275992679,
+                       "wallwalldoorwallwall.dae":9.204383270822815,
+                       "wallwallwallwallwall.dae":8.665204062882934,
+                       "wallwallwallwall.dae":7.104733596005054,
+                       "wallwallwall.dae":5.589983675200037,
+                       "corner.dae":3.1029307279803735,
+                       "cornerwall.dae":4.3460542323407605,
+                        "cornerwallwall.dae":5.721740065019299,
+                        "cornerwallwallwall.dae":7.208857839689103,
+                        "cornerwallwallwallwall.dae":8.750780155737374,
+                        "cornerwallwallwallwallwall.dae":10.322978025514102,
+                        "cornerwallwalldoor.dae":7.73083056971546,
+                        "cornerwallwalldoorwall.dae":9.28499129126393,
+                        "cornerwallwalldoorwallwall.dae":10.864418796357468,
+                        "colwall.dae":3.6086857882040206,
+                        "colwallwall.dae":4.852979818419367,
+                        "colwallwalldoor.dae":6.791422024729849,
+                        "colwallwalldoorwall.dae":8.321503056418694,
+                        "colwallwalldoorwallwall.dae":9.886890973303268,
+                        "colwallwallwall.dae":6.281672796157539,
+                        "colwallwallwallwall.dae":7.7940113624491,
+                        "colwallwallwallwallwall.dae":9.349492666342151,
+                        "col.dae":3.3959123230044836,
+                        "barecol.dae":2.8407957521676406,
+                        "decorator.dae":1.7099433049080963,
+                        "coldoor.dae":4.001626309138033,
+                        "door.dae":3.348818112618679
+                       };
+            if (wallName in scales) {
+                sizeAdjustment*=(scales[wallName]/scales["wall.dae"]);                      }
+            
+            
             vertAdjustment=wallVertical;
         }
         if (objectName.indexOf("square")!=-1) {
