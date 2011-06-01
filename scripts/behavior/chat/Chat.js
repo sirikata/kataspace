@@ -111,7 +111,7 @@ Kata.require([
 
     Kata.Behavior.Chat.prototype._handleEnter = function(presence, remoteID, name) {
         if (this.mTrackedObjects[remoteID]) {
-            Kata.warn("Overwriting existing chat info due to duplicate intro.");
+            Kata.log("Overwriting existing chat info due to duplicate intro.");
             var objdata = this.mTrackedObjects[remoteID];
             delete this.mTrackedObjects[remoteID];
             this.mExitCallback(remoteID, objdata.name);
@@ -145,7 +145,7 @@ Kata.require([
             Kata.bind(this._acceptConnection, this, pres),
             pres.sstEndpoint(this.ProtocolPort)
         );
-        Kata.warn("Listening for SST connections.");
+        Kata.log("Chat Listening for SST connections.");
     };
 
     Kata.Behavior.Chat.prototype.presenceInvalidated = function(pres) {
@@ -166,7 +166,7 @@ Kata.require([
                 remote.sstEndpoint(this.ProtocolPort),
                 Kata.bind(this._handleConnectedStream, this, presence, remote.presenceID())
             );
-            Kata.warn("Trying to initiate chat connection to " + remote.id() + ": " + tried_sst+ " on port "+port);
+            Kata.log("Trying to initiate chat connection to " + remote.id() + ": " + tried_sst+ " on port "+port);
         }
         else {
             // When we lose objects, we just make sure we clean up
@@ -177,25 +177,25 @@ Kata.require([
 
     Kata.Behavior.Chat.prototype._acceptConnection = function(pres, error, stream) {
         if (error == Kata.SST.FAILURE) {
-            Kata.warn("Failed to accept SST chat connection.");
+            Kata.log("Failed to accept SST chat connection.");
             return;
         }
 
-        Kata.warn("Successful SST chat connection.");
+        Kata.log("Successful SST chat connection.");
         var remoteid = new Kata.PresenceID(pres.space(), stream.remoteEndPoint().objectId());
         this._handleConnectedStream(pres, remoteid, error, stream);
     };
 
     Kata.Behavior.Chat.prototype._handleConnectedStream = function(pres, remoteid, error, stream) {
         if (error == Kata.SST.FAILURE) {
-            Kata.warn("Failed to get SST chat connection for " + remoteid + ".");
+            Kata.log("Failed to get SST chat connection for " + remoteid + ".");
             return;
         }
 
-        Kata.warn("Successful SST chat connection to " + remoteid + ".");
+        Kata.log("Successful SST chat connection to " + remoteid + ".");
 
         if (remoteid in this.mConnections)
-            Kata.warn("Overwriting previous connection.");
+            Kata.log("Overwriting previous connection.");
         this.mConnections[remoteid] = stream;
 
         stream.registerReadCallback(Kata.bind(this._handleMessage, this, pres, remoteid));
