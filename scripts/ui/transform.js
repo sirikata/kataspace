@@ -213,6 +213,7 @@ Kata.require([
                 }
             })
         );
+        this._destroy();
     };
 
 });

@@ -408,6 +408,7 @@ Kata.require([
                     sendPort.close();
                 }
             });
+            this.clearSelection(msg.spaceid);
         }
         if (msg.msg == "snap") {
             this.snapToGrid();
