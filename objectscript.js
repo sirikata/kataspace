@@ -27,6 +27,7 @@ Kata.require([
                              if (args.port!==undefined)
                                  thus.notifyCreator(presence,creator,args.port,args.receipt);
                              var movePort=presence.bindODPPort(Example.ObjectScript.kMovePort);
+                             var msgPort=presence.bindODPPort(Example.ObjectScript.kMsgPort);
                              console.log("Registering listener at "+Example.ObjectScript.kMovePort, movePort);
                              movePort.receive(function(src, endpoint, payload){
                                                   var jsonstr = "";
@@ -39,7 +40,22 @@ Kata.require([
                                                       thus.mPresence.setLocation(payload);
                                                   }
                                               });
-                             Kata.log("Connected subobject\n");
+                             console.log("Registering listener at "+Example.ObjectScript.kMsgPort, msgPort);
+                             msgPort.receive(function(src, endpoint, payload){
+                                                  var jsonstr = "";
+                                                  for (var i = 0; i < payload.length; i++) {
+                                                      jsonstr += String.fromCharCode(payload[i]);
+                                                  }
+                                                  //console.log("RECV PACKET WITH DATA "+jsonstr+" to "+JSON.stringify(src));
+                                                  payload = JSON.parse(jsonstr);
+                                                  if (payload) {
+                                                      if (payload.msg == "delete") {
+                                                          Kata.log("Disconnecting "+args.visual+"...");
+                                                          thus._disconnect(thus.mPresence);
+                                                      }
+                                                  }
+                                              });
+                             Kata.log("Connected subobject "+args.visual+"\n");
                          }
                          // Start periodic movemenst
                          //thus.move();
@@ -48,6 +64,7 @@ Kata.require([
     
     Kata.extend(Example.ObjectScript, SUPER);
     Example.ObjectScript.kMovePort=61827;
+    Example.ObjectScript.kMsgPort=61829;
     Example.ObjectScript.prototype.notifyCreator = function(presence,creator,port,receipt) {
         var returnReceiptPort=presence.bindODPPort(port);
         var timeout=10;
