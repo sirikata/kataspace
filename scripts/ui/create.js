@@ -127,11 +127,11 @@ Kata.require([
         case "W":
             return immediateLoad(dirname+ "static/GateHouse/house.dae",options);
         case "y":
-            return immediateLoad(dirname+ "static/fcroof/forbidden_roof.dae",options);
+            return immediateLoad(dirname+ "static/fcroof/roof.dae",options);
         case "z":
-            return immediateLoad(dirname+ "static/fcroof/forbidden_roof_lower.dae",options);
+            return immediateLoad(dirname+ "static/fcroof/roof_lower.dae",options);
         case "p":
-            return immediateLoad(dirname+ "static/fcsquare/forbidden_pedestal_square.dae",options);
+            return immediateLoad(dirname+ "static/fcsquare/square.dae",options);
         }
         var i = value.indexOf("/processed/index.html");
         if (i >= 0) {

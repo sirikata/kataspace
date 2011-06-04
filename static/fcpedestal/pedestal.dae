@@ -410,7 +410,7 @@
     </library_effects>
     <library_images>
         <image id="ID38">
-            <init_from>forbidden_pedestal/texture0.jpg</init_from>
+            <init_from>texture0.jpg</init_from>
         </image>
     </library_images>
     <scene>

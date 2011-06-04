@@ -21,6 +21,10 @@
     </library_visual_scenes>
     <library_nodes>
         <node id="ID3" name="ske43">
+            <node id="ID4" name="instance_1">
+                <matrix>-3.752966724634508 -3.412880408233245e-015 -1.014179971023014e-015 2438.347840177629 3.412880408233254e-015 -3.752966724634508 -6.204531380900718e-015 2678.433177190402 -1.817038378613291e-015 -1.111624362787914e-014 2.094718377354754 745.3501655332849 0 0 0 1</matrix>
+                <instance_node url="#ID5" />
+            </node>
             <node id="ID89" name="instance_4">
                 <matrix>-3.310116651127643 -3.265404086188577e-015 -2.725557567919959e-015 2733.746396030364 3.262814550830777e-015 -3.312743727834883 -1.667436544181867e-014 2972.960170145262 -1.602627849936927e-015 -9.812308250328916e-015 5.629450086951769 545.5046874464961 0 0 0 1</matrix>
                 <instance_node url="#ID90" />
@@ -847,13 +851,13 @@
     </library_effects>
     <library_images>
         <image id="ID25">
-            <init_from>forbidden_roof/texture0.jpg</init_from>
+            <init_from>texture0.jpg</init_from>
         </image>
         <image id="ID41">
-            <init_from>forbidden_roof/texture1.png</init_from>
+            <init_from>texture1.png</init_from>
         </image>
         <image id="ID114">
-            <init_from>forbidden_roof/texture2.jpg</init_from>
+            <init_from>texture2.jpg</init_from>
         </image>
     </library_images>
     <scene>
