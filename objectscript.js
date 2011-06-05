@@ -51,6 +51,7 @@ Kata.require([
                                                   if (payload) {
                                                       if (payload.msg == "delete") {
                                                           Kata.log("Disconnecting "+args.visual+"...");
+                                                          thus.mPresence.setVisual("");
                                                           thus._disconnect(thus.mPresence);
                                                       }
                                                   }
