@@ -105,17 +105,27 @@ Kata.require([
         slider.setAttribute('min',-Math.PI/2);
         slider.setAttribute('max',Math.PI/2.0);
 
+        var row1 = document.createElement("div");
+        newDiv.appendChild(row1);
+        var row2 = document.createElement("div");
+        newDiv.appendChild(row2);
         var confirm = document.createElement("input");
         confirm.setAttribute('type','button');
         confirm.value = 'Reset';
         confirm.addEventListener("click", Kata.bind(this._abort, this), false);
-        newDiv.appendChild(confirm);
+        row1.appendChild(confirm);
 
         var snap = document.createElement("input");
         snap.setAttribute('type','button');
         snap.value = 'Snap';
         snap.addEventListener("click", Kata.bind(this._snap, this), false);
-        newDiv.appendChild(snap);
+        row1.appendChild(snap);
+
+        var delobj = document.createElement("input");
+        delobj.setAttribute('type','button');
+        delobj.value = 'Delete Object';
+        delobj.addEventListener("click", Kata.bind(this._delete_object, this), false);
+        row2.appendChild(delobj);
     };
 
     TransformUI.prototype._changed = function(ev) {
@@ -191,6 +201,19 @@ Kata.require([
         }
         else if (revt.action == 'exit') {
         }
+    };
+    TransformUI.prototype._delete_object = function(ev) {
+        if (!confirm("Are you sure you want to delete selected?")) {
+            return;
+        }
+        this.mChannel.sendMessage(
+            new Kata.ScriptProtocol.ToScript.GUIMessage({
+                msg: 'delete',
+                event: {
+                }
+            })
+        );
+        this._destroy();
     };
 
 });

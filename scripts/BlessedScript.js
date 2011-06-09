@@ -186,12 +186,12 @@ Kata.require([
         D : 68
 
     };
-    Example.BlessedScript.prototype.handleCreateObject = function (objectName, pos, orient) {
+    Example.BlessedScript.prototype.handleCreateObject = function (objectName, pos, orient, scale) {
             this.createObject("../../objectscript.js", "Example.ObjectScript", {
                                   space: this.mPresence.mSpace,
                                   name: "Created object "+objectName,
                                   loc: {
-                                      scale: [1,1,1],
+                                      scale: scale? scale: [1,1,1],
                                       pos: pos ? pos : this.mPresence.predictedPosition(Kata.now(this.mPresence.mSpace)),
                                       orient : orient
                                   },
@@ -386,8 +386,29 @@ Kata.require([
         if (msg.msg == "abort") {
             this.resetDrag();
         }
+        if (msg.msg == "delete") {
+            this.foreachSelected(this.mPresence.mSpace, function(presid) {
+                var remote_pres = this.getRemotePresence(presid);
+                if (remote_pres) {
+                    var payload=JSON.stringify({"msg": "delete"});
+                    var sendPort = this.mPresence.bindODPPort(Example.ObjectScript.kMsgPort+1);
+                    sendPort.send(new Kata.ODP.Endpoint(remote_pres, Example.ObjectScript.kMsgPort),payload);
+                    sendPort.close();
+                }
+            });
+            this.clearSelection(msg.spaceid);
+        }
         if (msg.msg == "snap") {
             this.snapToGrid();
+        }
+        if (msg.msg == "import") {
+            this.doImport(msg.event.serialized);
+        }
+        if (msg.msg == "export") {
+            var gfxmsg = new Kata.ScriptProtocol.FromScript.GUIMessage(
+                "scenedump",
+                {serialized: this.doExport() });
+            this._sendHostedObjectMessage(gfxmsg);
         }
 
         if (msg.msg == "setslider") {
@@ -622,5 +643,45 @@ Kata.require([
     };
     Example.BlessedScript.prototype._calcCamOrient = function(){
         return this.mPresence.predictedOrientation(new Date());
+    };
+    Example.BlessedScript.prototype.doImport = function(serialized) {
+        if (serialized.v != 1) {
+            //
+        }
+        var scene = serialized.scene;
+        for (var i = 0; i < scene.length; i++) {
+            this.handleCreateObject(scene[i].visual, scene[i].position,
+                              scene[i].orientation, scene[i].bounds);
+        }
+    };
+    Example.BlessedScript.prototype.doExport = function() {
+        var scene = [];
+        for (var id in this.mRemotePresences) {
+            var remotePresence = this.mRemotePresences[id];
+            if (!remotePresence || !remotePresence.id) {
+                continue; // FIXME: Why do we have undefined stuff in here?
+            }
+            var time = Kata.now(this.mPresence.mSpace);
+            var obj = {
+                id: remotePresence.id(),
+                space: remotePresence.space(),
+                position: remotePresence.position(time),
+                orientation: remotePresence.orientation(time),
+                scale: remotePresence.scale(time),
+                bounds: remotePresence.bounds(time),
+                visual: remotePresence.visual()
+            };
+            if (!obj.visual) {
+                // See objectscript.js for setVisual("") hack.
+                // our current hack for deleting objects.
+                continue;
+            }
+            scene.push(obj);
+        }
+        var serialized = {
+            v: 1,
+            scene: scene
+        };
+        return serialized;
     };
 }, '../../scripts/BlessedScript.js');
