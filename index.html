@@ -102,6 +102,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                     kata_base_offset + 'scripts/ui/sit.js',
                     kata_base_offset + 'scripts/ui/panorama.js',
                     kata_base_offset + 'scripts/ui/create.js',
+                    kata_base_offset + 'scripts/ui/importexport.js',
                     kata_base_offset + 'scripts/ui/help.js'
                 ], function() {
                     loadGFX();
@@ -165,6 +166,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                     situi = new SitUI(window.kata.getChannel(), toolbar);
                     panoramaui = new PanoramaUI(window.kata.getChannel(), toolbar);
                     createui = new CreateUI(window.kata.getChannel(), toolbar);
+                    exportui = new ExportUI(window.kata.getChannel(), toolbar);
                     helpui = new HelpUI(window.kata.getChannel(), toolbar);
                     chats = new ChatUI(window.kata.getChannel(), loginName, 300);
                     transformUI = new TransformUI(window.kata.getChannel());
