@@ -191,7 +191,7 @@ Kata.require([
                                   space: this.mPresence.mSpace,
                                   name: "Created object "+objectName,
                                   loc: {
-                                      scale: scale? scale: [1,1,1],
+                                      scale: scale? scale: [0,0,0,1],
                                       pos: pos ? pos : this.mPresence.predictedPosition(Kata.now(this.mPresence.mSpace)),
                                       orient : orient
                                   },
@@ -434,7 +434,7 @@ Kata.require([
                     var time = Kata.now(remote_pres.mSpace);
                     var oldScale = this.mDrag.initialScale[presid];
                     var oldQuat = this.mDrag.initialOrient[presid];
-                    var newScale = [oldScale[0] * deltaScale, oldScale[1] * deltaScale, oldScale[2] * deltaScale];
+                    var newScale = [oldScale[0] * deltaScale, oldScale[1] * deltaScale, oldScale[2] * deltaScale, oldScale[3] * deltaScale];
                     var newQuat = Kata.extrapolateQuaternion(oldQuat, y_radians, [0,1,0], 1.0);
                     var newLoc = Kata.LocationExtrapolate(remote_pres.predictedLocation(), time);
                     var gfxLoc = {};
