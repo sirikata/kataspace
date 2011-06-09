@@ -191,7 +191,12 @@ Kata.require([
         DOWN : 40,
         LEFT : 37,
         RIGHT : 39,
-        ESCAPE : 27
+        ESCAPE : 27,
+        W : 87,
+        A : 64,
+        S : 83,
+        D : 68
+
     };
     Example.BlessedScript.prototype.handleCreateObject = function (objectName, pos, orient, scale) {
             this.createObject("../../objectscript.js", "Example.ObjectScript", {
@@ -551,6 +556,9 @@ Kata.require([
         if (msg.msg == "keydown") {
             var avMat = Kata.QuaternionToRotation(this.mPresence.predictedOrientation(new Date()));
             var avSpeed = 1;
+            if (this.keyIsDown[this.Keys.W]||this.keyIsDown[this.Keys.S]) {
+                avSpeed=10;
+            }
             var avXX = avMat[0][0] * avSpeed;
             var avXY = avMat[0][1] * avSpeed;
             var avXZ = avMat[0][2] * avSpeed;
@@ -562,21 +570,21 @@ Kata.require([
             if (this.keyIsDown[this.Keys.ESCAPE]) {
                 this.resetDrag();
             }
-            if (this.keyIsDown[this.Keys.UP]) {
+            if (this.keyIsDown[this.Keys.UP]||this.keyIsDown[this.Keys.W]) {
                 this.mPresence.setVelocity([-avZX, -avZY, -avZZ]);
                 this.disableSitting();
             }
-            if (this.keyIsDown[this.Keys.DOWN]) {
+            if (this.keyIsDown[this.Keys.DOWN]||this.keyIsDown[this.Keys.S]) {
                 this.mPresence.setVelocity([avZX, avZY, avZZ]);
             }
             var full_rot_seconds = 10.0;
-            if (this.keyIsDown[this.Keys.LEFT]) {
+            if (this.keyIsDown[this.Keys.LEFT]||this.keyIsDown[this.Keys.A]) {
                 this.mPresence.setAngularVelocity(
                     Kata.Quaternion.fromAxisAngle([0, 1, 0], 2.0*Math.PI/full_rot_seconds)
                 );
                 this.disableSitting();
             }
-            if (this.keyIsDown[this.Keys.RIGHT]) {
+            if (this.keyIsDown[this.Keys.RIGHT]||this.keyIsDown[this.Keys.D]) {
                 this.mPresence.setAngularVelocity(
                     Kata.Quaternion.fromAxisAngle([0, 1, 0], -2.0*Math.PI/full_rot_seconds)
                 );
