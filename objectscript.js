@@ -54,6 +54,17 @@ Kata.require([
                                                           thus.mPresence.setVisual("");
                                                           thus._disconnect(thus.mPresence);
                                                       }
+                                                      if (payload.msg == "physics") {
+                                                          Kata.log("Set physics for "+args.visual+"...");
+                                                          var pres = thus.mPresence;
+                                                          pres.setPhysics(payload.data);
+                                                          pres.setLocation(
+                                                              {rotaxis: [1,0,0],
+                                                               rotvel: 0,
+                                                               vel: [0,0,0],
+                                                               time: Kata.now(pres.space())});
+                                                          pres.setPhysics(payload.data);
+                                                      }
                                                   }
                                               });
                              Kata.log("Connected subobject "+args.visual+"\n");

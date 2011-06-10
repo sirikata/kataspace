@@ -126,6 +126,16 @@ Kata.require([
         delobj.value = 'Delete Object';
         delobj.addEventListener("click", Kata.bind(this._delete_object, this), false);
         row2.appendChild(delobj);
+        var foo = document.createElement("input");
+        foo.setAttribute('type','button');
+        foo.value = 'Physical';
+        foo.addEventListener("click", Kata.bind(this._makedynamic, this), false);
+        row2.appendChild(foo);
+        var foo = document.createElement("input");
+        foo.setAttribute('type','button');
+        foo.value = 'Static';
+        foo.addEventListener("click", Kata.bind(this._makestatic, this), false);
+        row2.appendChild(foo);
     };
 
     TransformUI.prototype._changed = function(ev) {
@@ -214,6 +224,28 @@ Kata.require([
             })
         );
         this._destroy();
+    };
+    TransformUI.prototype._makestatic = function(ev) {
+        this.mChannel.sendMessage(
+            new Kata.ScriptProtocol.ToScript.GUIMessage({
+                msg: 'physics',
+                event: {
+                    mass: 1.0,
+                    type: "static"
+                }
+            })
+        );
+    };
+    TransformUI.prototype._makedynamic = function(ev) {
+        this.mChannel.sendMessage(
+            new Kata.ScriptProtocol.ToScript.GUIMessage({
+                msg: 'physics',
+                event: {
+                    mass: 1.0,
+                    type: "dynamic"
+                }
+            })
+        );
     };
 
 });

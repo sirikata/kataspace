@@ -216,6 +216,28 @@ Kata.require([
          
     };
 
+    Example.BlessedScript.prototype.makePhysicsData = function(event) {
+        // Source: sirikata/libproxyobject/plugins/ogre/data/scripting/physics.js
+        var mass = 1.0;
+        var treatment = "ignore"; // "ignore", "static", "dynamic"
+        var bounds = "sphere"; // "sphere", "box", "triangles"
+
+        if (event.type in {"static":0, "dynamic":0, "ignore":0}) {
+            treatment = event.type;
+        }
+        if ((mass - 0.0) > 0.0) {
+            mass = (mass - 0.0);
+        }
+
+        var obj = {mass: mass, treatment: treatment, bounds: bounds};
+        var json = JSON.stringify(obj); // Warning: no unicode.
+        var bytes = [];
+        for (var i = 0; i < json.length; i++) {
+            bytes[i] = json.charCodeAt(i);
+        }
+        return bytes;
+    };
+
     Example.BlessedScript.prototype.clearSelection = function(space) {
         for (var id in this.mSelected) {
             var sendmsg;
@@ -414,6 +436,17 @@ Kata.require([
                 }
             });
             this.clearSelection(msg.spaceid);
+        }
+        if (msg.msg == "physics") {
+            this.foreachSelected(this.mPresence.mSpace, function(presid) {
+                var remote_pres = this.getRemotePresence(presid);
+                if (remote_pres) {
+                    var payload=JSON.stringify({"msg": "physics", "data": this.makePhysicsData(msg.event)});
+                    var sendPort = this.mPresence.bindODPPort(Example.ObjectScript.kMsgPort+1);
+                    sendPort.send(new Kata.ODP.Endpoint(remote_pres, Example.ObjectScript.kMsgPort),payload);
+                    sendPort.close();
+                }
+            });
         }
         if (msg.msg == "snap") {
             this.snapToGrid();
