@@ -72,7 +72,7 @@ Kata.require([
         }else if (delta[0]<16.5&&delta[2]<1) {
             heightRatio=1.0-(delta[0]-14)/(16.5-14);
         }
-        var desiredHeight=heightRatio*.9*plat_bounds/platformBounds;
+        var desiredHeight=heightRatio*1.25*plat_bounds/platformBounds;
         return desiredHeight;
     };
 
@@ -93,7 +93,7 @@ Kata.require([
 
             }
         }
-        desiredHeight+=this._scale[1];
+        //desiredHeight+=this._scale[1];
         var vdel=pos[1]-desiredHeight;
         if (vdel<0)vdel=-vdel;
         if (vdel>.1)
@@ -259,11 +259,16 @@ Kata.require([
         RIGHT : 39,
         ESCAPE : 27,
         W : 87,
-        A : 64,
+        A : 65,
         S : 83,
         D : 68
 
     };
+    var wallVertical=3;
+    var pedestalVertical=.5;
+    var lowerRoofVertical=7.25;
+    var upperRoofVertical=7.25;
+    var platformBounds=20.0;
     Example.BlessedScript.prototype.handleCreateObject = function (objectName, pos, orient, scale) {
         var wallVertical=3;
         var pedestalVertical=.5;
@@ -271,34 +276,104 @@ Kata.require([
         var upperRoofVertical=8.5;
         var sizeAdjustment=1.0;
         var vertAdjustment=0.0;
-        if (objectName.indexOf("/market.dae")!=-1) {
+        if (scale&&scale.length==3) {
+            Kata.warn("ERORR: The scale is incorrect "+scale);
+            scale=[0,0,0,scale[0]];
+        }
+        var objectScriptFile = "../../objectscript.js";
+        var objectScriptClass = "Example.ObjectScript";
+        var adjustmentMap={
+            "779030fe38bfa3fb58ad85df663a9338":"/wall/wall"
+            ,
+            "35e9bce5e11c3b7f43f8d1984fdd9e85":"/wall/wallwall"
+            ,
+            "453cf1fa1e4ba589d45f7b8bc1a21ad1":"/wall/col.dae"
+            ,
+            "bb63be9499d8d9a5170e56759996884d":"/wall/corner.dae"
+            ,
+            "1522a6e1c40ce8d45b1caa56a0971a41":"/wall/barecol.dae"
+            ,
+            "bc00bcfad78869c5be4af366c0261426":"/wall/decorator.dae"
+            ,
+            "cecc1e67bd5454d683b98c65d2b45bb2":"/wall/door.dae"
+            ,
+            "8b473a43909c42f059ccf30a25c1e906":"/house0.dae"
+            ,
+            "c8e72eddf6f04810f97b65120d2e4125":"/house1.dae"
+            ,
+        
+            "2b1cc72a60eb7b634657db636383e078":"/house2.dae"
+            ,
+            "e757aa97f8fed90eaed1e42af0e6053d":"roof/lower"
+            ,
+            "94e0315cce1e9d6e599fab0fba0e9093":"square"
+            ,
+            "e1dd0642ab54a286e8e549a8abb919c9":"path"            
+        };
+        var adjustedObjectName=objectName;
+        console.log("ADJUSTMENT MAP "+adjustmentMap);
+        for (var item in adjustmentMap) {
+            console.log("is "+item+" in "+objectName);
+            if (objectName.indexOf(item)!=-1) {
+                adjustedObjectName=adjustmentMap[item];            
+                console.log(objectName+"->"+adjustedObjectName);
+            }
+        }
+        if (adjustedObjectName.indexOf("male")!=-1||adjustedObjectName.indexOf("female")!=-1) {
+            sizeAdjustment=this._scale[3];
+            vertAdjustment=this._scale[1]*2;
+            objectScriptFile="../../scripts/npc.js";
+            objectScriptClass="Example.NPC";
+        }
+        if (adjustedObjectName.indexOf("/market.dae")!=-1) {
             sizeAdjustment=2.5;
             vertAdjustment=1.0;
         }
-        if (objectName.indexOf("/Tent.dae")!=-1) {
+        if (adjustedObjectName.indexOf("/market.dae")!=-1) {
+            sizeAdjustment=2.5;
+            vertAdjustment=1.0;
+        }
+
+        if (adjustedObjectName.indexOf("/Tent.dae")!=-1) {
             sizeAdjustment=7;
             vertAdjustment=2;
             
         }
-        if (objectName.indexOf("/tents.dae")!=-1) {
+        if (adjustedObjectName.indexOf("/tents.dae")!=-1) {
             sizeAdjustment=60;
             vertAdjustment=1.25;            
         } 
-        if (objectName.indexOf("/palace/")!=-1) {
+        if (adjustedObjectName.indexOf("/palace/")!=-1) {
             sizeAdjustment=20;
             vertAdjustment=6.5;            
         }
-        if (objectName.indexOf("/GateHouse/")!=-1) {
+        if (adjustedObjectName.indexOf("/GateHouse/")!=-1) {
             sizeAdjustment=30;
             vertAdjustment=11;                        
         }
-        if (objectName.indexOf("/LongerFence/")!=-1) {
+        if (adjustedObjectName.indexOf("/LongerFence/")!=-1) {
             sizeAdjustment=500;
             vertAdjustment=11;                                    
         }
-       var wallIndex=objectName.indexOf("/wall/");
+        if (adjustedObjectName.indexOf("/tents.dae")!=-1) {
+            sizeAdjustment=60;
+            vertAdjustment=1.25;            
+        } 
+        if (adjustedObjectName.indexOf("/palace/")!=-1) {
+            sizeAdjustment=20;
+            vertAdjustment=6.5;            
+        }
+        if (adjustedObjectName.indexOf("/GateHouse/")!=-1) {
+            sizeAdjustment=30;
+            vertAdjustment=11;                        
+        }
+        if (adjustedObjectName.indexOf("/LongerFence/")!=-1) {
+            sizeAdjustment=500;
+            vertAdjustment=11;                                    
+        }
+       var wallIndex=adjustedObjectName.indexOf("/wall/");
         if (wallIndex!=-1) {
-            var wallName=objectName.substr(wallIndex+6);
+            var wallName=adjustedObjectName.substr(wallIndex+6);
             sizeAdjustment=2.5;
             var scales={"wall.dae":2.987787396486388,
                        "wallwall.dae":4.17106647127601,
@@ -337,12 +412,16 @@ Kata.require([
             
             vertAdjustment=wallVertical;
         }
-        if (objectName.indexOf("square")!=-1) {
+        if (adjustedObjectName.indexOf("square")!=-1) {
             sizeAdjustment=platformBounds;
             vertAdjustment=pedestalVertical;
         }
-        if (objectName.indexOf("roof")!=-1) {
-            if (objectName.indexOf("lower")!=-1) {
+        if (adjustedObjectName.indexOf("square")!=-1) {
+            sizeAdjustment=platformBounds;
+            vertAdjustment=pedestalVertical;
+        }
+        if (adjustedObjectName.indexOf("roof")!=-1) {
+            if (adjustedObjectName.indexOf("lower")!=-1) {
                 sizeAdjustment=14.0;
                 vertAdjustment=lowerRoofVertical;
             }else {
@@ -356,7 +435,8 @@ Kata.require([
         };
 
         xpos[1]=vertAdjustment;//should this be += ?
-        this.createObject("../../objectscript.js", "Example.ObjectScript", {
+        xpos[1]=vertAdjustment;
+        this.createObject(objectScriptFile, objectScriptClass, {
                               space: this.mPresence.mSpace,
                               name: "Created object "+objectName,
                               loc: {
@@ -370,7 +450,6 @@ Kata.require([
                               //,port: port
                               //,receipt: ""+idx
                           });
-         
     };
 
     Example.BlessedScript.prototype.makePhysicsData = function(event) {
@@ -712,6 +791,9 @@ Kata.require([
         }
         if (msg.msg == "snap") {
             this.snapToGrid();
+        }
+        if (msg.msg == "snap_height") {
+            this.snapToVertical();
         }
         if (msg.msg == "import") {
             this.doImport(msg.event.serialized);

@@ -121,6 +121,12 @@ Kata.require([
         snap.addEventListener("click", Kata.bind(this._snap, this), false);
         row1.appendChild(snap);
 
+        var snaph = document.createElement("input");
+        snaph.setAttribute('type','button');
+        snaph.value = 'Snap Height';
+        snaph.addEventListener("click", Kata.bind(this._snap_height, this), false);
+        row1.appendChild(snaph);
+
         var delobj = document.createElement("input");
         delobj.setAttribute('type','button');
         delobj.value = 'Delete Object';

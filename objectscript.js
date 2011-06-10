@@ -67,7 +67,7 @@ Kata.require([
                                                       }
                                                   }
                                               });
-                             Kata.log("Connected subobject "+args.visual+"\n");
+                             Kata.log("Connected subobject "+args.visual.mesh+"...");
                          }
                          // Start periodic movemenst
                          //thus.move();

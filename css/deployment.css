@@ -29,6 +29,10 @@ body {
 
 .gui-button {
     font-size: 75%;
+    height:25px;
+}
+.gui-element {
+    font-size: 75%;
 }
 
 .ui-chatbox-input-box {

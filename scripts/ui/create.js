@@ -46,6 +46,7 @@ Kata.require([
             Kata.bind(this.create, this)
         );
         parent.addElement($('<input type="text" placeholder="http://example.com/collada.dae" id="objectCreation'+UNIQUE_ID+'" size="40" />'));
+        parent.addElement($('<select type="text" placeholder="http://example.com/collada.dae" id="objectDropdown'+UNIQUE_ID+'" size="1" ><option value=""></option><option value="a">Wall</option><option value="aa">Walls</option><option value="aaa">Wall3</option><option value="aaaa">Wall4</option><option value="aad">WDoor</option><option value="d">Door</option><option value="aadaa">wDoorw</option><option value="t">Tent</option><option value="tt">Tents</option><option value="w">Fort</option><option value="W">Gate</option><option value="p">Dias</option><option value="P">Bldg</option><option value="y">LRoof</option><option value="z">URoof</option><option value="m">Market</option></select>'));
         parent.addButton(button_div);
         this.uniqueId=UNIQUE_ID;
         UNIQUE_ID+=1;
@@ -64,7 +65,9 @@ Kata.require([
         var thus = this;
         var base;
         var value=document.getElementById('objectCreation'+this.uniqueId).value;
-
+        if (value=="") {
+            value=document.getElementById('objectDropdown'+this.uniqueId).value;
+        }
         var dirname = window.location.href.substr(0, window.location.href.lastIndexOf('/') + 1);
         function immediateLoad(value,options) {
             thus.mChannel.sendMessage(new Kata.ScriptProtocol.ToScript.GUIMessage({
