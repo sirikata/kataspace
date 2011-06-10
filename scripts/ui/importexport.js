@@ -82,7 +82,7 @@ Kata.require([
     ExportUI.prototype.doImport = function() {
         // Send the message
         var thus = this;
-        var data = prompt("Paste Data or URL", "");
+        var data = prompt("Paste Data or URL", "http://sbox.ourbricks.com/mcdemo/kataspace.git/static/save.txt");
         var json = null;
         if (data) {
             try {

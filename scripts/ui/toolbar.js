@@ -47,10 +47,10 @@ Kata.require([
     };
 
     ToolbarUI.prototype.addElement = function(elem) {
-        this.mDiv.append(elem.addClass('gui-button').addClass('ui-corner-all').addClass('ui-widget').css({"padding":"3px"}));
+        this.mDiv.append(elem.addClass('gui-element').addClass('ui-corner-all').addClass('ui-widget').css({"padding":"3px"}));
     }
     ToolbarUI.prototype.addButton = function(button) {
-        button.addClass('gui-button').attr("tabindex","0").width(100).height(25);
+        button.addClass('gui-button').attr("tabindex","0");
         this.mDiv.append(button);
         var canvas = this.mContainer[0].getElementsByTagName("canvas");
         if (canvas && canvas.length > 0) {

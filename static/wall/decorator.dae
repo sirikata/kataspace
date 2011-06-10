@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.5.1">
+  <asset>
+    <contributor>
+      <author>danielrh</author>
+      <authoring_tool>obj2dae</authoring_tool>
+      <source_data>a.obj</source_data>
+    </contributor>
+    <created>2011-05-31T17:47:47</created>
+    <modified>2011-05-31T17:47:47</modified>
+    <unit name="meter" meter="1.0"/>
+    <up_axis>Y_UP</up_axis>
+  </asset>
+  <library_images>
+    <image id="houseKspng_1" name="houseKspng_1">
+      <init_from>house_Ks.png</init_from>
+    </image>
+    <image id="housepng_1" name="housepng_1">
+      <init_from>house.png</init_from>
+    </image>
+    <image id="floorpng_1" name="floorpng_1">
+      <init_from>floor.png</init_from>
+    </image>
+  </library_images>
+  <library_effects>
+    <effect id="nil_1" name="nil_1">
+      <profile_COMMON>
+        <technique sid="common">
+          <blinn>
+            <emission>
+              <color>0 0 0 1</color>
+            </emission>
+            <ambient>
+              <color>0 0 0 1</color>
+            </ambient>
+            <diffuse>
+              <color>1 1 1 1</color>
+            </diffuse>
+            <specular>
+              <color>1 1 1 1</color>
+            </specular>
+            <shininess>
+              <float>1.0</float>
+            </shininess>
+          </blinn>
+        </technique>
+      </profile_COMMON>
+    </effect>
+    <effect id="house_1" name="house_1">
+      <profile_COMMON>
+        <newparam sid="houseKspng_1-surface">
+          <surface type="2D">
+            <init_from>houseKspng_1</init_from>
+            <format>A8R8G8B8</format>
+          </surface>
+        </newparam>
+        <newparam sid="houseKspng_1-sampler">
+          <sampler2D>
+            <source>houseKspng_1-surface</source>
+            <minfilter>LINEAR_MIPMAP_LINEAR</minfilter>
+            <magfilter>LINEAR</magfilter>
+          </sampler2D>
+        </newparam>
+        <newparam sid="housepng_1-surface">
+          <surface type="2D">
+            <init_from>housepng_1</init_from>
+            <format>A8R8G8B8</format>
+          </surface>
+        </newparam>
+        <newparam sid="housepng_1-sampler">
+          <sampler2D>
+            <source>housepng_1-surface</source>
+            <minfilter>LINEAR_MIPMAP_LINEAR</minfilter>
+            <magfilter>LINEAR</magfilter>
+          </sampler2D>
+        </newparam>
+        <technique sid="common">
+          <blinn>
+            <emission>
+              <color>0 0 0 1</color>
+            </emission>
+            <ambient>
+              <color>0 0 0 1</color>
+            </ambient>
+            <diffuse>
+              <texture texture="housepng_1-sampler" texcoord="CHANNEL0"/>
+            </diffuse>
+            <specular>
+              <texture texture="houseKspng_1-sampler" texcoord="CHANNEL0"/>
+            </specular>
+            <shininess>
+              <float>1.0</float>
+            </shininess>
+          </blinn>
+        </technique>
+      </profile_COMMON>
+    </effect>
+    <effect id="floor_1" name="floor_1">
+      <profile_COMMON>
+        <newparam sid="floorpng_1-surface">
+          <surface type="2D">
+            <init_from>floorpng_1</init_from>
+            <format>A8R8G8B8</format>
+          </surface>
+        </newparam>
+        <newparam sid="floorpng_1-sampler">
+          <sampler2D>
+            <source>floorpng_1-surface</source>
+            <minfilter>LINEAR_MIPMAP_LINEAR</minfilter>
+            <magfilter>LINEAR</magfilter>
+          </sampler2D>
+        </newparam>
+        <technique sid="common">
+          <blinn>
+            <emission>
+              <color>0 0 0 1</color>
+            </emission>
+            <ambient>
+              <color>0 0 0 1</color>
+            </ambient>
+            <diffuse>
+              <texture texture="floorpng_1-sampler" texcoord="CHANNEL0"/>
+            </diffuse>
+            <specular>
+              <color>1 1 1 1</color>
+            </specular>
+            <shininess>
+              <float>1.0</float>
+            </shininess>
+          </blinn>
+        </technique>
+      </profile_COMMON>
+    </effect>
+  </library_effects>
+  <library_materials>
+    <material id="nil_1-material" name="nil_1">
+      <instance_effect url="#nil_1"/>
+    </material>
+    <material id="house_1-material" name="house_1">
+      <instance_effect url="#house_1"/>
+    </material>
+    <material id="floor_1-material" name="floor_1">
+      <instance_effect url="#floor_1"/>
+    </material>
+  </library_materials>
+  <library_geometries>
+  <geometry id="adae_1-geometry" name="adae_1">
+    <mesh>
+      <source id="1_1-positions">
+        <float_array id="1_1-positions-array" count="24">
+0.0 3.84 2.0625 0.0 4.7999997 2.0625 3.28 4.7999997 2.0625 3.28 3.84 2.0625 0.0 3.84 1.9375 0.0 4.7999997 1.9375 3.28 4.7999997 1.9375 3.28 3.84 1.9375         </float_array>
+        <technique_common>
+          <accessor source="#1_1-positions-array" count="8" stride="3">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+            <param name="Z" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="1_1-texcoords">
+        <float_array id="1_1-texcoords-array" count="12">
+0.2755 0.875 0.2755 1.0 0.6505 1.0 0.6505 0.875 0.5995 1.0 0.5995 0.875         </float_array>
+        <technique_common>
+          <accessor source="#1_1-texcoords-array" count="6" stride="2">
+            <param name="S" type="float"/>
+            <param name="T" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <vertices id="1_1-vertices">
+        <input semantic="POSITION" source="#1_1-positions"/>
+      </vertices>
+      <polylist material="house_1-material" count="6">
+         <input offset="0" semantic="VERTEX" source="#1_1-vertices"/>
+         <input offset="1" semantic="TEXCOORD" source="#1_1-texcoords"/>
+      <vcount>4 4 4 4 4 4       </vcount>
+      <p>3 3 2 2 1 1 0 0 4 3 5 2 6 1 7 0 0 0 1 1 5 4 4 5 3 0 7 5 6 4 2 1 5 4 1 1 2 0 6 5 4 5 7 4 3 1 0 0       </p>
+      </polylist>
+    </mesh>
+    </geometry>
+  </library_geometries>
+  <library_visual_scenes>
+    <visual_scene id="main_scene_000" name="MainScene">
+      <node id="main_node_000" name="MainNode">
+        <instance_geometry url="#adae_1-geometry">
+          <bind_material>
+          <technique_common>
+            <instance_material symbol="house_1-material" target="#house_1-material">
+              <bind_vertex_input input_semantic="TEXCOORD" input_set="0" semantic="CHANNEL0"/>
+            </instance_material>
+          </technique_common>
+          </bind_material>
+        </instance_geometry>
+      </node>
+    </visual_scene>
+  </library_visual_scenes>
+  <scene>
+    <instance_visual_scene url="#main_scene_000"/>
+  </scene>
+</COLLADA>

@@ -43,9 +43,60 @@ Kata.require([
                 },
                 Kata.bind(this.animatedSetState, this)
             );
+        this.platforms={};
+        setInterval(Kata.bind(Example.BlessedScript.prototype.heartbeat,this),300);
     };
     Kata.extend(Example.BlessedScript, SUPER);
+    
+    Example.BlessedScript.prototype.updatePlatformPhysics = function(remote_pres,pos,time) {
+        var platpos=remote_pres.position(time);
+        var plat_bounds=remote_pres.bounds();
+        if (plat_bounds.length&&plat_bounds.length==3) {
+            plat_bounds=plat_bounds[1];
+        }else if (plat_bounds.length&&plat_bounds.length==4) {
+            plat_bounds=plat_bounds[3];            
+        }
+        var delta=Kata.Vec3Scale(Kata.Vec3Sub(pos,platpos),platformBounds/plat_bounds);
+        if (delta[0]<0) delta[0]=-delta[0];
+        if (delta[2]<0) delta[2]=-delta[2];//14,11
+        
+        //console.log("platform ",delta[0],delta[2],"radius",);
+        var heightRatio=0.0;
+        if (delta[0]<14&&delta[2]<11) {
+            heightRatio=1.0;
+        }else if (delta[0]<7.5&&delta[2]<13) {
+            heightRatio=1.0-(delta[2]-11)/(13-11);
+        }else if (delta[0]<16.5&&delta[2]<1) {
+            heightRatio=1.0-(delta[0]-14)/(16.5-14);
+        }
+        var desiredHeight=heightRatio*1.25*plat_bounds/platformBounds;
+        return desiredHeight;
+    };
 
+    Example.BlessedScript.prototype.heartbeat = function() {
+        var desiredHeight=0.0;
+        var time = Kata.now(this.mPresence.mSpace);
+        var pos = this.mPresence.position(time);
+
+        for (plat in this.platforms) {
+            var remote=this.platforms[plat];
+            if (isPlatform(remote,false)) {
+                var tmp=this.updatePlatformPhysics(remote,pos,time);
+                if (tmp>desiredHeight)
+                    desiredHeight=tmp;
+            }else if (!isPlatform(remote,true)) {
+                delete this.platforms[plat];
+            }else {
+
+            }
+        }
+        desiredHeight+=this._scale[1];
+        var vdel=pos[1]-desiredHeight;
+        if (vdel<0)vdel=-vdel;
+        if (vdel>.1)
+            this.mPresence.setPosition([pos[0],desiredHeight,pos[2]]);
+
+    };
     Example.BlessedScript.prototype.createChatEvent = function(action, name, msg) {
         var evt = {
             action : action,
@@ -103,19 +154,33 @@ Kata.require([
 
 
     Example.BlessedScript.prototype.handlePanoramaGUIMessage = function(msg) {
-        console.log("Panorama");
         this.panorama = !this.panorama;
         this.updateCamera();
     };
 
-
+    function isPlatform(remote_pres, allow_undefined) {
+        var vis=remote_pres.visual();
+        if (vis===undefined)
+            return true;
+        if (vis.indexOf("square")!=-1)
+            return true;
+        if (vis.indexOf("platform")!=-1)
+            return true;
+        return false;
+    }
     Example.BlessedScript.prototype.proxEvent = function(remote, added){
         if (added) {
             Kata.warn("Camera Discover object.");
             this.mPresence.subscribe(remote.id());
             this.mOther = remote;
+            if (isPlatform(remote,true)) {
+                this.platforms[remote.id()]=remote;
+            }
         }
         else {
+            if (remote.id() in this.platforms) {
+                delete this.platforms[remote.id()];
+            }
             Kata.warn("Camera Wiped object.");      // FIXME: unsubscribe!
         }
     };
@@ -181,27 +246,163 @@ Kata.require([
         RIGHT : 39,
         ESCAPE : 27,
         W : 87,
-        A : 64,
+        A : 65,
         S : 83,
         D : 68
 
     };
+    var wallVertical=3;
+    var pedestalVertical=.5;
+    var lowerRoofVertical=7.25;
+    var upperRoofVertical=7.25;
+    var platformBounds=20.0;
     Example.BlessedScript.prototype.handleCreateObject = function (objectName, pos, orient, scale) {
-            this.createObject("../../objectscript.js", "Example.ObjectScript", {
-                                  space: this.mPresence.mSpace,
-                                  name: "Created object "+objectName,
-                                  loc: {
-                                      scale: scale? scale: [0,0,0,1],
-                                      pos: pos ? pos : this.mPresence.predictedPosition(Kata.now(this.mPresence.mSpace)),
-                                      orient : orient
-                                  },
-                                  creator: this.mPresence.id(),
-                                  visual: {mesh:objectName},
-                                  auth: "whiskey-foxtrot-tango"
-                                  //,port: port
-                                  //,receipt: ""+idx
-            });
-         
+        if (scale&&scale.length==3) {
+            Kata.warn("ERORR: The scale is incorrect "+scale);
+            scale=[0,0,0,scale[0]];
+        }
+        var objectScriptFile = "../../objectscript.js";
+        var objectScriptClass = "Example.ObjectScript";
+        var sizeAdjustment=1.0;
+        var vertAdjustment=0.0;
+        var adjustmentMap={
+            "779030fe38bfa3fb58ad85df663a9338":"/wall/wall"
+            ,
+            "35e9bce5e11c3b7f43f8d1984fdd9e85":"/wall/wallwall"
+            ,
+            "453cf1fa1e4ba589d45f7b8bc1a21ad1":"/wall/col.dae"
+            ,
+            "bb63be9499d8d9a5170e56759996884d":"/wall/corner.dae"
+            ,
+            "1522a6e1c40ce8d45b1caa56a0971a41":"/wall/barecol.dae"
+            ,
+            "bc00bcfad78869c5be4af366c0261426":"/wall/decorator.dae"
+            ,
+            "cecc1e67bd5454d683b98c65d2b45bb2":"/wall/door.dae"
+            ,
+            "8b473a43909c42f059ccf30a25c1e906":"/house0.dae"
+            ,
+            "c8e72eddf6f04810f97b65120d2e4125":"/house1.dae"
+            ,
+        
+            "2b1cc72a60eb7b634657db636383e078":"/house2.dae"
+            ,
+            "e757aa97f8fed90eaed1e42af0e6053d":"roof/lower"
+            ,
+            "94e0315cce1e9d6e599fab0fba0e9093":"square"
+            ,
+            "e1dd0642ab54a286e8e549a8abb919c9":"path"            
+        };
+        var adjustedObjectName=objectName;
+        console.log("ADJUSTMENT MAP "+adjustmentMap);
+        for (var item in adjustmentMap) {
+            console.log("is "+item+" in "+objectName);
+            if (objectName.indexOf(item)!=-1) {
+                adjustedObjectName=adjustmentMap[item];            
+                console.log(objectName+"->"+adjustedObjectName);
+            }
+        }
+        if (adjustedObjectName.indexOf("male")!=-1||adjustedObjectName.indexOf("female")!=-1) {
+            sizeAdjustment=this._scale[3];
+            vertAdjustment=this._scale[1]*2;
+            objectScriptFile="../../scripts/npc.js";
+            objectScriptClass="Example.NPC";
+        }
+        if (adjustedObjectName.indexOf("/market.dae")!=-1) {
+            sizeAdjustment=2.5;
+            vertAdjustment=1.0;
+        }
+        if (adjustedObjectName.indexOf("/Tent.dae")!=-1) {
+            sizeAdjustment=7;
+            vertAdjustment=2;
+            
+        }
+        if (adjustedObjectName.indexOf("/tents.dae")!=-1) {
+            sizeAdjustment=60;
+            vertAdjustment=1.25;            
+        } 
+        if (adjustedObjectName.indexOf("/palace/")!=-1) {
+            sizeAdjustment=20;
+            vertAdjustment=6.5;            
+        }
+        if (adjustedObjectName.indexOf("/GateHouse/")!=-1) {
+            sizeAdjustment=30;
+            vertAdjustment=11;                        
+        }
+        if (adjustedObjectName.indexOf("/LongerFence/")!=-1) {
+            sizeAdjustment=500;
+            vertAdjustment=11;                                    
+        }
+       var wallIndex=adjustedObjectName.indexOf("/wall/");
+        if (wallIndex!=-1) {
+            var wallName=adjustedObjectName.substr(wallIndex+6);
+            sizeAdjustment=2.5;
+            var scales={"wall.dae":2.987787396486388,
+                       "wallwall.dae":4.17106647127601,
+                       "wallwalldoor.dae":6.099936674573181,
+                       "wallwalldoorwall.dae":7.633829275992679,
+                       "wallwalldoorwallwall.dae":9.204383270822815,
+                       "wallwallwallwallwall.dae":8.665204062882934,
+                       "wallwallwallwall.dae":7.104733596005054,
+                       "wallwallwall.dae":5.589983675200037,
+                       "corner.dae":3.4109270545476065,//3.1029307279803735,
+                       "cornerwall.dae":4.338910514042135,//4.3460542323407605,
+                        "cornerwallwall.dae":5.6033081908143245,//5.721740065019299,
+                        "cornerwallwallwall.dae":7.024755015119525,//7.208857839689103,
+                        "cornerwallwallwallwall.dae":8.525051516773779,//8.750780155737374,
+                        "cornerwallwallwallwallwall.dae":10.069013520571158,
+                        "cornerwallwalldoor.dae":7.530504127032061,
+                        "cornerwallwalldoorwall.dae":9.048459605979616,
+                        "cornerwallwalldoorwallwall.dae":10.602827133469864,
+                        "colwall.dae":3.622959601001048,
+                        "colwallwall.dae":4.8212691555736304,
+                        "colwallwalldoor.dae":6.728048474148034,
+                        "colwallwalldoorwall.dae":8.245037,
+                        "colwallwalldoorwallwall.dae":9.80172618830406,
+                        "colwallwallwall.dae":6.224358301904356,
+                        "colwallwallwallwall.dae":7.721388234669052,
+                        "colwallwallwallwallwall.dae":9.266943199916877,
+                        "col.dae":3.3959123230044836,
+                        "barecol.dae":2.8407957521676406,
+                        "decorator.dae":1.7099433049080963,
+                        "coldoor.dae":4.001626309138033,
+                        "door.dae":3.348818112618679
+                       };
+            if (wallName in scales) {
+                sizeAdjustment*=(scales[wallName]/scales["wall.dae"]);                      }
+            
+            
+            vertAdjustment=wallVertical;
+        }
+        if (adjustedObjectName.indexOf("square")!=-1) {
+            sizeAdjustment=platformBounds;
+            vertAdjustment=pedestalVertical;
+        }
+        if (adjustedObjectName.indexOf("roof")!=-1) {
+            if (adjustedObjectName.indexOf("lower")!=-1) {
+                sizeAdjustment=14.0;
+                vertAdjustment=lowerRoofVertical;
+            }else {
+                sizeAdjustment=13.0;
+                vertAdjustment=upperRoofVertical;                
+            }
+        }
+        var xpos = this.mPresence.predictedPosition(Kata.now(this.mPresence.mSpace));
+        xpos[1]=vertAdjustment;
+        this.createObject(objectScriptFile, objectScriptClass, {
+                              space: this.mPresence.mSpace,
+                              name: "Created object "+objectName,
+                              loc: {
+                                  scale: scale?scale:[0,0,0,sizeAdjustment],
+                                  pos: pos ? pos : xpos,
+                                  orient : orient
+                              },
+                              creator: this.mPresence.id(),
+                              visual: {mesh:objectName},
+                              auth: "whiskey-foxtrot-tango"
+                              //,port: port
+                              //,receipt: ""+idx
+                          });
     };
 
     Example.BlessedScript.prototype.clearSelection = function(space) {
@@ -233,11 +434,116 @@ Kata.require([
             func.call(this, presid);
         }
     };
-    Example.BlessedScript.prototype.snapToGrid = function() {
+    Example.BlessedScript.prototype.commitPositionUpdate = function(remote_pres,newPos,time){
+        var newLoc = Kata.LocationExtrapolate(remote_pres.predictedLocation(), time);
+        newLoc.pos = newPos;
+        var gfxLoc = {};
+        //optimistically update gfx
+        gfxLoc.pos = newPos;
+        gfxLoc.time = time + Example.BlessedScript.GFX_TIMESTAMP_OFFSET;
+        var gfxmsg = new Kata.ScriptProtocol.FromScript.GFXMoveNode(
+            remote_pres.space(),
+            remote_pres.id(),
+            remote_pres,
+            { loc : gfxLoc }
+        );
+        this._sendHostedObjectMessage(gfxmsg);
+        
+        //get remote presence ready
+        
+        remote_pres.mLocation.pos = newLoc.pos;
+        remote_pres.mLocation.posTime = time;
+        this.setRemoteObjectLocation(this.mPresence,
+                                     remote_pres,
+                                     newLoc);
+        // Make change permanent!
+        remote_pres._updateLoc({pos: newLoc.pos, time: time});
+        
+        //Kata.warn("snapped on "+JSON.stringify(remote_pres.visual()));
+        
+    };
+    Example.BlessedScript.prototype.snapToVertical = function() {
         this.foreachSelected(this.mPresence.mSpace, function(presid) {
                                  var remote_pres = this.getRemotePresence(presid);
                                  if (remote_pres) {
-                                     Kata.warn("snapped on "+JSON.stringify(remote_pres.visual()));
+                                     var time = Kata.now(remote_pres.mSpace);
+                                     var oldPos = remote_pres.position(time);
+                                     var height= oldPos[1];
+                                     var objectName=remote_pres.visual();
+                                     if (objectName.indexOf("/wall/")!=-1) {
+                                         height=wallVertical;
+                                     }
+                                     if (objectName.indexOf("square")!=-1) {
+                                         height=pedestalVertical;
+                                     }
+                                     if (objectName.indexOf("roof")!=-1) {
+                                         if (objectName.indexOf("lower")!=-1) {
+                                             height=lowerRoofVertical;
+                                         }else {
+                                             height=upperRoofVertical;                
+                                         }
+                                     }
+                                     
+                                     var newPos=[oldPos[0],height,oldPos[2]];
+                                     this.commitPositionUpdate(remote_pres,newPos,time);
+                                 }
+                             }
+                            );
+    };
+    Example.BlessedScript.prototype.snapToGrid = function() {
+        var buildingSizeX=20;
+        var buildingSizeY=1./1024;
+        var buildingSizeZ=20;
+        function buildingCenter(oldPos){
+            var newPos=[Math.round(oldPos[0]/buildingSizeX)*buildingSizeX,
+                        Math.round(oldPos[1]/buildingSizeY)*buildingSizeY,
+                        Math.round(oldPos[2]/buildingSizeZ)*buildingSizeZ];
+            return newPos;
+        }
+        function wallSnap(oldPos,newPos,orient) {
+            var rot=Kata.QuaternionToRotation(orient);
+            var deltaAxis=rot[2];
+            var perpAxis=rot[0];
+            var wallDistance=10;
+            if (deltaAxis[0]>.9) {  
+                //deltaAxis=[1,0,0];                
+            }else if (deltaAxis[0]<-.9) {
+                //deltaAxis=[-1,0,0];               
+            }else if (deltaAxis[2]<-.9) {
+                wallDistance=6;
+                //deltaAxis=[0,0,-1];                               
+            }else if (deltaAxis[2]>.9) {
+                wallDistance=6;
+                //deltaAxis=[0,0,1];                               
+            }
+            var deltaPos=Kata.Vec3Sub(oldPos,newPos);
+            function dot(a,b){
+                return a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
+            }
+            if (dot(deltaAxis,deltaPos)<0) {
+                wallDistance=-wallDistance;//push towards closest wall
+            }
+            var delX=Kata.Vec3Scale(perpAxis,dot(perpAxis,deltaPos));
+            
+            var delZ=Kata.Vec3Scale(deltaAxis,wallDistance);
+           
+            return Kata.Vec3Add(Kata.Vec3Add(newPos,delX),delZ);
+        }
+        this.foreachSelected(this.mPresence.mSpace, function(presid) {
+                                 var remote_pres = this.getRemotePresence(presid);
+                                 if (remote_pres) {
+                                     var time = Kata.now(remote_pres.mSpace);
+                                     var oldPos = remote_pres.position(time);
+                                     var orient = remote_pres.orientation(time);
+                                     var newPos = buildingCenter(oldPos);
+                                     if (remote_pres.visual().indexOf("/wall/")!=-1) {
+                                         newPos = wallSnap(oldPos,newPos,orient);
+                                     }
+                                     if (remote_pres.visual().indexOf("square")!=-1) {
+                                         newPos[0]-=1;
+                                     }
+                                     this.commitPositionUpdate(remote_pres,newPos,time);
+                                     
                                  }
                                  
                              });
@@ -400,6 +706,9 @@ Kata.require([
         }
         if (msg.msg == "snap") {
             this.snapToGrid();
+        }
+        if (msg.msg == "snap_height") {
+            this.snapToVertical();
         }
         if (msg.msg == "import") {
             this.doImport(msg.event.serialized);

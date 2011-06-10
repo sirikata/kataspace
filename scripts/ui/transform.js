@@ -121,6 +121,12 @@ Kata.require([
         snap.addEventListener("click", Kata.bind(this._snap, this), false);
         row1.appendChild(snap);
 
+        var snaph = document.createElement("input");
+        snaph.setAttribute('type','button');
+        snaph.value = 'Snap Height';
+        snaph.addEventListener("click", Kata.bind(this._snap_height, this), false);
+        row1.appendChild(snaph);
+
         var delobj = document.createElement("input");
         delobj.setAttribute('type','button');
         delobj.value = 'Delete Object';
@@ -166,7 +172,16 @@ Kata.require([
                 }
             })
         );
-        this._destroy();
+    };
+    TransformUI.prototype._snap_height = function(ev) {
+        this.mChannel.sendMessage(
+            new Kata.ScriptProtocol.ToScript.GUIMessage({
+                msg: 'snap_height',
+                event: {
+                }
+            })
+        );
+        this._destroy();//I was thinking snapheight could be a final adjustment?
     };
     TransformUI.prototype._commit = function(form, commit) {
         var scalearg = form.scale.value - 0;

@@ -46,6 +46,7 @@ Kata.require([
             Kata.bind(this.create, this)
         );
         parent.addElement($('<input type="text" placeholder="http://example.com/collada.dae" id="objectCreation'+UNIQUE_ID+'" size="40" />'));
+        parent.addElement($('<select type="text" placeholder="http://example.com/collada.dae" id="objectDropdown'+UNIQUE_ID+'" size="1" ><option value=""></option><option value="a">Wall</option><option value="aa">Walls</option><option value="aaa">Wall3</option><option value="aaaa">Wall4</option><option value="aad">WDoor</option><option value="d">Door</option><option value="aadaa">wDoorw</option><option value="t">Tent</option><option value="tt">Tents</option><option value="w">Fort</option><option value="W">Gate</option><option value="p">Dias</option><option value="P">Bldg</option><option value="y">LRoof</option><option value="z">URoof</option><option value="m">Market</option></select>'));
         parent.addButton(button_div);
         this.uniqueId=UNIQUE_ID;
         UNIQUE_ID+=1;
@@ -64,6 +65,77 @@ Kata.require([
         var thus = this;
         var base;
         var value=document.getElementById('objectCreation'+this.uniqueId).value;
+        if (value=="") {
+            value=document.getElementById('objectDropdown'+this.uniqueId).value;
+        }
+        var dirname = window.location.href.substr(0, window.location.href.lastIndexOf('/') + 1);
+        function immediateLoad(value,options) {
+            thus.mChannel.sendMessage(new Kata.ScriptProtocol.ToScript.GUIMessage({
+                msg:'create',
+                event: {
+                    visual: value+options
+                }
+            })); /* put args here for what to create */    
+
+        }
+        var options=value.indexOf("?");
+        if (options>=0){
+            options=value.substr(options);
+            value=value.substr(0,value.indexOf("?"));
+        }else {
+            options="";            
+        }
+        switch (value) {
+        case "A":
+            return immediateLoad(dirname+ "static/wall/wall.dae",options);
+        case "C":
+            return immediateLoad(dirname+ "static/wall/corner.dae",options);
+        case "c":
+            return immediateLoad(dirname+ "static/wall/col.dae",options);
+        case "a":
+            return immediateLoad(dirname+ "static/wall/colwall.dae",options);
+        case "aa":
+            return immediateLoad(dirname+ "static/wall/colwallwall.dae",options);
+        case "aaa":
+            return immediateLoad(dirname+ "static/wall/cornerwallwallwall.dae",options);
+        case "aad":
+            return immediateLoad(dirname+ "static/wall/cornerwallwalldoor.dae",options);
+        case "aaaa":
+            return immediateLoad(dirname+ "static/wall/cornerwallwallwallwall.dae",options);
+        case "aada":
+            return immediateLoad(dirname+ "static/wall/cornerwallwalldoorwall.dae",options);
+        case "aaaaa":
+            return immediateLoad(dirname+ "static/wall/cornerwallwallwallwallwall.dae",options);
+        case "aadaa":
+            return immediateLoad(dirname+ "static/wall/cornerwallwalldoorwallwall.dae",options);
+        case "d":
+            return immediateLoad(dirname+ "static/wall/coldoor.dae",options);
+        case "market":
+            return immediateLoad(dirname+ "static/market/models/market.dae",options);                       
+        case "m":
+            return immediateLoad(dirname+ "static/market/models/market.dae",options);                       
+        case "t":
+            return immediateLoad(dirname+ "static/tent/models/Tent.dae",options);
+        case "tent":
+            return immediateLoad(dirname+ "static/tent/models/Tent.dae",options);                       
+        case "tt":
+            return immediateLoad(dirname+ "static/tents.dae",options);                  case "tents":
+            return immediateLoad(dirname+ "static/tents.dae",options);                       
+        case "palace": 
+            return immediateLoad(dirname+ "static/palace/models/fc.dae",options);
+        case "P": 
+            return immediateLoad(dirname+ "static/palace/models/fc.dae",options);           
+        case "w":
+            return immediateLoad(dirname+ "static/LongerFence/fence.dae",options);
+        case "W":
+            return immediateLoad(dirname+ "static/GateHouse/house.dae",options);
+        case "y":
+            return immediateLoad(dirname+ "static/fcroof/roof.dae",options);
+        case "z":
+            return immediateLoad(dirname+ "static/fcroof/roof_lower.dae",options);
+        case "p":
+            return immediateLoad(dirname+ "static/fcsquare/square.dae",options);
+        }
         var i = value.indexOf("/processed/index.html");
         if (i >= 0) {
             base = value.substr(0, i) + "/processed/";
@@ -122,8 +194,8 @@ Kata.require([
         }
         else {
             if (!value) {
-                var dirname = window.location.href.substr(0, window.location.href.lastIndexOf('/') + 1);
-                value = dirname + "static/maleWalkIdleSit.dae";
+                var dirname2 = window.location.href.substr(0, window.location.href.lastIndexOf('/') + 1);
+                value = dirname2 + "static/maleWalkIdleSit.dae";
             }
             this.mChannel.sendMessage(new Kata.ScriptProtocol.ToScript.GUIMessage({
                 msg:'create',
