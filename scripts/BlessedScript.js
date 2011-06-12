@@ -416,10 +416,6 @@ Kata.require([
             sizeAdjustment=platformBounds;
             vertAdjustment=pedestalVertical;
         }
-        if (adjustedObjectName.indexOf("square")!=-1) {
-            sizeAdjustment=platformBounds;
-            vertAdjustment=pedestalVertical;
-        }
         if (adjustedObjectName.indexOf("roof")!=-1) {
             if (adjustedObjectName.indexOf("lower")!=-1) {
                 sizeAdjustment=14.0;
@@ -435,12 +431,11 @@ Kata.require([
         };
 
         xpos[1]=vertAdjustment;//should this be += ?
-        xpos[1]=vertAdjustment;
         this.createObject(objectScriptFile, objectScriptClass, {
                               space: this.mPresence.mSpace,
                               name: "Created object "+objectName,
                               loc: {
-                                  scale: scale? Vec4Scale(scale,sizeAdjustment): Vec4Scale(this._scale,sizeAdjustment),
+                                  scale: scale? [0,0,0,scale[3]*sizeAdjustment]: [0,0,0,this._scale[3]*sizeAdjustment],
                                   pos: pos ? pos : xpos,
                                   orient : orient
                               },
