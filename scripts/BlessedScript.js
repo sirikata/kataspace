@@ -435,7 +435,7 @@ Kata.require([
                               space: this.mPresence.mSpace,
                               name: "Created object "+objectName,
                               loc: {
-                                  scale: scale? [0,0,0,scale[3]*sizeAdjustment]: [0,0,0,this._scale[3]*sizeAdjustment],
+                                  scale: scale? [0,0,0,scale[3]]: [0,0,0,this._scale[3]*sizeAdjustment],
                                   pos: pos ? pos : xpos,
                                   orient : orient
                               },

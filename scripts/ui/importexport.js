@@ -82,13 +82,16 @@ Kata.require([
     ExportUI.prototype.doImport = function() {
         // Send the message
         var thus = this;
-        var data = prompt("Paste Data or URL", "http://sbox.ourbricks.com/mcdemo/kataspace.git/static/save.txt");
+        var data = prompt("Paste Data or URL", "/kspace/static/save.txt");
         var json = null;
         if (data) {
             try {
                 json = JSON.parse(data);
             } catch (x) {
                 var xhr = new XMLHttpRequest();
+                //if (data.indexOf("://")==-1) {
+                //    data=window.location.protocol+window.location.host+data;
+                //}
                 xhr.open("GET", data, false);
                 xhr.send(null);
                 if (xhr.status == 200 || xhr.status == 0) {
