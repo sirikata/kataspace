@@ -1,6 +1,7 @@
 # A few items extracted to externals that are not in repositories
 externals/css/
 externals/development-bundle/
+externals/jquery-ui-1.8.9/
 externals/jquery-1.4.3.min.js
 externals/js/
 externals/*.zip

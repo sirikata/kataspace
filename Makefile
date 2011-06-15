@@ -59,8 +59,9 @@ submodules : our-submodules katajs-submodules
 
 JQUERY_DIR=externals
 JQUERY_UI_VERSION=1.8.9
-JQUERY_UI_URL=http://jqueryui.com/download/jquery-ui-$(JQUERY_UI_VERSION).custom.zip
-JQUERY_UI_ZIP=jquery-ui-$(JQUERY_UI_VERSION).custom.zip
+JQUERY_UI_URL=http://jquery-ui.googlecode.com/files/jquery-ui-$(JQUERY_UI_VERSION).zip
+#http://jquery-ui.googlecode.com/files/jquery-ui-themes-1.8.9.zip
+JQUERY_UI_ZIP=jquery-ui-$(JQUERY_UI_VERSION).zip
 JQUERY_UI_FULL_ZIP=$(JQUERY_DIR)/$(JQUERY_UI_ZIP)
 JQUERY_UI_FILE=jquery-ui
 
