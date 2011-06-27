@@ -111,9 +111,9 @@ Kata.require([
         case "d":
             return immediateLoad(dirname+ "static/wall/coldoor.dae",options);
         case "market":
-            return immediateLoad(dirname+ "static/market/models/market.dae",options);                       
+            return immediateLoad(dirname+ "static/market/market.dae",options);                       
         case "m":
-            return immediateLoad(dirname+ "static/market/models/market.dae",options);                       
+            return immediateLoad(dirname+ "static/market/market.dae",options);                       
         case "t":
             return immediateLoad(dirname+ "static/tent/models/Tent.dae",options);
         case "tent":

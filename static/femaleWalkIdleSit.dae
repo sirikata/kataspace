@@ -206,6 +206,8 @@
   </library_images>
   <library_visual_scenes>
     <visual_scene id="MaxScene">
+    <node id="scene_root" name="scene_root" sid="scene_root">
+      <rotate>0.0 0.0 1.0 180.0</rotate>
       <node name="EnvironmentAmbientLight">
         <instance_light url="#EnvironmentAmbientLight"/>
       </node>
@@ -331,6 +333,7 @@
             </bind_material>
           </instance_controller>
         </node>
+      </node>
       </node>
     </visual_scene>
   </library_visual_scenes>
@@ -2231,9 +2234,7 @@
       <channel source="#node-MaleAvatarHead_matrix-sampler_anim3" target="node-MaleAvatarHead/matrix"/>
     </animation></library_animations>
   <scene>
-    <node id="scene_root" name="scene_root" sid="scene_root">
-      <rotate>0.0 0.0 1.0 180.0</rotate>
       <instance_visual_scene url="#MaxScene"/>
-    </node>
+   
   </scene>
 </COLLADA>

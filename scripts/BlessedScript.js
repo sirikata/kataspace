@@ -321,13 +321,9 @@ Kata.require([
         }
         if (adjustedObjectName.indexOf("male")!=-1||adjustedObjectName.indexOf("female")!=-1) {
             sizeAdjustment=this._scale[3];
-            vertAdjustment=this._scale[1]*2;
+            vertAdjustment=this._scale[1];
             objectScriptFile="../../scripts/npc.js";
             objectScriptClass="Example.NPC";
-        }
-        if (adjustedObjectName.indexOf("/market.dae")!=-1) {
-            sizeAdjustment=2.5;
-            vertAdjustment=1.0;
         }
         if (adjustedObjectName.indexOf("/market.dae")!=-1) {
             sizeAdjustment=2.5;
