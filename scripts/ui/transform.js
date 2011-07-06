@@ -102,8 +102,8 @@ Kata.require([
         slider.setAttribute('max','0.9');
 
         slider = this._addSliderUI(divID, newDiv, 'Rotation', 'rotateX', Kata.bind(this._changed, this));
-        slider.setAttribute('min',-Math.PI/2);
-        slider.setAttribute('max',Math.PI/2.0);
+        slider.setAttribute('min',-Math.PI);
+        slider.setAttribute('max',Math.PI);
 
         var row1 = document.createElement("div");
         newDiv.appendChild(row1);
@@ -143,6 +143,12 @@ Kata.require([
         //ev.target.lastvalue = arg;
         var thus = this;
         var form = thus.mForm;
+        if (form.rotateX.value>Math.PI*3./8&&form.rotateX.value<Math.PI*5./8){
+            form.rotateX.value=Math.PI/2;
+        }
+        if (form.rotateX.value<-Math.PI*3./8&&form.rotateX.value>-Math.PI*5./8){
+            form.rotateX.value=-Math.PI/2;
+        }
         if (form.allowCommit) {
             var intid = setInterval(function(){
                 if (!form.destroyed && (form.didChange != form.scale.value + "/" + form.rotateX.value)) {
