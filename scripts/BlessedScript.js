@@ -267,6 +267,13 @@ Kata.require([
             func.call(this, presid);
         }
     };
+    Example.BlessedScript.prototype.numSelected = function(space) {
+        var num = 0;
+        for (var obj in this.mSelected) {
+            num++;
+        }
+        return num;
+    };
     Example.BlessedScript.prototype.snapToGrid = function() {
         this.foreachSelected(this.mPresence.mSpace, function(presid) {
                                  var remote_pres = this.getRemotePresence(presid);
@@ -541,24 +548,28 @@ Kata.require([
             }
         }
         if (msg.msg == "pick") {
-            this.mDrag = null; //this.resetDrag();
-            if (!(msg.shiftKey || msg.metaKey)) {
-                if (!(msg.id && msg.id in this.mSelected)) {
-                    this.clearSelection(msg.spaceid);
-                }
-            }
-            if (msg.id) {
-                if (msg.id in this.mSelected) {
-                    if (msg.metaKey) {
-                        this.removeSelection(msg.spaceid, msg.id);
+            if (msg.button == 2) {
+                this.resetDrag();
+            } else {
+                this.mDrag = null;
+                if (!(msg.shiftKey || msg.metaKey)) {
+                    if (!(msg.id && msg.id in this.mSelected)) {
+                        this.clearSelection(msg.spaceid);
                     }
-                } else {
-                    this.addSelection(msg.spaceid, msg.id);
+                }
+                if (msg.id) {
+                    if (msg.id in this.mSelected) {
+                        if (msg.metaKey) {
+                            this.removeSelection(msg.spaceid, msg.id);
+                        }
+                    } else {
+                        this.addSelection(msg.spaceid, msg.id);
+                    }
                 }
             }
             var gfxmsg = new Kata.ScriptProtocol.FromScript.GUIMessage("transform", {action: "hide"});
             this._sendHostedObjectMessage(gfxmsg);
-            if (msg.id != null) {
+            if (this.numSelected(msg.spaceid) > 0) {
                 var buttons = [
                     {img: "ui-icon-arrow-4", title: "Drag", msg: "drag2D"},
                     {img: "ui-icon-arrow-3", title: "Slide", msg: "dragXZ"},
