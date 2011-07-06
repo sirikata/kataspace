@@ -322,7 +322,7 @@ Kata.require([
                         remote_pres,
                         { loc : gfxLoc }
                     );
-                    console.log("Abort drag", newLoc, msg);
+                    //console.log("Abort drag", newLoc, msg);
                     this._sendHostedObjectMessage(msg);
                     this.setRemoteObjectLocation(this.mPresence,
                                                  remote_pres,
@@ -533,9 +533,13 @@ Kata.require([
             } else if (which == "drag2D" || which == "dragXZ") {
                 this.mDrag = this.mDragPrepare;
                 var camdir = this.mDrag.origCameraDir;
-                var camdir;
                 if (which == "dragXZ") {
-                    camdir = [0,-1,0];
+                    console.log(this.mDrag.dir);
+                    if (this.mDrag.dir[1] > 0) {
+                        camdir = [0,-1,0];
+                    } else {
+                        camdir = [0,1,0];
+                    }
                 }
                 var dx = (this.mDrag.start[0] - this.mDrag.camerapos[0]);
                 var dy = (this.mDrag.start[1] - this.mDrag.camerapos[1]);
