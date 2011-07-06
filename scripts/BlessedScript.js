@@ -366,7 +366,9 @@ Kata.require([
             Kata.log("Got NaN in deltaPos computation.");
             deltaPos = [0,0,0];
         }
-
+        if (dragObject.moveInPlane) {
+            deltaPos[1] = 0;
+        }
         if (commit) {
             if (!dragObject.origstart) {
                 dragObject.origstart = start;
@@ -576,7 +578,7 @@ Kata.require([
             if (this.numSelected(msg.spaceid) > 0) {
                 var buttons = [
                     {img: "ui-icon-arrow-4", title: "Drag", msg: "drag2D"},
-                    {img: "ui-icon-arrow-3", title: "Slide", msg: "dragXZ"},
+                    {img: "ui-icon-arrowthick-2-e-w", title: "Slide", msg: "dragXZ"},
                     {img: "ui-icon-info", title: "Info", msg: "foobar"},
                     {img: "ui-icon-cart", title: "Control", msg: "farboo"},
                     {img: "ui-icon-gear", title: "Edit", msg: "transform-show"}
