@@ -337,7 +337,7 @@ Kata.require([
         var msg = dragObject.lastDragMsg;
         var camdir = msg.cameradir;
         if (dragObject.moveInPlane) {
-            camdir = [0,-1,0];
+            camdir = dragObject.camdir;
         }
         var length = dragObject.planedist / (msg.dir[0]*camdir[0] +
                                              msg.dir[1]*camdir[1] +
@@ -534,12 +534,12 @@ Kata.require([
                 this.mDrag = this.mDragPrepare;
                 var camdir = this.mDrag.origCameraDir;
                 if (which == "dragXZ") {
-                    console.log(this.mDrag.dir);
                     if (this.mDrag.dir[1] > 0) {
                         camdir = [0,-1,0];
                     } else {
                         camdir = [0,1,0];
                     }
+                    this.mDrag.camdir = camdir;
                 }
                 var dx = (this.mDrag.start[0] - this.mDrag.camerapos[0]);
                 var dy = (this.mDrag.start[1] - this.mDrag.camerapos[1]);
