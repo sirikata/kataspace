@@ -51,7 +51,7 @@ $.widget("ui.prettypiemenu", {
 			.css({
 				width: radius*2,
 				height: radius*2,
-				position: "absolute"
+				position: "fixed"
 			})
 			.bind('contextmenu', function(e) {
 				e.preventDefault();
