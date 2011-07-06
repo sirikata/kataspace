@@ -210,7 +210,7 @@ Kata.require([
         var revt = evt.event;
 
         if (revt.action == 'show') {
-            this._create(revt.x, revt.y);
+            this._create(revt.x, revt.y-90);
         }
         else if (revt.action == 'hide') {
             this._destroy();
