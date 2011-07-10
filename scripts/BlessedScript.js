@@ -408,7 +408,27 @@ Kata.require([
     };
 
     Example.BlessedScript.GFX_TIMESTAMP_OFFSET = 5000;
-
+    Example.BlessedScript.prototype.startDragAction=function(which) {
+        this.mDrag = this.mDragPrepare;
+        var camdir = this.mDrag.origCameraDir;
+        if (which == "dragXZ") {
+            if (this.mDrag.dir[1] > 0) {
+                camdir = [0,-1,0];
+            } else {
+                camdir = [0,1,0];
+            }
+            this.mDrag.camdir = camdir;
+        }
+        var dx = (this.mDrag.start[0] - this.mDrag.camerapos[0]);
+        var dy = (this.mDrag.start[1] - this.mDrag.camerapos[1]);
+        var dz = (this.mDrag.start[2] - this.mDrag.camerapos[2]);
+        var planedist = dx*camdir[0] + dy*camdir[1] + dz*camdir[2];
+        this.mDrag.planedist = planedist;
+        this.mDrag.moveInPlane = (which == "dragXZ");
+        var gfxmsg = new Kata.ScriptProtocol.FromScript.GFXEnableEvent(null, "mousemove");
+        this._sendHostedObjectMessage(gfxmsg);
+        
+    };
     Example.BlessedScript.prototype._handleGUIMessage = function (channel, msg) {
         Kata.GraphicsScript.prototype._handleGUIMessage.call(this,channel,msg);
         if (msg.msg=="MeshAspectRatio") {
@@ -533,24 +553,7 @@ Kata.require([
                 var gfxmsg = new Kata.ScriptProtocol.FromScript.GUIMessage("transform", {action: "show", x: msg.event.x, y: msg.event.y});
                 this._sendHostedObjectMessage(gfxmsg);
             } else if (which == "drag2D" || which == "dragXZ") {
-                this.mDrag = this.mDragPrepare;
-                var camdir = this.mDrag.origCameraDir;
-                if (which == "dragXZ") {
-                    if (this.mDrag.dir[1] > 0) {
-                        camdir = [0,-1,0];
-                    } else {
-                        camdir = [0,1,0];
-                    }
-                    this.mDrag.camdir = camdir;
-                }
-                var dx = (this.mDrag.start[0] - this.mDrag.camerapos[0]);
-                var dy = (this.mDrag.start[1] - this.mDrag.camerapos[1]);
-                var dz = (this.mDrag.start[2] - this.mDrag.camerapos[2]);
-                var planedist = dx*camdir[0] + dy*camdir[1] + dz*camdir[2];
-                this.mDrag.planedist = planedist;
-                this.mDrag.moveInPlane = (which == "dragXZ");
-                var gfxmsg = new Kata.ScriptProtocol.FromScript.GFXEnableEvent(null, "mousemove");
-                this._sendHostedObjectMessage(gfxmsg);
+                this.startDragAction(which);
             }
         }
         if (msg.msg == "pick") {
@@ -575,21 +578,23 @@ Kata.require([
             }
             var gfxmsg = new Kata.ScriptProtocol.FromScript.GUIMessage("transform", {action: "hide"});
             this._sendHostedObjectMessage(gfxmsg);
-            if (this.numSelected(msg.spaceid) > 0) {
-                var buttons = [
-                    {img: "ui-icon-arrow-4", title: "Drag", msg: "drag2D"},
-                    {img: "ui-icon-arrowthick-2-e-w", title: "Slide", msg: "dragXZ"},
-                    {img: "ui-icon-info", title: "Info", msg: "foobar"},
-                    {img: "ui-icon-cart", title: "Control", msg: "farboo"},
-                    {img: "ui-icon-gear", title: "Edit", msg: "transform-show"}
-                ];
-                var gfxmsg = new Kata.ScriptProtocol.FromScript.GUIMessage("pie", {
-                    action: "show",
-                    x: msg.clientX,
-                    y: msg.clientY,
-                    buttons: buttons
-                });
-                this._sendHostedObjectMessage(gfxmsg);
+            if (!msg.ctrlKey) {
+                if (this.numSelected(msg.spaceid) > 0) {
+                    var buttons = [
+                        {img: "ui-icon-arrow-4", title: "Drag", msg: "drag2D"},
+                        {img: "ui-icon-arrowthick-2-e-w", title: "Slide", msg: "dragXZ"},
+                        {img: "ui-icon-info", title: "Info", msg: "foobar"},
+                        {img: "ui-icon-cart", title: "Control", msg: "farboo"},
+                        {img: "ui-icon-gear", title: "Edit", msg: "transform-show"}
+                    ];
+                    var gfxmsg = new Kata.ScriptProtocol.FromScript.GUIMessage("pie", {
+                                                                                   action: "show",
+                                                                                   x: msg.clientX,
+                                                                                   y: msg.clientY,
+                                                                                   buttons: buttons
+                                                                               });
+                    this._sendHostedObjectMessage(gfxmsg);
+                }
             }
             if (msg.pos && msg.camerapos) {
                 var dx = (msg.pos[0] - msg.camerapos[0]);
@@ -599,6 +604,9 @@ Kata.require([
                 this.mDragPrepare = {camerapos: msg.camerapos, dir: msg.dir,
                                      origCameraDir: msg.cameradir, start: msg.pos, dist:length,
                                      allowMoveCommit: true};
+            }
+            if (msg.ctrlKey) {
+                this.startDragAction("dragXZ");
             }
         }
         if ((msg.msg == "drag" || msg.msg == "drop" || msg.msg == "mousemove") && this.mDrag) {
