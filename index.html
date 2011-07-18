@@ -43,6 +43,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         <script type="text/javascript" src="externals/jquery-ui-1.8.9/ui/minified/jquery-ui.min.js">
         </script>
         <link type="text/css" href="css/jquery.ui.chatbox.css" rel="stylesheet" />
+        <link type="text/css" href="css/jquery.ui.ppmenu.css" rel="stylesheet" />
         <script type="text/javascript" src="scripts/jquery.ui.chatbox.js">
         </script>
         <!-- Notifications -->
@@ -102,7 +103,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                     kata_base_offset + 'scripts/ui/sit.js',
                     kata_base_offset + 'scripts/ui/panorama.js',
                     kata_base_offset + 'scripts/ui/create.js',
+                    kata_base_offset + 'scripts/ui/transform.js',
                     kata_base_offset + 'scripts/ui/importexport.js',
+                    kata_base_offset + 'scripts/ui/piemenu.js',
                     kata_base_offset + 'scripts/ui/help.js'
                 ], function() {
                     loadGFX();
@@ -170,6 +173,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                     helpui = new HelpUI(window.kata.getChannel(), toolbar);
                     chats = new ChatUI(window.kata.getChannel(), loginName, 300);
                     transformUI = new TransformUI(window.kata.getChannel());
+                    pieUI = new PieUI(window.kata.getChannel());
                     chats.create("Chat");
                 }
 

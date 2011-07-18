@@ -1,0 +1,30 @@
+.ui-ppmenu-pieBg {
+	background-color: transparent;
+	background: url(radial_bg.png) center center no-repeat;
+	background: -moz-radial-gradient(center 45deg, circle closest-corner, rgba(245, 245,
+		255, 0.8) 40%, rgba(255, 255, 255, 0) 75% );
+	background: -webkit-gradient(radial, center center, 0, center center, 70, from(rgba(245
+		, 245, 255, 0.8) ), to(rgba(255, 255, 255, 0) ) );
+}
+
+.ui-ppmenu-iconBg {
+    border-radius: 10px;
+	-moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    position: absolute;
+}
+
+.ui-ppmenu-tooltip {
+    z-index: 10000;
+    position: absolute;
+    font-size: 0.8em !important; 
+	padding: 4px;
+    width: auto;
+    white-space: nowrap;
+	opacity: .85;
+	filter: alpha(opacity = 85);
+	-moz-opacity: 0.85;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+}
