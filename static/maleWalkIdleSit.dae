@@ -4,7 +4,6 @@
       <author>Stein Lotveit</author>
       <comments>Avatar modeling, texture and animation by Stein Lotveit - lotveit.stein@gmail.com</comments>
       <copyright>Creative Commons Attribution http://creativecommons.org/licenses/by/3.0/</copyright>
-      <authoring_tool>OpenCOLLADA for 3ds Max;  Version: 1.2.5;  Revision: 734:737M;  Platform: Win32;  Configuration: Release_Max2010_static</authoring_tool>
       <source_data>file:///C:/Users/Stein/Desktop/CLIENT.ME/PROJECT.HENRIK/Scenes/Adam/Adam015Anim012-AllAnim.max</source_data>
     </contributor>
     <created>2011-01-11T21:53:36</created>
@@ -206,6 +205,8 @@
   </library_images>
   <library_visual_scenes>
     <visual_scene id="MaxScene">
+    <node id="scene_root" name="scene_root" sid="scene_root">
+      <rotate>0.0 0.0 1.0 180.0</rotate>
       <node name="EnvironmentAmbientLight">
         <instance_light url="#EnvironmentAmbientLight"/>
       </node>
@@ -327,6 +328,7 @@
       <node id="node-MaleAvatarHead" name="MaleAvatarHead" sid="joint4" type="JOINT">
         <matrix sid="matrix">-0.1374156 -0.08084936 -0.9872084 5.544185 -0.0358681 0.9964164 -0.07661067 -8.180868 0.9898646 0.0248818 -0.1398229 69.8356 0 0 0 1</matrix>
       </node>
+     </node>
     </visual_scene>
   </library_visual_scenes>
   <library_animation_clips><animation_clip id="idle"><instance_animation url="#_anim1"/></animation_clip><animation_clip id="walk"><instance_animation url="#_anim2"/></animation_clip><animation_clip id="sit"><instance_animation url="#_anim3"/></animation_clip></library_animation_clips><library_animations>
@@ -3216,9 +3218,6 @@
       <channel source="#node-MaleAvatarHead_matrix-sampler_anim3" target="node-MaleAvatarHead/matrix"/>
     </animation></library_animations>
   <scene>
-    <node id="scene_root" name="scene_root" sid="scene_root">
-      <rotate>0.0 0.0 1.0 180.0</rotate>
       <instance_visual_scene url="#MaxScene"/>
-    </node>
   </scene>
 </COLLADA>

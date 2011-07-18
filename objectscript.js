@@ -15,7 +15,41 @@ Kata.require([
         Kata.log("Connecting to "+args.space+" with "+args.visual+" from "+args.creator+ " at "+args.loc.pos);
         this.connect(args,
                      args.auth?args.auth:null,
-                     function(presence) {
+                     Kata.bind(this.connected,this));
+        this.args=args;
+    };
+    
+    Kata.extend(Example.ObjectScript, SUPER);
+    Example.ObjectScript.kMovePort=61827;
+    Example.ObjectScript.kMsgPort=61829;
+    Example.ObjectScript.prototype.notifyCreator = function(presence,creator,port,receipt) {
+        var returnReceiptPort=presence.bindODPPort(port);
+        var timeout=10;
+        var thus=this;
+        var send=null;
+        var dst=new Kata.ODP.Endpoint(presence.mSpace,creator,port);
+
+        send=function() {
+            if (returnReceiptPort&&timeout<100000) {//FIXME: have a mechanism to give up returning receipts
+                returnReceiptPort.send(dst,receipt);
+                setTimeout(send,timeout);
+                timeout*=1.5;
+            }else {
+                if (returnReceiptPort)
+                    returnReceiptPort.close();
+            }
+        };
+        returnReceiptPort.receiveFrom(dst,function() {
+                                          if (returnReceiptPort)
+                                              returnReceiptPort.close();
+                                          returnReceiptPort=null;                                          
+                                      });
+        send();
+    };
+    Example.ObjectScript.prototype.connected = function(presence) {
+        var thus=this;
+        var args=this.args;
+        delete this.args;
                          thus.mPresence = presence;
                          if (args.creator) {
                              var space=args.space;
@@ -71,36 +105,7 @@ Kata.require([
                          }
                          // Start periodic movemenst
                          //thus.move();
-                     });
-    };
-    
-    Kata.extend(Example.ObjectScript, SUPER);
-    Example.ObjectScript.kMovePort=61827;
-    Example.ObjectScript.kMsgPort=61829;
-    Example.ObjectScript.prototype.notifyCreator = function(presence,creator,port,receipt) {
-        var returnReceiptPort=presence.bindODPPort(port);
-        var timeout=10;
-        var thus=this;
-        var send=null;
-        var dst=new Kata.ODP.Endpoint(presence.mSpace,creator,port);
-
-        send=function() {
-            if (returnReceiptPort&&timeout<100000) {//FIXME: have a mechanism to give up returning receipts
-                returnReceiptPort.send(dst,receipt);
-                setTimeout(send,timeout);
-                timeout*=1.5;
-            }else {
-                if (returnReceiptPort)
-                    returnReceiptPort.close();
-            }
-        };
-        returnReceiptPort.receiveFrom(dst,function() {
-                                          if (returnReceiptPort)
-                                              returnReceiptPort.close();
-                                          returnReceiptPort=null;                                          
-                                      });
-        send();
-    };
+                     };
 /*    
     Example.TestScript.prototype.move = function(){
         if (!this.mPresence) 
