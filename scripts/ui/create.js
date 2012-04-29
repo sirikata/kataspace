@@ -117,7 +117,7 @@ Kata.require([
         else {
             if (!value) {
                 var dirname = window.location.href.substr(0, window.location.href.lastIndexOf('/') + 1);
-                value = dirname + "static/maleWalkIdleSit.dae";
+                value = "meerkat:///danielrh/maleWalkIdleSit.dae/optimized/maleWalkIdleSit.dae";
             }
             this.mChannel.sendMessage(new Kata.ScriptProtocol.ToScript.GUIMessage({
                 msg:'create',

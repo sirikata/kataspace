@@ -15,13 +15,13 @@ dirname = window.location.href.substr(0, window.location.href.lastIndexOf('/')+1
 Avatars = [
     {
         name : "Male",
-        url : dirname + "static/maleWalkIdleSit.dae",
+        url : "meerkat:///danielrh/maleWalkIdleSit.dae/optimized/maleWalkIdleSit.dae",
         scale : 1.0,
         preview : dirname + "static/maleheadshot.png"
     },
     {
         name : "Female",
-        url : dirname + "static/femaleWalkIdleSit.dae",
+        url : "meerkat:///danielrh/femaleWalkIdleSit.dae/optimized/femaleWalkIdleSit.dae",
         scale : 1.0,
         preview : dirname + "static/femaleheadshot.png"
     }
