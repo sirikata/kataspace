@@ -65,7 +65,7 @@ Kata.require([
         slider.setAttribute('name',name);
         slider.setAttribute('id',name+divID);
         slider.setAttribute('type','range');
-        slider.setAttribute('step','any');
+        slider.setAttribute('step','0.001');
         slider.value = '0';
         slider.style.width="200px";
         slider.addEventListener("change", func, false);
