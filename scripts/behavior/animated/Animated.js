@@ -166,7 +166,7 @@ Kata.require([
     Kata.Behavior.Animated.prototype._handleMessage = function(presence, src, dest, payload) {
         // We should be able to just parse a Animated Container
         var container_msg = new Animated.Protocol.Container();
-        container_msg.ParseFromStream(new PROTO.ByteArrayStream(payload));
+        container_msg.ParseFromStream(PROTO.CreateArrayStream(payload));
 
         // And just try handling any and all of the three components
         if (container_msg.HasField("intro")) {

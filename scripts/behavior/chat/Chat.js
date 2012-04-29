@@ -216,7 +216,7 @@ Kata.require([
     Kata.Behavior.Chat.prototype._handleMessage = function(presence, remoteid, payload) {
         // We should be able to just parse a Chat Container
         var container_msg = new Chat.Protocol.Container();
-        container_msg.ParseFromStream(new PROTO.ByteArrayStream(payload));
+        container_msg.ParseFromStream(PROTO.CreateArrayStream(payload));
 
         // And just try handling any and all of the three components
         if (container_msg.HasField("intro")) {
