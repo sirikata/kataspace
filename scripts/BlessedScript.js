@@ -609,7 +609,8 @@ Kata.require([
                 this.startDragAction("dragXZ");
             }
         }
-        if ((msg.msg == "drag" || msg.msg == "drop" || msg.msg == "mousemove") && this.mDrag) {
+        // Check if we are dragging and we are not adjusting sliders (which also counts as a drag)
+        if ((msg.msg == "drag" || msg.msg == "drop" || msg.msg == "mousemove") && this.mDrag && !this.mDrag.setslider) {
             var thus = this;
             var dragObject = this.mDrag;
             dragObject.lastDragMsg = msg;
