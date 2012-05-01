@@ -159,6 +159,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                         kata_base_offset + "scripts/BlessedScript.js",
                         "Example.BlessedScript",
                         {
+                        //main_thread:true,//Uncomment to run the blessed script on the main thread                        
+                        //disable_simulation:true,//Uncomment to disable simulations on the main thread                        
                         space: SpaceURL,
                         name: loginName,
                         loc: {scale : [0,0,0,avatarScale]},
