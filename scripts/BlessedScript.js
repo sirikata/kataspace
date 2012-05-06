@@ -208,7 +208,7 @@ Kata.require([
                                       orient : orient
                                   },
                                   creator: this.mPresence.id(),
-                                  visual: {mesh:objectName},
+                                  visual: objectName,
                                   auth: "whiskey-foxtrot-tango"
                                   //,port: port
                                   //,receipt: ""+idx
